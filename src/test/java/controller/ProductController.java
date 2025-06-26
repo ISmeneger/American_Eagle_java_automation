@@ -8,6 +8,8 @@ import io.restassured.specification.RequestSpecification;
 import models.Item;
 import org.aeonbits.owner.ConfigFactory;
 
+import java.util.List;
+
 import static io.restassured.RestAssured.given;
 
 public class ProductController {
