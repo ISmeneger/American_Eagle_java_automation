@@ -7,8 +7,11 @@ import org.aeonbits.owner.Config;
         "classpath:default.properties"
 })
 public interface TestPropertiesConfig extends org.aeonbits.owner.Config {
-    @Key("apiBaseUrl")
+    @Key("baseUrl")
     String getApiBaseUrl();
+
+    @Key("guest.header.auth")
+    String getGuestHeaderAuth();
 
     @Key("uiBaseUrl")
     String getUiBaseUrl();
