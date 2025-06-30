@@ -9,7 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import static constants.CommonConstants.UI_BASE_URL;
+import static constants.CommonConstants.BASE_URL;
 
 public class HomePage extends BasePage {
 
@@ -31,7 +31,7 @@ public class HomePage extends BasePage {
 
     @Step("Open homepage")
     private void open() {
-        driver.get(UI_BASE_URL);
+        driver.get(BASE_URL);
     }
 
     @Step("Get web title")
