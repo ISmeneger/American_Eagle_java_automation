@@ -7,10 +7,11 @@ import org.junit.jupiter.api.Test;
 import pages.HomePage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FooterComponentTests extends BaseTest {
     HomePage homePage;
-    private static final String TEXT_MUTED = "© 2025 AEO Management Co. All Rights Reserved";
+    private static final String COPYRIGHT_TEXT = "© 2025 AEO Management Co. All Rights Reserved";
 
     @BeforeEach
     void setupPage() {
@@ -18,10 +19,18 @@ class FooterComponentTests extends BaseTest {
     }
 
     @Test
-    @DisplayName("Checking the page's copyright")
-    void checkCopyrightText() {
+    @DisplayName("Check the page's copyright")
+    void checkCopyrightTextTest() {
         FooterComponent footer = homePage.getFooter();
         footer.scrollingToElement();
-        assertEquals(TEXT_MUTED, homePage.getFooter().getText());
+        assertEquals(COPYRIGHT_TEXT, footer.getCopyrightText());
+    }
+
+    @Test
+    @DisplayName("Check footer img is displayed")
+    void checkFooterImgTest() {
+        FooterComponent footer = homePage.getFooter();
+        footer.scrollingToElement();
+        assertTrue(footer.footerImgIsDisplayed());
     }
 }

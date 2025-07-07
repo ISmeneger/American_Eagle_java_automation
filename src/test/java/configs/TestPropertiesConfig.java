@@ -16,8 +16,8 @@ public interface TestPropertiesConfig extends org.aeonbits.owner.Config {
     @Key("uiBaseUrl")
     String getUiBaseUrl();
 
-    @Key("login")
-    String getLogin();
+    @Key("email")
+    String getEmail();
 
     @Key("password")
     String getPassword();
