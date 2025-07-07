@@ -25,7 +25,7 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
-    implementation 'org.seleniumhq.selenium:selenium-java:4.28.1'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.33.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
     testImplementation 'org.assertj:assertj-core:3.27.3'
     implementation 'org.aeonbits.owner:owner:1.0.12'
