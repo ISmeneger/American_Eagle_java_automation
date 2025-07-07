@@ -11,30 +11,31 @@ import org.openqa.selenium.support.PageFactory;
 public class FooterComponent {
     WebDriver driver;
 
-    @FindBy(xpath = "//p[@class = 'copyright _no-bottom-margin_ksdzei _footer-copyright_1c0c3k']")
+    @FindBy(xpath = "//p[contains(@class, 'copyright ')]")
     private WebElement copyrightText;
 
-    @FindBy(id = "un_version")
-    private WebElement footerText;
+    @FindBy(xpath = "//img[@src='https://www.ae.com/assets/ae/logos/Footer-logos.svg']")
+    private WebElement footerImg;
 
     public FooterComponent(WebDriver driver) {
         this.driver = driver;
-    }
-
-    @Step("Get copyright text")
-    public String getText() {
-        return copyrightText.getText();
+        PageFactory.initElements(driver, this);
     }
 
     @Step("Scroll to copyright text")
     public void scrollingToElement() {
         new Actions(driver)
-                .scrollToElement(footerText)
+                .scrollToElement(copyrightText)
                 .perform();
     }
 
-    @Step("Getting current url")
-    public String getCurrentUrlInformationPage() {
-        return driver.getCurrentUrl();
+    @Step("Get copyright text")
+    public String getCopyrightText() {
+        return copyrightText.getText();
+    }
+
+    @Step("Check footer img is displayed")
+    public Boolean footerImgIsDisplayed() {
+        return footerImg.isDisplayed();
     }
 }

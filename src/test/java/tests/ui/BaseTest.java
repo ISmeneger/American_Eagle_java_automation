@@ -25,7 +25,7 @@ class BaseTest {
     void setup() {
         initDriver();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        longWait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        longWait = new WebDriverWait(driver, Duration.ofSeconds(5));
     }
 
     @AfterEach
