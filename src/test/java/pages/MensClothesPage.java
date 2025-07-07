@@ -1,37 +1,58 @@
 package pages;
 
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+
+import static constants.CommonConstants.BASE_URL;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MensClothesPage extends BasePage {
+    WebDriver driver;
+    WebDriverWait wait;
 
     public MensClothesPage(WebDriver driver) {
         super(driver);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        this.driver = driver;
+        PageFactory.initElements(driver, this);
     }
 
-//    @FindBy(xpath = "//a[@href='/us/en/c/men/mens?pagetype=plp']")
-//    WebElement mensForm;
+    @FindBy(xpath = "//a[text()='Men']")
+    WebElement menFormMenu;
 
-    WebElement mensForm = driver.findElement(By.xpath("//a[@href='/us/en/c/men/mens?pagetype=plp']"));
+    @FindBy(xpath = "//a[@href='/us/en/c/men/mens?pagetype=clp']")
+    WebElement viewAllCategories;
 
-//    @FindBy(xpath = "//a[@href='/us/en/c/men/mens?pagetype=clp']")
-//    WebElement viewAllCategories;
+    @FindBy(className = "qa-non-link-label")
+    WebElement mensClothesTitle;
 
-    WebElement viewAllCategories = driver.findElement(By.xpath("//a[@href='/us/en/c/men/mens?pagetype=clp']"));
+    @FindBy(css = "img.img-responsive.product-tile-image._image_l3zrmt")
+    WebElement mensTShirtBlack;
 
-//    @FindBy(className = "qa-non-link-label _non-link-label_yzxc3z")
-//    WebElement mensClothesTitle;
+    @FindBy(name = "addToBag")
+    WebElement addToBagButton;
 
-//    WebElement mensClothesTitle = driver.findElement(By.xpath("//div[@class='container-fluid qa-breadcrumb-items _container_yzxc3z']"));
+    @FindBy(xpath = "//li[@data-value='0043976372']")
+    WebElement chooseTheSize;
+
+    @FindBy(xpath = "//h2[text()='Added to bag!']")
+    WebElement successfulAddedToBag;
+
+    @FindBy(name = "viewBag")
+    WebElement viewItemInBagButton;
 
     @Step("Move mouse to element Mens clothes")
     public void movingToElementMen() {
         new Actions(driver)
-                .moveToElement(mensForm)
+                .moveToElement(menFormMenu)
                 .perform();
     }
 
@@ -40,8 +61,40 @@ public class MensClothesPage extends BasePage {
         viewAllCategories.click();
     }
 
-//    @Step("Get subpage title")
-//    public String getSubPageTitle() {
-//        return mensClothesTitle.getText();
-//    }
+    @Step("Get subpage title")
+    public String getMensPageTitle() {
+        return mensClothesTitle.getText();
+    }
+
+    @Step("Move mouse to element T-Shirt Black")
+    public void movingToElementTShirt() {
+        new Actions(driver)
+                .moveToElement(mensTShirtBlack)
+                .perform();
+    }
+
+    @Step("Choose T-Shirt in catalogue")
+    public void chooseTShirtInCatalogue() {
+        mensTShirtBlack.click();
+    }
+
+    @Step("Check button 'Add to bag")
+    public void clickToBagButton() {
+        addToBagButton.click();
+    }
+
+    @Step("Choose the size")
+    public void chooseTheSizeS() {
+        chooseTheSize.click();
+    }
+
+    @Step("Check successful added to bag")
+    public String getSuccessfulAddedToBagText() {
+        return successfulAddedToBag.getText();
+    }
+
+    @Step("Check added item on basket")
+    public void clickViewButton() {
+        viewItemInBagButton.click();
+    }
 }

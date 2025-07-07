@@ -18,7 +18,7 @@ public class HomePage extends BasePage {
     @Getter
     private final HeaderComponent header;
 
-    @FindBy(xpath = "//img[@src='https://s7d2.scene7.com/is/image/aeo/flag__US?fmt=png-alpha&fit=crop&wid=100&qlt=90,0']")
+    @FindBy(xpath = "//b[text()='Ship to' and text()='United States']")
     private WebElement chooseCountry;
 
 
@@ -44,4 +44,9 @@ public class HomePage extends BasePage {
         chooseCountry.click();
     }
 
+    @Step("Open Men form page")
+    public MensClothesPage openMensClothesChapterPage() {
+        driver.findElement(By.xpath("//a[@href='/us/en/c/men/mens?pagetype=clp']"));
+        return new MensClothesPage(driver);
+    }
 }
