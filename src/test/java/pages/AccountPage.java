@@ -1,11 +1,13 @@
 package pages;
 
 import io.qameta.allure.Step;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -15,13 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AccountPage extends BasePage {
     WebDriver driver;
-    WebDriverWait wait;
 
     public static final String VALUE_NAME = "value";
 
     public AccountPage(WebDriver driver) {
         super(driver);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }
@@ -59,13 +59,7 @@ public class AccountPage extends BasePage {
     @FindBy(xpath = "//select[@name='day']")
     private WebElement dropdownSelectMenuDay;
 
-    @FindBy(xpath = "//input[@id='toggle-ember15']")
-    private WebElement checkboxAEEmails;
-
-    @FindBy(xpath = "//input[@id='toggle-ember16']")
-    private WebElement checkboxAerieEmails;
-
-    @FindBy(xpath = "//*[@id='main-content-focus']/div[2]/div/div/div/form/div[3]/label")
+    @FindBy(name = "acceptTerms")
     private WebElement checkboxAcceptTerms;
 
     @FindBy(xpath = "//button[@name='submit']")
@@ -80,6 +74,27 @@ public class AccountPage extends BasePage {
     @FindBy(css = "h2.modal-title")
     private WebElement successfulAccountText;
 
+    @FindBy(css = "h6.alert-header")
+    private WebElement errorWarningText;
+
+    @FindBy(xpath = "//div[@data-testid='form-error']")
+    private WebElement errorAccountUnderFieldText;
+
+    @FindBy(xpath = "//div[@data-testid='form-error' and text()='Please enter your password.']")
+    private WebElement errorAccountEmptyPasswordFieldText;
+
+    @FindBy(xpath = "//div[@data-testid='form-error' and text()='Please enter a valid email address.']")
+    private WebElement errorAccountInvalidPasswordText;
+
+    @FindBy(xpath = "//div[@data-testid='form-error' and text()='Please enter your first name.']")
+    private WebElement errorEmptyFirstNameText;
+
+    @FindBy(xpath = "//div[@data-testid='form-error' and text()='Please enter your last name.']")
+    private WebElement errorEmptyLastNameText;
+
+    @FindBy(xpath = "//div[@data-testid='form-error' and text()='Please enter your zip/postal code.']")
+    private WebElement errorEmptyZipCodeText;
+
     @Step("Click account button")
     public void clickAccountButton() {
         iconAccount.click();
@@ -92,7 +107,8 @@ public class AccountPage extends BasePage {
 
     @Step("Input email field")
     public void inputEmailField(String email) {
-        inputEmail.sendKeys(email);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.visibilityOf(inputEmail)).sendKeys(email);
     }
 
     @Step("Input first name field")
@@ -103,13 +119,6 @@ public class AccountPage extends BasePage {
     @Step("Input last name field")
     public void inputLastNameField(String lastName) {
         inputLastName.sendKeys(lastName);
-    }
-
-    @Step("Move to text 'Sign Up for Emails & Texts'")
-    public void movingToElementSignUpText() {
-        new Actions(driver)
-                .moveToElement(signUpText)
-                .perform();
     }
 
     @Step("Input password field")
@@ -127,40 +136,36 @@ public class AccountPage extends BasePage {
         zipCode.sendKeys(postalCode);
     }
 
-    @Step("Check dropdown month and choose value")
+    @Step("Click dropdown month and choose value")
     public void dropdownMonthSelectorByValue(String value) {
         Select select = new Select(dropdownSelectMenuMonth);
         select.selectByValue(value);
         assertEquals(value, select.getFirstSelectedOption().getDomProperty(VALUE_NAME));
     }
 
-    @Step("Check dropdown day and choose value")
+    @Step("Click dropdown day and choose value")
     public void dropdownDaySelectorByValue(String value) {
         Select select = new Select(dropdownSelectMenuDay);
         select.selectByValue(value);
         assertEquals(value, select.getFirstSelectedOption().getDomProperty(VALUE_NAME));
     }
 
-    @Step("Move to text 'Sign Up for Emails & Texts'")
+    @Step("Move to 'Create Account' button")
     public void movingToElementSubmitButton() {
         new Actions(driver)
                 .moveToElement(submitAccountButton)
                 .perform();
     }
 
-    @Step("Check checkbox AE Emails")
-    public void clickCheckboxAEEmails() {
-        checkboxAEEmails.click();
-    }
-
-    @Step("Check checkbox Aerie Emails")
-    public void clickCheckboxAerieEmails() {
-        checkboxAerieEmails.click();
-    }
-
-    @Step("Check checkbox Aerie Emails")
+    @Step("Click checkbox 'I Accept'")
     public void clickCheckboxAcceptTerms() {
-        checkboxAcceptTerms.click();
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].click();", checkboxAcceptTerms);
+    }
+
+    @Step("Check 'Create Account' button is enabled")
+    public Boolean submitAccountButtonIsEnabled() {
+        return submitAccountButton.isEnabled();
     }
 
     @Step("Click submit button")
@@ -173,7 +178,7 @@ public class AccountPage extends BasePage {
         return accountCreatedText.getText();
     }
 
-    @Step("Click on submit button")
+    @Step("Click on 'Sign In' button")
     public void submitSignInButtonClick() {
         submitSignInButton.click();
     }
@@ -181,5 +186,40 @@ public class AccountPage extends BasePage {
     @Step("Check successful entered to account")
     public String getSuccessfulEnteredAccountText() {
         return successfulAccountText.getText();
+    }
+
+    @Step("Get text about problem")
+    public String getErrorWarningText() {
+        return errorWarningText.getText();
+    }
+
+    @Step("Get text describing the problem under the email and password field")
+    public String getErrorAccountUnderFieldText() {
+        return errorAccountUnderFieldText.getText();
+    }
+
+    @Step("Get text describing the problem under the email, when it's not valid")
+    public String getErrorAccountInvalidPasswordText() {
+        return errorAccountInvalidPasswordText.getText();
+    }
+
+    @Step("Get text describing the problem under the password field, when it's empty")
+    public String getErrorEmptyPasswordText() {
+        return errorAccountEmptyPasswordFieldText.getText();
+    }
+
+    @Step("Get text describing the problem under the 'First Name' field, when it's empty")
+    public String getErrorEmptyFirstNameText() {
+        return errorEmptyFirstNameText.getText();
+    }
+
+    @Step("Get text describing the problem under the 'Last Name' field, when it's empty")
+    public String getErrorEmptyLastNameText() {
+        return errorEmptyLastNameText.getText();
+    }
+
+    @Step("Get text describing the problem under the 'Zip Cde' field, when it's empty")
+    public String getErrorEmptyZipCOdeText() {
+        return errorEmptyZipCodeText.getText();
     }
 }
