@@ -95,7 +95,7 @@ class BagApiTests {
         assertThat(afterAdd.getData().getItemCount())
                 .isEqualTo(qty);
 
-        itemId = afterAdd.getData().getItems().getFirst().getItemId();
+        itemId = afterAdd.getData().getItems().get(0).getItemId();
 
         bag.updateItem(TEST_SKU_ID, updateQty, itemId)
                 .then()
@@ -127,7 +127,7 @@ class BagApiTests {
         assertThat(afterAdd.getData().getItemCount())
                 .isEqualTo(qty);
 
-        itemId = afterAdd.getData().getItems().getFirst().getItemId();
+        itemId = afterAdd.getData().getItems().get(0).getItemId();
 
         bag.deleteItem(itemId)
                 .then()
