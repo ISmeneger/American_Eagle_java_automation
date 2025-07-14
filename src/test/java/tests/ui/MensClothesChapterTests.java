@@ -16,7 +16,7 @@ import static constants.CommonConstants.BASE_URL;
 import static io.qameta.allure.SeverityLevel.CRITICAL;
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@Tags({@Tag("UI"), @Tag("Extended")})
 class MensClothesChapterTests extends BaseTest {
     HomePage homePage;
     MensClothesPage mensClothesPage;

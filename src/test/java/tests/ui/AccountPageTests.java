@@ -11,11 +11,12 @@ import utils.TestDataGeneratorForCreationAccount;
 
 import java.time.Duration;
 
-import static constants.CommonConstants.BASE_URL;
+import static constants.CommonConstants.*;
 import static io.qameta.allure.SeverityLevel.CRITICAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tags({@Tag("UI"), @Tag("Extended")})
 class AccountPageTests extends BaseTest {
     HomePage homePage;
     AccountPage accountPage;
