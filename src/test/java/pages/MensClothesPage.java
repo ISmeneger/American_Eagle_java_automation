@@ -100,7 +100,7 @@ public class MensClothesPage extends BasePage {
         dropdownSizeToggle.click();
         wait.until(ExpectedConditions.visibilityOfAllElements(availableSizes));
         if (!availableSizes.isEmpty()) {
-            availableSizes.getFirst().click();
+            availableSizes.get(0).click();
         } else {
             throw new RuntimeException("No available sizes found");
         }
