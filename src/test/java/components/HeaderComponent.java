@@ -9,6 +9,11 @@ import org.openqa.selenium.support.PageFactory;
 public class HeaderComponent {
     WebDriver driver;
 
+    public HeaderComponent(WebDriver driver) {
+        this.driver = driver;
+        PageFactory.initElements(driver, this);
+    }
+
     @FindBy(css = "a[data-testid='aeo-logo']")
     private WebElement subTitleAeoLogo;
 
@@ -71,11 +76,6 @@ public class HeaderComponent {
 
     @FindBy(xpath = "//a[@href='/us/en/c/men/mens?pagetype=clp']")
     WebElement viewAllCategories;
-
-    public HeaderComponent(WebDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
-    }
 
     @Step("Get text in logo link")
     public String getAeoLogoSubtitleText() {

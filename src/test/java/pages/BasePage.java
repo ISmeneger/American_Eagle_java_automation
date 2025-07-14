@@ -1,17 +1,18 @@
 package pages;
 
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
+
 public class BasePage {
     WebDriver driver;
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     private static final Logger log = LoggerFactory.getLogger(BasePage.class);
 
 
@@ -20,6 +21,9 @@ public class BasePage {
 
     @FindBy(xpath = "//div[@class='bloomreach-weblayer']")
     private WebElement shadowRoot;
+
+    @FindBy(css = "button[class='close']")
+    private WebElement closePopUp;
 
     public BasePage(WebDriver driver) {
         this.driver = driver;
@@ -37,18 +41,18 @@ public class BasePage {
     }
 
     @Step("Сatch and close pop-up")
-    public void closePopUp() {
+    public void closePopUpIfAvailable() {
         try {
             // Получение shadow root и закрытие поп-апа
             SearchContext popUp = shadowRoot.getShadowRoot();
             WebElement closePopUp = popUp.findElement(By.cssSelector("button[class='close']"));
             closePopUp.click();
 
-            log.info("Поп-ап закрыт успешно.");
+//            log.info("Поп-ап закрыт успешно.");
         } catch (org.openqa.selenium.NoSuchElementException e) {
-            log.info("Поп-ап не найден.");
+//            log.info("Поп-ап не найден.");
         } catch (Exception e) {
-            log.error("Ошибка при закрытии поп-апа: ", e);
+//            log.error("Ошибка при закрытии поп-апа: ", e);
         }
     }
 }

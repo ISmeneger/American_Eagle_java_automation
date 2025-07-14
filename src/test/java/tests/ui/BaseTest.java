@@ -19,13 +19,13 @@ import java.util.Map;
 class BaseTest {
     TestPropertiesConfig configProperties = ConfigFactory.create(TestPropertiesConfig.class, System.getProperties());
     static WebDriver driver;
-    WebDriverWait longWait;
+    protected WebDriverWait wait;
 
     @BeforeEach
     void setup() {
         initDriver();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        longWait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     @AfterEach
