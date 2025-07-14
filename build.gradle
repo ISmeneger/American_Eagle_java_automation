@@ -33,9 +33,35 @@ dependencies {
     implementation "io.qameta.allure:allure-rest-assured:${allureVersion}"
     // https://mvnrepository.com/artifact/org.aspectj/aspectjweaver
     runtimeOnly("org.aspectj:aspectjweaver:1.9.23")
+    implementation 'com.github.javafaker:javafaker:1.0.2'
 }
 
 test {
     useJUnitPlatform()
     systemProperties(System.getProperties())
 }
+
+tasks.register('uiTests', Test) {
+    useJUnitPlatform() {
+        includeTags 'UI'
+        excludeTags 'API'
+        excludeTags 'defect'
+    }
+    systemProperties(System.getProperties())
+}
+
+tasks.register('defect', Test) {
+    useJUnitPlatform() {
+        includeTags 'UI'
+    }
+    systemProperties(System.getProperties())
+}
+
+tasks.register('apiTests', Test) {
+    useJUnitPlatform() {
+        includeTags 'API'
+        excludeTags 'UI'
+    }
+    systemProperties(System.getProperties())
+}
+
