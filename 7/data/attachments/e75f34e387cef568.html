@@ -1,0 +1,37 @@
+<div>POST to https://www.ae.com/ugp-api/bag/v1/items</div>
+
+    <h4>Body</h4>
+    <div>
+    <pre class="preformated-text">
+{
+    &quot;items&quot;: [
+        {
+            &quot;skuId&quot;: &quot;0043421387&quot;,
+            &quot;quantity&quot;: 1
+        }
+    ]
+}    </pre>
+    </div>
+
+    <h4>Headers</h4>
+    <div>
+            <div>aesite: AEO_US</div>
+            <div>Accept: application/json, application/javascript, text/javascript, text/json</div>
+            <div>x-access-token: eyJlcGsiOnsia3R5IjoiRUMiLCJjcnYiOiJQLTI1NiIsIngiOiJMbGdwenhiTjRjSmZjNDhrOHJfT2xrWFd2c010UXgwSFVfWlhDbDRzeHE0IiwieSI6IkdMWEVldnJPdmE2SkNYV2ZJaE5kM1FYWU9XSGEtV0pwRWw2TWJwQkZaaFEifSwia2lkIjoiS0VZMSIsImN0eSI6IkpXVCIsInR5cCI6IkpXVCIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJhbGciOiJFQ0RILUVTK0EyNTZLVyJ9.HoDZifs6qAPZ2jnfG3dnpJH_4dPtueCCl5PelwhlzDF1L8A3hJmM8w.fPVSFyO2kL6UA9SZgfxvCQ.z-dyMvYhYfkU-2exc4LGeXAa-8kYex7EcXKCPT4oQKh5PKgcpLbmKjWfZAc3xt9TxBpyxRTvlV_sEL6ldPtjN3AOy9wP_URLEf_EjipA02fSRp2Jxn-nFAmNI-1alvdjEL0zrJ-2W5Tg6bGUXt45H8zEGcWHUgok5dCQbcYOnDH4gAjR2Dytqe9R6evzAtEEGteg-gz5MiZ73iusN2DuioVLveuXL-JskrM1i3Z_XXoxldfeSnG5b7pxhmdGprySFIsSCStM0YHJy04pYOwgwKJlXlCpWXdq28tTOZqQor7UI7Jly-zvfjleMcsJvwvpIMeHtPizKR9YL0L2slsp4-Cz1ZhvpCyZ_rzNGYjRtxZpE7Msu30dPoFb_BuW07LJTEF-lCDTrKV8hD_3Z5VKrfk8pwJIBfFMDGxW_BBoHNEUKFlrgrvs6vmDPgEvG2zuD6bEiNfH7d561mAay93rIMgHFq3VC88sXywiTGKuqEK1SeK0CiYrZA2dpuXQrUjT7MFOMtlmUzyoQKqQdiLK-Nk9FtbSRUZlfFT6RIVXTmKMJAO3yOvvpwe20wxcUTP9lngbB7tOLlVBZj66c_Ov0Dqq9sGo0EV0DZ2X_ePhIN64fkKeW6k6xmHO1WxAPysKsZ3Zwk664GBM-qRugkaPj0iaj0K4s1LaxabnumhsgGPAs2b-uN2lsRCOGYUhosfi.CZUiRsJiCFuO-z1NcsW3wg</div>
+            <div>Content-Type: application/json</div>
+    </div>
+
+
+
+    <h4>Curl</h4>
+    <div>
+        curl -v -X POST &#39;https://www.ae.com/ugp-api/bag/v1/items&#39; -H &#39;aesite: AEO_US&#39; -H &#39;Accept: application/json, application/javascript, text/javascript, text/json&#39; -H &#39;x-access-token: eyJlcGsiOnsia3R5IjoiRUMiLCJjcnYiOiJQLTI1NiIsIngiOiJMbGdwenhiTjRjSmZjNDhrOHJfT2xrWFd2c010UXgwSFVfWlhDbDRzeHE0IiwieSI6IkdMWEVldnJPdmE2SkNYV2ZJaE5kM1FYWU9XSGEtV0pwRWw2TWJwQkZaaFEifSwia2lkIjoiS0VZMSIsImN0eSI6IkpXVCIsInR5cCI6IkpXVCIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJhbGciOiJFQ0RILUVTK0EyNTZLVyJ9.HoDZifs6qAPZ2jnfG3dnpJH_4dPtueCCl5PelwhlzDF1L8A3hJmM8w.fPVSFyO2kL6UA9SZgfxvCQ.z-dyMvYhYfkU-2exc4LGeXAa-8kYex7EcXKCPT4oQKh5PKgcpLbmKjWfZAc3xt9TxBpyxRTvlV_sEL6ldPtjN3AOy9wP_URLEf_EjipA02fSRp2Jxn-nFAmNI-1alvdjEL0zrJ-2W5Tg6bGUXt45H8zEGcWHUgok5dCQbcYOnDH4gAjR2Dytqe9R6evzAtEEGteg-gz5MiZ73iusN2DuioVLveuXL-JskrM1i3Z_XXoxldfeSnG5b7pxhmdGprySFIsSCStM0YHJy04pYOwgwKJlXlCpWXdq28tTOZqQor7UI7Jly-zvfjleMcsJvwvpIMeHtPizKR9YL0L2slsp4-Cz1ZhvpCyZ_rzNGYjRtxZpE7Msu30dPoFb_BuW07LJTEF-lCDTrKV8hD_3Z5VKrfk8pwJIBfFMDGxW_BBoHNEUKFlrgrvs6vmDPgEvG2zuD6bEiNfH7d561mAay93rIMgHFq3VC88sXywiTGKuqEK1SeK0CiYrZA2dpuXQrUjT7MFOMtlmUzyoQKqQdiLK-Nk9FtbSRUZlfFT6RIVXTmKMJAO3yOvvpwe20wxcUTP9lngbB7tOLlVBZj66c_Ov0Dqq9sGo0EV0DZ2X_ePhIN64fkKeW6k6xmHO1WxAPysKsZ3Zwk664GBM-qRugkaPj0iaj0K4s1LaxabnumhsgGPAs2b-uN2lsRCOGYUhosfi.CZUiRsJiCFuO-z1NcsW3wg&#39; -H &#39;Content-Type: application/json&#39; -d &#39;{
+    &quot;items&quot;: [
+        {
+            &quot;skuId&quot;: &quot;0043421387&quot;,
+            &quot;quantity&quot;: 1
+        }
+    ]
+}&#39;
+    </div>
+
