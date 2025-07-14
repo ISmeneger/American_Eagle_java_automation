@@ -35,9 +35,9 @@ class BaseTest {
 
     private WebDriver initDriver() {
         String remoteUrl = System.getenv("SELENIUM_REMOTE_URL");
-//        if (remoteUrl == null || remoteUrl.isEmpty()) {
-//            remoteUrl = configProperties.getSeleniumRemoteUrl();
-//        }
+        if (remoteUrl == null && remoteUrl.isEmpty()) {
+            remoteUrl = configProperties.getSeleniumRemoteUrl();
+        }
 
         if (remoteUrl != null && !remoteUrl.isEmpty()) {
             Allure.addAttachment("RemoteUrl", remoteUrl);
@@ -56,7 +56,7 @@ class BaseTest {
             Allure.addAttachment("Local run", "No remote driver");
             driver = new ChromeDriver();
         }
-        driver.manage().window().maximize();
+        driver.manage().window().fullscreen();
         return driver;
     }
 }
