@@ -87,7 +87,7 @@ public class MensClothesPage extends BasePage {
             wait.until(ExpectedConditions.visibilityOfAllElements(productItems));
         }
         if (!productItems.isEmpty()) {
-            productItems.getFirst().click();
+            productItems.get(0).click();
         }
     }
 
