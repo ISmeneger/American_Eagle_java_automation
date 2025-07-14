@@ -3,19 +3,15 @@ package tests.ui;
 import components.FooterComponent;
 import components.HeaderComponent;
 import io.qameta.allure.Severity;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.junit.jupiter.api.*;
 import pages.HomePage;
-
-import java.time.Duration;
 
 import static constants.CommonConstants.BASE_URL;
 import static io.qameta.allure.SeverityLevel.CRITICAL;
 import static io.qameta.allure.SeverityLevel.NORMAL;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("UI")
 class HomePageTests extends BaseTest {
     HomePage homePage;
 
@@ -44,6 +40,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
+    @Tags({@Tag("smoke"), @Tag("positive")})
     @DisplayName("Check HomePage url")
     void getHomePageUrlTest() {
         assertEquals(BASE_URL, homePage.getCurrentUrl());
@@ -51,6 +48,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
+    @Tags({@Tag("smoke"), @Tag("positive")})
     @DisplayName("Check HomePage web title")
     void homePageTitleTest() {
         homePage.chooseCountrySale();
@@ -60,6 +58,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(NORMAL)
+    @Tags({@Tag("smoke"), @Tag("positive")})
     @DisplayName("Open homepage and check header and main menu titles")
     void openHomePageTest() {
         HeaderComponent header = homePage.getHeader();
@@ -80,6 +79,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(NORMAL)
+    @Tags({@Tag("smoke"), @Tag("positive")})
     @DisplayName("Check search button on homepage")
     void checkSearchButtonTest() {
         HeaderComponent header = homePage.getHeader();
@@ -89,6 +89,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(NORMAL)
+    @Tags({@Tag("smoke"), @Tag("positive")})
     @DisplayName("Click on search button and check search input field is displayed on homepage")
     void checkSearchButtonClickTest() {
         HeaderComponent header = homePage.getHeader();
@@ -100,6 +101,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
+    @Tags({@Tag("smoke"), @Tag("positive")})
     @DisplayName("Check account button on homepage")
     void checkAccountButtonTest() {
         HeaderComponent header = homePage.getHeader();
@@ -120,6 +122,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
+    @Tags({@Tag("smoke"), @Tag("positive")})
     @DisplayName("Click on account button and check 'Create Account'")
     void checkCreateAccountButtonTest() {
         HeaderComponent header = homePage.getHeader();
@@ -131,6 +134,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(NORMAL)
+    @Tags({@Tag("smoke"), @Tag("positive")})
     @DisplayName("Check favorites button on homepage")
     void checkFavoritesButtonTest() {
         HeaderComponent header = homePage.getHeader();
@@ -140,6 +144,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(NORMAL)
+    @Tags({@Tag("smoke"), @Tag("positive")})
     @DisplayName("Click on favorites button and check 'Favorites' text")
     void checkFavoritesButtonClickTest() {
         HeaderComponent header = homePage.getHeader();
@@ -150,6 +155,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
+    @Tags({@Tag("smoke"), @Tag("positive")})
     @DisplayName("Check basket button on homepage")
     void checkBasketButtonTest() {
         HeaderComponent header = homePage.getHeader();
@@ -159,6 +165,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
+    @Tags({@Tag("smoke"), @Tag("positive")})
     @DisplayName("Click on basket button and check 'Shopping Bag' text")
     void checkBasketButtonClickTest() {
         HeaderComponent header = homePage.getHeader();
@@ -169,6 +176,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(NORMAL)
+    @Tags({@Tag("smoke"), @Tag("positive")})
     @DisplayName("Check the page's copyright")
     void checkCopyrightTextTest() {
         FooterComponent footer = homePage.getFooter();
@@ -178,6 +186,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(NORMAL)
+    @Tags({@Tag("smoke"), @Tag("positive")})
     @DisplayName("Check footer img is displayed")
     void checkFooterImgTest() {
         FooterComponent footer = homePage.getFooter();
