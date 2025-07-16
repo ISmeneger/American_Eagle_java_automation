@@ -1,7 +1,6 @@
 package components;
 
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -11,10 +10,10 @@ import org.openqa.selenium.support.PageFactory;
 public class FooterComponent {
     WebDriver driver;
 
-    @FindBy(xpath = "//p[contains(@class, 'copyright ')]")
+    @FindBy(xpath = "//p[contains(@class, 'copyright')]")
     private WebElement copyrightText;
 
-    @FindBy(xpath = "//img[@src='https://www.ae.com/assets/ae/logos/Footer-logos.svg']")
+    @FindBy(css = "img.qa-footer-copyright-image")
     private WebElement footerImg;
 
     public FooterComponent(WebDriver driver) {

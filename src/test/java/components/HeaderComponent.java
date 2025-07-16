@@ -5,6 +5,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class HeaderComponent {
     WebDriver driver;
@@ -14,10 +18,10 @@ public class HeaderComponent {
         PageFactory.initElements(driver, this);
     }
 
-    @FindBy(css = "a[data-testid='aeo-logo']")
+    @FindBy(xpath = "//a[@title='Shop AE']")
     private WebElement subTitleAeoLogo;
 
-    @FindBy(name = "showFeaturedOffers")
+    @FindBy(xpath = "//button[normalize-space(text())=\"Today's Offers\"]")
     private WebElement featuredOffersMenu;
 
     @FindBy(xpath = "//a[text()='Women']")
@@ -26,7 +30,7 @@ public class HeaderComponent {
     @FindBy(xpath = "//a[text()='Men']")
     private WebElement menFormMenu;
 
-    @FindBy(xpath = "//a[@data-text='Jeans']")
+    @FindBy(xpath = "//a[contains(@href, '/x/jeans') and normalize-space(text())='Jeans']")
     private WebElement jeansFormMenu;
 
     @FindBy(xpath = "//span[text()='Shoes & Accessories']")
@@ -35,16 +39,16 @@ public class HeaderComponent {
     @FindBy(xpath = "//span[text()='Loungewear & PJs']")
     private WebElement loungewearFormMenu;
 
-    @FindBy(xpath = "//a[@data-text='Aerie']")
+    @FindBy(xpath = "//a[normalize-space(text())='Aerie']")
     private WebElement aerieFormMenu;
 
-    @FindBy(xpath = "//a[@data-text='Clearance']")
+    @FindBy(xpath = "//a[contains(@href, '/x/clearance')]")
     private WebElement clearanceFormMenu;
 
     @FindBy(name =  "search-cta")
     private WebElement searchButton;
 
-    @FindBy(name =  "search")
+    @FindBy(xpath = "//input[@name='search']")
     private WebElement searchInputField;
 
     @FindBy(className = "modal-title")
@@ -173,8 +177,9 @@ public class HeaderComponent {
     }
 
     @Step("Check 'Create Account' button is displayed")
-    public Boolean CreateAccountButtonIsDisplayed() {
-        return createAccountButton.isDisplayed();
+    public Boolean createAccountButtonIsDisplayed() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        return wait.until(ExpectedConditions.visibilityOf(createAccountButton)).isDisplayed();
     }
 
     @Step("Check 'Favorites' button is displayed")
