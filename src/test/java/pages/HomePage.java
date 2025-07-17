@@ -18,7 +18,7 @@ public class HomePage extends BasePage {
     @Getter
     private final HeaderComponent header;
 
-    @FindBy(xpath = "//b[text()='Ship to' and text()='United States']")
+    @FindBy(xpath = "//img[@src='https://s7d2.scene7.com/is/image/aeo/flag__US?fmt=png-alpha&fit=crop&wid=100&qlt=90,0']")
     private WebElement chooseCountry;
 
 

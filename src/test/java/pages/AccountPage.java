@@ -77,22 +77,25 @@ public class AccountPage extends BasePage {
     @FindBy(css = "h6.alert-header")
     private WebElement errorWarningText;
 
-    @FindBy(xpath = "//div[@data-testid='form-error']")
-    private WebElement errorAccountUnderFieldText;
+    @FindBy(css = "div[data-label-code='error.account.email.empty']")
+    private WebElement errorAccountEmptyEmailFieldText;
 
-    @FindBy(xpath = "//div[@data-testid='form-error' and text()='Please enter your password.']")
+    @FindBy(css = "div[data-label-code='error.account.password.empty']")
     private WebElement errorAccountEmptyPasswordFieldText;
 
-    @FindBy(xpath = "//div[@data-testid='form-error' and text()='Please enter a valid email address.']")
+    @FindBy(css = "div[data-label-code='error.account.email.invalid']")
+    private WebElement errorAccountInvalidEmailText;
+
+    @FindBy(css = "div[data-label-code='error.account.login.passwordInvalid']")
     private WebElement errorAccountInvalidPasswordText;
 
-    @FindBy(xpath = "//div[@data-testid='form-error' and text()='Please enter your first name.']")
+    @FindBy(css = "div[data-label-code='error.checkout.shippingAddress.firstName.empty']")
     private WebElement errorEmptyFirstNameText;
 
-    @FindBy(xpath = "//div[@data-testid='form-error' and text()='Please enter your last name.']")
+    @FindBy(css = "div[data-label-code='error.checkout.shippingAddress.lastName.empty']")
     private WebElement errorEmptyLastNameText;
 
-    @FindBy(xpath = "//div[@data-testid='form-error' and text()='Please enter your zip/postal code.']")
+    @FindBy(css = "div[data-label-code='error.account.loyalty.postalCode.empty']")
     private WebElement errorEmptyZipCodeText;
 
     @Step("Click account button")
@@ -132,7 +135,7 @@ public class AccountPage extends BasePage {
     }
 
     @Step("Zip code field")
-    public void zipCodeField(String postalCode) {
+    public void enterZipCode(String postalCode) {
         zipCode.sendKeys(postalCode);
     }
 
@@ -150,17 +153,27 @@ public class AccountPage extends BasePage {
         assertEquals(value, select.getFirstSelectedOption().getDomProperty(VALUE_NAME));
     }
 
+    @Step("Select BirthDate")
+    public void selectBirthDate(String valueMonth, String valueDay) {
+        dropdownMonthSelectorByValue(valueMonth);
+        dropdownDaySelectorByValue(valueDay);
+    }
+
     @Step("Move to 'Create Account' button")
-    public void movingToElementSubmitButton() {
+    public void scrollToSubmitButton() {
         new Actions(driver)
                 .moveToElement(submitAccountButton)
                 .perform();
     }
 
     @Step("Click checkbox 'I Accept'")
-    public void clickCheckboxAcceptTerms() {
+    public void acceptTermsAndConditions() {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].click();", checkboxAcceptTerms);
+    }
+
+    public boolean isTermsCheckboxSelected() {
+        return checkboxAcceptTerms.isSelected();
     }
 
     @Step("Check 'Create Account' button is enabled")
@@ -189,37 +202,82 @@ public class AccountPage extends BasePage {
     }
 
     @Step("Get text about problem")
-    public String getErrorWarningText() {
+    public String getLoginWarningError() {
         return errorWarningText.getText();
     }
 
-    @Step("Get text describing the problem under the email and password field")
-    public String getErrorAccountUnderFieldText() {
-        return errorAccountUnderFieldText.getText();
+    @Step("Checking that the form error is displayed specifically for email field")
+    public boolean getLoginWarningErrorIsDisplayed() {
+        return errorWarningText.isDisplayed();
     }
 
-    @Step("Get text describing the problem under the email, when it's not valid")
-    public String getErrorAccountInvalidPasswordText() {
+    @Step("Get text describing the problem under the password, when it's not valid")
+    public String getErrorEmailMessage() {
+        return errorAccountInvalidEmailText.getText();
+    }
+
+    @Step("Checking that the form error is displayed specifically for email field")
+    public boolean getErrorEmailMessageIsDisplayed() {
+        return errorAccountInvalidEmailText.isDisplayed();
+    }
+
+    @Step("Get text describing the problem under the password, when it's not valid")
+    public String getErrorAccountInvalidPasswordMessage() {
         return errorAccountInvalidPasswordText.getText();
     }
 
+    @Step("Checking that the form error is displayed specifically for email field")
+    public boolean getErrorAccountInvalidPasswordMessageIsDisplayed() {
+        return errorAccountInvalidPasswordText.isDisplayed();
+    }
+
+    @Step("Get text describing the problem under the email field, when it's empty")
+    public String getErrorEmptyEmailMessage() {
+        return errorAccountEmptyEmailFieldText.getText();
+    }
+
+    @Step("Checking that the empty form error is displayed specifically for email field")
+    public boolean getErrorEmptyEmailMessageIsDisplayed() {
+        return errorAccountEmptyEmailFieldText.isDisplayed();
+    }
+
     @Step("Get text describing the problem under the password field, when it's empty")
-    public String getErrorEmptyPasswordText() {
+    public String getErrorEmptyPasswordMessage() {
         return errorAccountEmptyPasswordFieldText.getText();
     }
 
+    @Step("Checking that the empty form error is displayed specifically for password field")
+    public boolean getErrorEmptyPasswordMessageIsDisplayed() {
+        return errorAccountEmptyPasswordFieldText.isDisplayed();
+    }
+
     @Step("Get text describing the problem under the 'First Name' field, when it's empty")
-    public String getErrorEmptyFirstNameText() {
+    public String getErrorEmptyFirstNameMessage() {
         return errorEmptyFirstNameText.getText();
     }
 
+    @Step("Checking that the empty form error is displayed specifically for 'First Name' field")
+    public boolean getErrorEmptyFirstNameMessageIsDisplayed() {
+        return errorEmptyFirstNameText.isDisplayed();
+    }
+
     @Step("Get text describing the problem under the 'Last Name' field, when it's empty")
-    public String getErrorEmptyLastNameText() {
+    public String getErrorEmptyLastNameMessage() {
         return errorEmptyLastNameText.getText();
     }
 
+    @Step("Checking that the empty form error is displayed specifically for 'Last Name' field")
+    public boolean getErrorEmptyLastNameMessageIsDisplayed() {
+        return errorEmptyLastNameText.isDisplayed();
+    }
+
     @Step("Get text describing the problem under the 'Zip Cde' field, when it's empty")
-    public String getErrorEmptyZipCOdeText() {
+    public String getErrorEmptyZipCOdeMessage() {
         return errorEmptyZipCodeText.getText();
+    }
+
+    @Step("Checking that the empty form error is displayed specifically for 'Zip Cde' field")
+    public boolean getErrorEmptyZipCOdeMessageIsDisplayed() {
+        return errorEmptyZipCodeText.isDisplayed();
     }
 }
