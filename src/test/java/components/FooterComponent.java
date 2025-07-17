@@ -6,6 +6,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class FooterComponent {
     WebDriver driver;
@@ -35,6 +39,8 @@ public class FooterComponent {
 
     @Step("Check footer img is displayed")
     public Boolean footerImgIsDisplayed() {
+        new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOf(footerImg));
         return footerImg.isDisplayed();
     }
 }
