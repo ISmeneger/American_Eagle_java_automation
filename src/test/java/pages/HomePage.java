@@ -8,6 +8,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import java.util.List;
 
 import static constants.CommonConstants.BASE_URL;
 
@@ -18,8 +21,8 @@ public class HomePage extends BasePage {
     @Getter
     private final HeaderComponent header;
 
-    @FindBy(xpath = "//img[@src='https://s7d2.scene7.com/is/image/aeo/flag__US?fmt=png-alpha&fit=crop&wid=100&qlt=90,0']")
-    private WebElement chooseCountry;
+    @FindBy(xpath = "//b[contains(@data-test-shipping-text, '') and contains(., 'Ship to')]")
+    private List<WebElement> chooseCountry;
 
 
     public HomePage(WebDriver driver) {
@@ -41,7 +44,8 @@ public class HomePage extends BasePage {
 
     @Step("Choose country sale")
     public void chooseCountrySale() {
-        chooseCountry.click();
+        wait.until(ExpectedConditions.visibilityOfAllElements(chooseCountry));
+        chooseCountry.get(0).click();
     }
 
     @Step("Open Men form page")
