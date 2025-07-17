@@ -3,7 +3,10 @@ package tests.ui;
 import configs.TestPropertiesConfig;
 import io.qameta.allure.Severity;
 import org.aeonbits.owner.ConfigFactory;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.AccountPage;
 import pages.HomePage;
 import steps.CreateNewAccountPage;
@@ -48,8 +51,8 @@ class AccountPageTests extends BaseTest {
     @Test
     @Severity(CRITICAL)
     @Tags({@Tag("smoke"), @Tag("positive"), @Tag("defect")})
-    @DisplayName("Check successful create account")
-    void createAccountPageTest() {
+    @DisplayName("Check successful account creation")
+    void shouldCreateAccountSuccessfullyTest() {
         String email = TestDataGeneratorForCreationAccount.generateEmail();
         String firstName = TestDataGeneratorForCreationAccount.generateFirstName();
         String lastName = TestDataGeneratorForCreationAccount.generateLastName();
@@ -60,22 +63,29 @@ class AccountPageTests extends BaseTest {
 
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickCreateAccountButton();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+
         createNewAccountPage.createNewAccount(email, firstName, lastName, password);
 
-        accountPage.zipCodeField(POSTAL_CODE);
-        accountPage.dropdownMonthSelectorByValue(MONTH_VALUE);
-        accountPage.dropdownDaySelectorByValue(DAY_VALUE);
-        accountPage.movingToElementSubmitButton();
-        accountPage.clickCheckboxAcceptTerms();
+        accountPage.enterZipCode(POSTAL_CODE);
+        accountPage.selectBirthDate(MONTH_VALUE, DAY_VALUE);
+        accountPage.scrollToSubmitButton();
+        accountPage.acceptTermsAndConditions();
+
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.submitAccountButtonIsEnabled())
+                .as("'Create Account' button should be enabled before submission").isTrue();
+        softly.assertAll();
+
         accountPage.clickSubmitButton();
 
-        assertThat(accountPage.submitAccountButtonIsEnabled())
-                .as("'Create Account' button should be enabled").isTrue();
-        assertEquals(BASE_URL + ACCOUNT_URL, accountPage.getCurrentUrl(),
-                "The url values must match");
-        assertEquals(ACCOUNT_CREATED_SUCCESSFUL_MESSAGE, accountPage.getSuccessfulCreatedAccountText(),
-                "The user should receive a message about successful account creation");
+        softly.assertThat(accountPage.getCurrentUrl())
+                .as("After successful account creation, user should be redirected to account page")
+                .isEqualTo(BASE_URL + ACCOUNT_URL);
+
+        softly.assertThat(accountPage.getSuccessfulCreatedAccountText())
+                .as("User should see a success message after account creation")
+                .isEqualTo(ACCOUNT_CREATED_SUCCESSFUL_MESSAGE);
+        softly.assertAll();
     }
 
     @Test
@@ -93,18 +103,27 @@ class AccountPageTests extends BaseTest {
 
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickCreateAccountButton();
+
         createNewAccountPage.createNewAccount(invalidEmail, firstName, lastName, password);
 
-        accountPage.zipCodeField(POSTAL_CODE);
-        accountPage.dropdownMonthSelectorByValue(MONTH_VALUE);
-        accountPage.dropdownDaySelectorByValue(DAY_VALUE);
-        accountPage.movingToElementSubmitButton();
-        accountPage.clickCheckboxAcceptTerms();
+        accountPage.enterZipCode(POSTAL_CODE);
+        accountPage.selectBirthDate(MONTH_VALUE, DAY_VALUE);
+        accountPage.scrollToSubmitButton();
+        accountPage.acceptTermsAndConditions();
 
-        assertThat(accountPage.submitAccountButtonIsEnabled())
-                .as("'Create Account' button is not clickable").isFalse();
-        assertThat(accountPage.getErrorAccountInvalidPasswordText())
-                .as("The email must be valid").isEqualTo(WRONG_EMAIL_MESSAGE);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.submitAccountButtonIsEnabled())
+                .as("'Create Account' button should be disabled when email is invalid")
+                .isFalse();
+
+        softly.assertThat(accountPage.getErrorEmailMessageIsDisplayed())
+                .as("Email error message should be displayed")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorEmailMessage())
+                .as("Error message for invalid email should appear")
+                .isEqualTo(WRONG_EMAIL_MESSAGE);
+        softly.assertAll();
     }
 
     @Test
@@ -122,19 +141,27 @@ class AccountPageTests extends BaseTest {
 
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickCreateAccountButton();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+
         createNewAccountPage.createNewAccount(emptyEmail, firstName, lastName, password);
 
-        accountPage.zipCodeField(EMPTY_POSTAL_CODE);
-        accountPage.dropdownMonthSelectorByValue(MONTH_VALUE);
-        accountPage.dropdownDaySelectorByValue(DAY_VALUE);
-        accountPage.movingToElementSubmitButton();
-        accountPage.clickCheckboxAcceptTerms();
+        accountPage.enterZipCode(POSTAL_CODE);
+        accountPage.selectBirthDate(MONTH_VALUE, DAY_VALUE);
+        accountPage.scrollToSubmitButton();
+        accountPage.acceptTermsAndConditions();
 
-        assertThat(accountPage.submitAccountButtonIsEnabled())
-                .as("'Create Account' button is not clickable").isFalse();
-        assertThat(accountPage.getErrorAccountUnderFieldText())
-                .as("The email field must not be empty").isEqualTo(EMPTY_EMAIL_MESSAGE);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.submitAccountButtonIsEnabled())
+                .as("'Create Account' button should be disabled when email field is empty")
+                .isFalse();
+
+        softly.assertThat(accountPage.getErrorEmptyEmailMessageIsDisplayed())
+                .as("Email error message should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorEmptyEmailMessage())
+                .as("Error message for empty email field should be correct")
+                .isEqualTo(EMPTY_EMAIL_MESSAGE);
+        softly.assertAll();
     }
 
     @Test
@@ -152,20 +179,35 @@ class AccountPageTests extends BaseTest {
 
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickCreateAccountButton();
+
         createNewAccountPage.createNewAccount(email, emptyFirstName, emptyLastName, password);
 
-        accountPage.zipCodeField(POSTAL_CODE);
-        accountPage.dropdownMonthSelectorByValue(MONTH_VALUE);
-        accountPage.dropdownDaySelectorByValue(DAY_VALUE);
-        accountPage.movingToElementSubmitButton();
-        accountPage.clickCheckboxAcceptTerms();
+        accountPage.enterZipCode(POSTAL_CODE);
+        accountPage.selectBirthDate(MONTH_VALUE, DAY_VALUE);
+        accountPage.scrollToSubmitButton();
+        accountPage.acceptTermsAndConditions();
 
-        assertThat(accountPage.submitAccountButtonIsEnabled())
-                .as("'Create Account' button is not clickable").isFalse();
-        assertThat(accountPage.getErrorEmptyFirstNameText())
-                .as("The 'First name' field must not be empty").isEqualTo(EMPTY_FIRST_NAME_MESSAGE);
-        assertThat(accountPage.getErrorEmptyLastNameText())
-                .as("The 'Last name' field must not be empty").isEqualTo(EMPTY_LAST_NAME_MESSAGE);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.submitAccountButtonIsEnabled())
+                .as("'Create Account' button should be disabled with empty name fields")
+                .isFalse();
+
+        softly.assertThat(accountPage.getErrorEmptyFirstNameMessageIsDisplayed())
+                .as("Error message for empty First Name should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorEmptyFirstNameMessage())
+                .as("Error message for empty First Name should match expected text")
+                .isEqualTo(EMPTY_FIRST_NAME_MESSAGE);
+
+        softly.assertThat(accountPage.getErrorEmptyLastNameMessageIsDisplayed())
+                .as("Error message for empty Last Name should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorEmptyLastNameMessage())
+                .as("Error message for empty Last Name should match expected text")
+                .isEqualTo(EMPTY_LAST_NAME_MESSAGE);
+        softly.assertAll();
     }
 
     @Test
@@ -183,18 +225,27 @@ class AccountPageTests extends BaseTest {
 
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickCreateAccountButton();
+
         createNewAccountPage.createNewAccount(email, firstName, lastName, emptyPassword);
 
-        accountPage.zipCodeField(POSTAL_CODE);
-        accountPage.dropdownMonthSelectorByValue(MONTH_VALUE);
-        accountPage.dropdownDaySelectorByValue(DAY_VALUE);
-        accountPage.movingToElementSubmitButton();
-        accountPage.clickCheckboxAcceptTerms();
+        accountPage.enterZipCode(POSTAL_CODE);
+        accountPage.selectBirthDate(MONTH_VALUE, DAY_VALUE);
+        accountPage.scrollToSubmitButton();
+        accountPage.acceptTermsAndConditions();
 
-        assertThat(accountPage.submitAccountButtonIsEnabled())
-                .as("'Create Account' button is not clickable").isFalse();
-        assertThat(accountPage.getErrorEmptyPasswordText())
-                .as("The password field must not be empty").isEqualTo(EMPTY_PASSWORD_MESSAGE);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.submitAccountButtonIsEnabled())
+                .as("Create Account button should be disabled when password is empty")
+                .isFalse();
+
+        softly.assertThat(accountPage.getErrorEmptyPasswordMessageIsDisplayed())
+                .as("Password error message should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorEmptyPasswordMessage())
+                .as("Password error message text should match expected")
+                .isEqualTo(EMPTY_PASSWORD_MESSAGE);
+        softly.assertAll();
     }
 
     @Test
@@ -212,18 +263,27 @@ class AccountPageTests extends BaseTest {
 
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickCreateAccountButton();
+
         createNewAccountPage.createNewAccount(email, firstName, lastName, password);
 
-        accountPage.zipCodeField(EMPTY_POSTAL_CODE);
-        accountPage.dropdownMonthSelectorByValue(MONTH_VALUE);
-        accountPage.dropdownDaySelectorByValue(DAY_VALUE);
-        accountPage.movingToElementSubmitButton();
-        accountPage.clickCheckboxAcceptTerms();
+        accountPage.enterZipCode(EMPTY_POSTAL_CODE);
+        accountPage.selectBirthDate(MONTH_VALUE, DAY_VALUE);
+        accountPage.scrollToSubmitButton();
+        accountPage.acceptTermsAndConditions();
 
-        assertThat(accountPage.submitAccountButtonIsEnabled())
-                .as("'Create Account' button is not clickable").isFalse();
-        assertThat(accountPage.getErrorEmptyZipCOdeText())
-                .as("'Zip Code' field must not be empty").isEqualTo(EMPTY_POSTAL_CODE_MESSAGE);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.submitAccountButtonIsEnabled())
+                .as("Submit button must be disabled when 'Zip Code' is empty")
+                .isFalse();
+
+        softly.assertThat(accountPage.getErrorEmptyZipCOdeMessageIsDisplayed())
+                .as("Error message for empty 'Zip Code' must be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorEmptyZipCOdeMessage())
+                .as("Error message for empty 'Zip Code' must match expected text")
+                .isEqualTo(EMPTY_POSTAL_CODE_MESSAGE);
+        softly.assertAll();
     }
 
     @Test
@@ -241,15 +301,21 @@ class AccountPageTests extends BaseTest {
 
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickCreateAccountButton();
+
         createNewAccountPage.createNewAccount(email, firstName, lastName, password);
+        accountPage.enterZipCode(POSTAL_CODE);
+        accountPage.scrollToSubmitButton();
 
-        accountPage.zipCodeField(POSTAL_CODE);
-        accountPage.movingToElementSubmitButton();
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.isTermsCheckboxSelected())
+                .as("'I accept' checkbox should be unchecked by default")
+                .isFalse();
 
-        assertThat(accountPage.submitAccountButtonIsEnabled())
-                .as("'Create Account' button is not clickable").isFalse();
+        softly.assertThat(accountPage.submitAccountButtonIsEnabled())
+                .as("Submit button should be disabled when birth date and checkbox are not filled")
+                .isFalse();
+        softly.assertAll();
     }
-
 
     @Test
     @Severity(CRITICAL)
@@ -257,160 +323,275 @@ class AccountPageTests extends BaseTest {
     @DisplayName("Check successful 'Sign In' account")
     void signInPageTest() {
         accountPage = new AccountPage(driver);
+
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickSignInButton();
+
         accountPage.inputEmailField(config.getEmail());
         accountPage.inputPasswordField(config.getPassword());
         accountPage.submitSignInButtonClick();
 
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.urlToBe(BASE_URL + ACCOUNT_URL));
 
         assertEquals(BASE_URL + ACCOUNT_URL, accountPage.getCurrentUrl(),
-                "The url values must match");
-        assertEquals(ACCOUNT_SUCCESSFUL_ENTERED_MESSAGE, accountPage.getSuccessfulEnteredAccountText(),
-                "The username should be used in the named accounts");
+                "User should be redirected to account page after successful login");
+
+        assertThat(accountPage.getSuccessfulEnteredAccountText())
+                .as("The successful login message should match expected")
+                .isEqualTo(ACCOUNT_SUCCESSFUL_ENTERED_MESSAGE);
     }
 
     @Test
     @Severity(CRITICAL)
     @Tags({@Tag("smoke"), @Tag("negative")})
-    @DisplayName("Check for invalid email input 'Sign In' account")
+    @DisplayName("Check 'Sign In' with invalid email input")
     void invalidEmailSignInPageTest() {
         String invalidEmail = "user.gmail.com";
 
         accountPage = new AccountPage(driver);
+
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickSignInButton();
+
         accountPage.inputEmailField(invalidEmail);
         accountPage.inputPasswordField(config.getPassword());
         accountPage.submitSignInButtonClick();
 
-        assertThat(accountPage.getErrorWarningText())
-                .as("Reporting a problem logging into your account").isEqualTo(PROBLEM_REPORT);
-        assertThat(accountPage.getErrorAccountUnderFieldText())
-                .as("The email must be valid").isEqualTo(WRONG_EMAIL_MESSAGE);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.getLoginWarningError())
+                .as("Login warning message should match expected")
+                .isEqualTo(PROBLEM_REPORT);
+
+        softly.assertThat(accountPage.getLoginWarningErrorIsDisplayed())
+                .as("Login warning message should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorEmailMessage())
+                .as("Email validation error message should match expected")
+                .isEqualTo(WRONG_EMAIL_MESSAGE);
+
+        softly.assertThat(accountPage.getErrorEmailMessageIsDisplayed())
+                .as("Email validation error should be visible")
+                .isTrue();
+        softly.assertAll();
     }
 
     @Test
     @Severity(CRITICAL)
     @Tags({@Tag("smoke"), @Tag("negative")})
-    @DisplayName("Check for invalid password input 'Sign In' account")
+    @DisplayName("Check 'Sign In' with invalid password")
     void invalidPasswordSignInPageTest() {
         String invalidPassword = "123456789";
 
         accountPage = new AccountPage(driver);
+
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickSignInButton();
+
         accountPage.inputEmailField(config.getEmail());
         accountPage.inputPasswordField(invalidPassword);
         accountPage.submitSignInButtonClick();
 
-        assertThat(accountPage.getErrorWarningText())
-                .as("Reporting a problem logging into your account").isEqualTo(PROBLEM_REPORT);
-        assertThat(accountPage.getErrorAccountUnderFieldText())
-                .as("The password must be valid").isEqualTo(WRONG_PASSWORD_MESSAGE);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.getLoginWarningErrorIsDisplayed())
+                .as("General login error message should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getLoginWarningError())
+                .as("Login warning message should match expected").isEqualTo(PROBLEM_REPORT);
+
+        softly.assertThat(accountPage.getErrorAccountInvalidPasswordMessageIsDisplayed() )
+                .as("Password validation error should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorAccountInvalidPasswordMessage())
+                .as("Password validation error message should match expected")
+                .isEqualTo(WRONG_PASSWORD_MESSAGE);
+        softly.assertAll();
     }
 
     @Test
     @Severity(CRITICAL)
     @Tags({@Tag("smoke"), @Tag("negative")})
-    @DisplayName("Check for empty email input 'Sign In' account")
+    @DisplayName("Check 'Sign In' with empty email input")
     void emptyEmailSignInPageTest() {
         String emptyEmail = "";
 
         accountPage = new AccountPage(driver);
+
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickSignInButton();
+
         accountPage.inputEmailField(emptyEmail);
         accountPage.inputPasswordField(config.getPassword());
         accountPage.submitSignInButtonClick();
 
-        assertThat(accountPage.getErrorWarningText())
-                .as("Reporting a problem logging into your account").isEqualTo(PROBLEM_REPORT);
-        assertThat(accountPage.getErrorAccountUnderFieldText())
-                .as("The field email must not be empty").isEqualTo(EMPTY_EMAIL_MESSAGE);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.getLoginWarningErrorIsDisplayed())
+                .as("General login warning message should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getLoginWarningError())
+                .as("Login warning message should match expected")
+                .isEqualTo(PROBLEM_REPORT);
+
+        softly.assertThat(accountPage.getErrorEmptyEmailMessageIsDisplayed())
+                .as("Validation message for empty email should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorEmptyEmailMessage())
+                .as("Empty email validation message should match expected")
+                .isEqualTo(EMPTY_EMAIL_MESSAGE);
+        softly.assertAll();
     }
 
     @Test
     @Severity(CRITICAL)
     @Tags({@Tag("smoke"), @Tag("negative")})
-    @DisplayName("Check for empty password input 'Sign In' account")
+    @DisplayName("Check 'Sign In' with empty password input")
     void emptyPasswordSignInPageTest() {
         String emptyPassword = "";
 
         accountPage = new AccountPage(driver);
+
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickSignInButton();
+
         accountPage.inputEmailField(config.getEmail());
         accountPage.inputPasswordField(emptyPassword);
         accountPage.submitSignInButtonClick();
 
-        assertThat(accountPage.getErrorWarningText())
-                .as("Reporting a problem logging into your account").isEqualTo(PROBLEM_REPORT);
-        assertThat(accountPage.getErrorAccountUnderFieldText())
-                .as("The field password must not be empty").isEqualTo(EMPTY_PASSWORD_MESSAGE);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.getLoginWarningErrorIsDisplayed())
+                .as("General login warning message should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getLoginWarningError())
+                .as("Login warning message should match expected")
+                .isEqualTo(PROBLEM_REPORT);
+
+        softly.assertThat(accountPage.getErrorEmptyPasswordMessageIsDisplayed())
+                .as("Validation message for empty password should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorEmptyPasswordMessage())
+                .as("Empty password validation message should match expected")
+                .isEqualTo(EMPTY_PASSWORD_MESSAGE);
+        softly.assertAll();
     }
 
     @Test
     @Severity(CRITICAL)
     @Tags({@Tag("smoke"), @Tag("negative")})
-    @DisplayName("Check for empty email and empty password input 'Sign In' account")
+    @DisplayName("Check 'Sign In' with empty email and empty password input")
     void emptyEmailAndEmptyPasswordSignInPageTest() {
         String emptyEmail = "";
         String emptyPassword = "";
 
         accountPage = new AccountPage(driver);
+
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickSignInButton();
+
         accountPage.inputEmailField(emptyEmail);
         accountPage.inputPasswordField(emptyPassword);
         accountPage.submitSignInButtonClick();
 
-        assertThat(accountPage.getErrorWarningText())
-                .as("Reporting a problem logging into your account").isEqualTo(PROBLEM_REPORT);
-        assertThat(accountPage.getErrorAccountUnderFieldText())
-                .as("The field email must not be empty").isEqualTo(EMPTY_EMAIL_MESSAGE);
-        assertThat(accountPage.getErrorEmptyPasswordText())
-                .as("The field password must not be empty").isEqualTo(EMPTY_PASSWORD_MESSAGE);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.getLoginWarningErrorIsDisplayed())
+                .as("General login warning message should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getLoginWarningError())
+                .as("Login warning message text should match expected")
+                .isEqualTo(PROBLEM_REPORT);
+
+        softly.assertThat(accountPage.getErrorEmptyEmailMessageIsDisplayed())
+                .as("Email empty validation message should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorEmptyEmailMessage())
+                .as("Empty email validation message should match expected")
+                .isEqualTo(EMPTY_EMAIL_MESSAGE);
+
+        softly.assertThat(accountPage.getErrorEmptyPasswordMessageIsDisplayed())
+                .as("Password empty validation message should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorEmptyPasswordMessage())
+                .as("Empty password validation message should match expected")
+                .isEqualTo(EMPTY_PASSWORD_MESSAGE);
+        softly.assertAll();
     }
 
     @Test
     @Severity(CRITICAL)
     @Tags({@Tag("smoke"), @Tag("negative")})
-    @DisplayName("Check for password with less than 8 characters input 'Sign In' account")
+    @DisplayName("Check 'Sign In' with password shorter than 8 characters")
     void shortPasswordSignInPageTest() {
         String shortPassword = "12345";
 
         accountPage = new AccountPage(driver);
+
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickSignInButton();
+
         accountPage.inputEmailField(config.getEmail());
         accountPage.inputPasswordField(shortPassword);
         accountPage.submitSignInButtonClick();
 
-        assertThat(accountPage.getErrorWarningText())
-                .as("Reporting a problem logging into your account").isEqualTo(PROBLEM_REPORT);
-        assertThat(accountPage.getErrorAccountUnderFieldText())
-                .as("Password must be between 8 and 25 characters long").isEqualTo(WRONG_PASSWORD_MESSAGE);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.getLoginWarningErrorIsDisplayed())
+                .as("Login warning should be displayed for invalid credentials")
+                .isTrue();
+
+        softly.assertThat(accountPage.getLoginWarningError())
+                .as("General login warning text should match expected")
+                .isEqualTo(PROBLEM_REPORT);
+
+        softly.assertThat(accountPage.getErrorAccountInvalidPasswordMessageIsDisplayed())
+                .as("Password validation message should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorAccountInvalidPasswordMessage())
+                .as("Validation message should inform about password length requirements")
+                .isEqualTo(WRONG_PASSWORD_MESSAGE);
+        softly.assertAll();
     }
 
     @Test
     @Severity(CRITICAL)
     @Tags({@Tag("smoke"), @Tag("negative")})
-    @DisplayName("Check for password with more than 25 characters input 'Sign In' account")
+    @DisplayName("Check 'Sign In' with password longer than 25 characters")
     void longPasswordSignInPageTest() {
         String longPassword = "12345qwerrttfgfhdhfhdfhfdhdfhdfh";
 
         accountPage = new AccountPage(driver);
+
         homePage.getHeader().clickAccountButton();
         homePage.getHeader().clickSignInButton();
+
         accountPage.inputEmailField(config.getEmail());
         accountPage.inputPasswordField(longPassword);
         accountPage.submitSignInButtonClick();
 
-        assertThat(accountPage.getErrorWarningText())
-                .as("Reporting a problem logging into your account").isEqualTo(PROBLEM_REPORT);
-        assertThat(accountPage.getErrorAccountUnderFieldText())
-                .as("Password must be between 8 and 25 characters long").isEqualTo(WRONG_PASSWORD_MESSAGE);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(accountPage.getLoginWarningErrorIsDisplayed())
+                .as("Login warning message should be displayed for long password")
+                .isTrue();
+
+        softly.assertThat(accountPage.getLoginWarningError())
+                .as("General login warning text should match expected")
+                .isEqualTo(PROBLEM_REPORT);
+
+        softly.assertThat(accountPage.getErrorAccountInvalidPasswordMessageIsDisplayed())
+                .as("Password length validation message should be visible")
+                .isTrue();
+
+        softly.assertThat(accountPage.getErrorAccountInvalidPasswordMessage())
+                .as("Should display password length restriction message")
+                .isEqualTo(WRONG_PASSWORD_MESSAGE);
+        softly.assertAll();
     }
 }

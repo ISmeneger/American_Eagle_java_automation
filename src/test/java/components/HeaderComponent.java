@@ -21,7 +21,7 @@ public class HeaderComponent {
     @FindBy(xpath = "//a[@title='Shop AE']")
     private WebElement subTitleAeoLogo;
 
-    @FindBy(xpath = "//button[normalize-space(text())=\"Today's Offers\"]")
+    @FindBy(css = "button.link_EZ5lj.text_FV564")
     private WebElement featuredOffersMenu;
 
     @FindBy(xpath = "//a[text()='Women']")
@@ -66,13 +66,13 @@ public class HeaderComponent {
     @FindBy(xpath = "//a[@data-test='register-button']")
     private WebElement createAccountButton;
 
-    @FindBy(xpath = "//a[@id='ember3']")
+    @FindBy(css = "svg[data-testid='icon-favorites']")
     private WebElement favoritesButton;
 
     @FindBy(xpath = "//h1[text()='Favorites']")
     private WebElement favoritesText;
 
-    @FindBy(xpath = "//a[@id='ember4']")
+    @FindBy(css = "a[href='/us/en/cart']")
     private WebElement basketButton;
 
     @FindBy(xpath = "//h1[text()='Shopping Bag']")
@@ -183,7 +183,7 @@ public class HeaderComponent {
     }
 
     @Step("Check 'Favorites' button is displayed")
-    public Boolean favoriteButtonIsDisplayed() {
+    public boolean favoriteButtonIsDisplayed() {
         return favoritesButton.isDisplayed();
     }
 
