@@ -9,9 +9,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 
 public class HeaderComponent {
     WebDriver driver;
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
     public HeaderComponent(WebDriver driver) {
         this.driver = driver;
@@ -21,7 +23,7 @@ public class HeaderComponent {
     @FindBy(xpath = "//a[@title='Shop AE']")
     private WebElement subTitleAeoLogo;
 
-    @FindBy(css = "button.link_EZ5lj.text_FV564")
+    @FindBy(xpath = "//li[@data-test='top-link-wrapper']//button[contains(@class, 'link_EZ5lj')]")
     private WebElement featuredOffersMenu;
 
     @FindBy(xpath = "//a[text()='Women']")
@@ -168,7 +170,8 @@ public class HeaderComponent {
 
     @Step("Check 'Sign in' button is displayed")
     public Boolean signInButtonIsDisplayed() {
-        return signInButton.isDisplayed();
+        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        return wait.until(ExpectedConditions.visibilityOf(signInButton)).isDisplayed();
     }
 
     @Step("Get text in modal menu 'Account'")
@@ -178,7 +181,7 @@ public class HeaderComponent {
 
     @Step("Check 'Create Account' button is displayed")
     public Boolean createAccountButtonIsDisplayed() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         return wait.until(ExpectedConditions.visibilityOf(createAccountButton)).isDisplayed();
     }
 
