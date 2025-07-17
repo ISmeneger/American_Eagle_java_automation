@@ -49,7 +49,7 @@ class BagApiTests {
         String productName = "AE Mariner Jacket";
         String size = "XS";
         double originalPrice = 89.95;
-        double price = 89.95;
+        double price = 62.96;
 
         BagResponse beforeAdd = bag.getBag();
         assertThat(beforeAdd.getData().getItemCount())
