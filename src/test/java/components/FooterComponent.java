@@ -13,7 +13,7 @@ public class FooterComponent {
     @FindBy(xpath = "//p[contains(@class, 'copyright')]")
     private WebElement copyrightText;
 
-    @FindBy(css = "img.qa-footer-copyright-image")
+    @FindBy(xpath = "//img[contains(@src, 'Footer-logos.svg')]")
     private WebElement footerImg;
 
     public FooterComponent(WebDriver driver) {
