@@ -7,16 +7,12 @@ import lombok.Getter;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 import java.util.List;
 
 import static constants.CommonConstants.BASE_URL;
 
 public class HomePage extends BasePage {
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
     @Getter
     private final FooterComponent footer;
@@ -42,12 +38,5 @@ public class HomePage extends BasePage {
     @Step("Get web title")
     public String getWebTitle() {
         return driver.getTitle();
-    }
-
-    @Step("Choose country sale")
-    public void chooseCountrySale() {
-        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        wait.until(ExpectedConditions.visibilityOfAllElements(chooseCountry));
-        chooseCountry.get(0).click();
     }
 }

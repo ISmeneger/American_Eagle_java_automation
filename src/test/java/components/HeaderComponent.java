@@ -9,7 +9,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.List;
 
 public class HeaderComponent {
     WebDriver driver;
@@ -95,7 +94,7 @@ public class HeaderComponent {
 
     @Step("Get text in 'Today's Offers' button on main menu")
     public String getAeoFeaturedOffersText() {
-        return featuredOffersMenu.getText();
+        return wait.until(ExpectedConditions.visibilityOf(featuredOffersMenu)).getText();
     }
 
     @Step("Get text in 'Women' tab on main menu")
@@ -170,7 +169,6 @@ public class HeaderComponent {
 
     @Step("Check 'Sign in' button is displayed")
     public Boolean signInButtonIsDisplayed() {
-        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         return wait.until(ExpectedConditions.visibilityOf(signInButton)).isDisplayed();
     }
 
@@ -181,7 +179,6 @@ public class HeaderComponent {
 
     @Step("Check 'Create Account' button is displayed")
     public Boolean createAccountButtonIsDisplayed() {
-        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         return wait.until(ExpectedConditions.visibilityOf(createAccountButton)).isDisplayed();
     }
 
