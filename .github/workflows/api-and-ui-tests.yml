@@ -46,7 +46,7 @@ jobs:
         SELENIUM_REMOTE_URL: http://localhost:4444/wd/hub
         EMAIL_INPUT: ${{ secrets.EMAIL }}
         PASSWORD_INPUT: ${{ secrets.PASSWORD }}
-      run: ./gradlew test allExceptDefectRemote -Denv=default -Demail=EMAIL_INPUT -Dpassword=PASSWORD_INPUT
+      run: ./gradlew allExceptDefectRemote -Denv=default -Demail=EMAIL_INPUT -Dpassword=PASSWORD_INPUT
 
     - name: Copy History
       uses: actions/checkout@v2
