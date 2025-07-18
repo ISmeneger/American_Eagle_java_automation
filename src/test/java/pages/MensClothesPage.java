@@ -72,6 +72,10 @@ public class MensClothesPage extends BasePage {
 
     @Step("Select chapter 'View all'")
     public void selectChapterViewAll() {
+        new Actions(driver)
+                .moveToElement(viewAllCategories)
+                .pause(Duration.ofSeconds(2))
+                .perform();
         wait.until(ExpectedConditions.visibilityOf(viewAllCategories)).click();
     }
 
