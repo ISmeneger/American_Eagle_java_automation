@@ -54,8 +54,6 @@ class BaseTest {
             options.setCapability("goog:loggingPrefs", Map.of("browser", "ALL"));
             try {
                 driver = new RemoteWebDriver(new URL(remoteUrl), options);
-                driver.manage().window().setSize(new Dimension(1920, 1080));
-                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
             } catch (MalformedURLException e) {
                 throw new RuntimeException("Malformed URL for Selenium Remote WebDriver", e);
             }

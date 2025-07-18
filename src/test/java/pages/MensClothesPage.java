@@ -62,7 +62,6 @@ public class MensClothesPage extends BasePage {
 
     @Step("Move mouse to element Mens clothes")
     public void movingToElementMen() {
-        wait.until(ExpectedConditions.visibilityOf(menFormMenu));
         new Actions(driver)
                 .pause(Duration.ofSeconds(2))
                 .scrollToElement(menFormMenu)
