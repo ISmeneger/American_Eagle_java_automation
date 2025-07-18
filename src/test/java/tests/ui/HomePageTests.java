@@ -4,7 +4,9 @@ import components.FooterComponent;
 import components.HeaderComponent;
 import io.qameta.allure.Severity;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import pages.HomePage;
+import utils.AllureExtension;
 
 import static constants.CommonConstants.BASE_URL;
 import static io.qameta.allure.SeverityLevel.CRITICAL;
@@ -12,6 +14,7 @@ import static io.qameta.allure.SeverityLevel.NORMAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(AllureExtension.class)
 @Tag("UI")
 class HomePageTests extends BaseTest {
     HomePage homePage;
