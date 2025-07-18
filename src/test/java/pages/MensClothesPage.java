@@ -65,17 +65,14 @@ public class MensClothesPage extends BasePage {
         wait.until(ExpectedConditions.visibilityOf(menFormMenu));
         new Actions(driver)
                 .moveToElement(menFormMenu)
+                .pause(Duration.ofSeconds(2))
                 .perform();
         wait.until(ExpectedConditions.visibilityOf(viewAllCategories));
     }
 
     @Step("Select chapter 'View all'")
     public void selectChapterViewAll() {
-        wait.until(ExpectedConditions.visibilityOf(viewAllCategories));
-        new Actions(driver)
-                .moveToElement(viewAllCategories)
-                .click()
-                .perform();
+        wait.until(ExpectedConditions.visibilityOf(viewAllCategories)).click();
     }
 
     @Step("Get subpage title")
