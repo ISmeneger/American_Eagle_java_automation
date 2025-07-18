@@ -11,8 +11,9 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 
 public class BasePage {
-    WebDriver driver;
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+    protected static WebDriver driver;
+    protected WebDriverWait wait;
+
     private static final Logger log = LoggerFactory.getLogger(BasePage.class);
 
 
@@ -26,28 +27,26 @@ public class BasePage {
     private WebElement closePopUp;
 
     public BasePage(WebDriver driver) {
-        this.driver = driver;
+        BasePage.driver = driver;
         PageFactory.initElements(driver, this);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     }
 
-    @Step("Getting current url")
+    public static WebDriver getDriver() {
+        return driver;
+    }
+
+    @Step("Get current url")
     public String getCurrentUrl() {
         return driver.getCurrentUrl();
-    }
-
-    @Step("Get subpage title")
-    public String getTitle() {
-        return driver.getTitle();
     }
 
     @Step("Сatch and close pop-up")
     public void closePopUpIfAvailable() {
         try {
-            // Получение shadow root и закрытие поп-апа
             SearchContext popUp = shadowRoot.getShadowRoot();
             WebElement closePopUp = popUp.findElement(By.cssSelector("button[class='close']"));
             closePopUp.click();
-
 //            log.info("Поп-ап закрыт успешно.");
         } catch (org.openqa.selenium.NoSuchElementException e) {
 //            log.info("Поп-ап не найден.");
