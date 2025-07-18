@@ -94,7 +94,7 @@ public class HeaderComponent {
 
     @Step("Get text in 'Today's Offers' button on main menu")
     public String getAeoFeaturedOffersText() {
-        return wait.until(ExpectedConditions.visibilityOf(featuredOffersMenu)).getText();
+        return featuredOffersMenu.getText();
     }
 
     @Step("Get text in 'Women' tab on main menu")
