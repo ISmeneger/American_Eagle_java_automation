@@ -8,18 +8,15 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
 
 public class MensClothesPage extends BasePage {
     WebDriver driver;
-    WebDriverWait wait;
 
     public MensClothesPage(WebDriver driver) {
         super(driver);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }
@@ -27,7 +24,7 @@ public class MensClothesPage extends BasePage {
     @FindBy(xpath = "//a[text()='Men']")
     private WebElement menFormMenu;
 
-    @FindBy(xpath = "//a[@href='/us/en/c/men/mens?pagetype=clp']")
+    @FindBy(xpath = "//a[contains(@href, '/men/mens') and text()='View All']")
     private WebElement viewAllCategories;
 
     @FindBy(className = "qa-non-link-label")
@@ -42,17 +39,20 @@ public class MensClothesPage extends BasePage {
     @FindBy(css = "ul.dropdown-menu li:not(.visually-disabled)")
     private List<WebElement> availableSizes;
 
+    @FindBy(css = "div.product-sale-price")
+    private WebElement catalogProductPrice;
+
     @FindBy(name = "addToBag")
     private WebElement addToBagButton;
-
-    @FindBy(xpath = "//li[@data-value='0043976372']")
-    private WebElement chooseTheSize;
 
     @FindBy(xpath = "//h2[text()='Added to bag!']")
     private WebElement successfulAddedToBag;
 
     @FindBy(name = "viewBag")
     private WebElement viewItemInBagButton;
+
+    @FindBy(css = "span[data-test-cart-item-sale-price]")
+    private WebElement cartProductPrice;
 
     @FindBy(css = "div._icon-container_lm3uk3")
     private WebElement returnItems;
@@ -64,11 +64,13 @@ public class MensClothesPage extends BasePage {
     public void movingToElementMen() {
         new Actions(driver)
                 .moveToElement(menFormMenu)
+                .pause(Duration.ofSeconds(2))
                 .perform();
     }
 
     @Step("Select chapter 'View all'")
     public void selectChapterViewAll() {
+        wait.until(ExpectedConditions.visibilityOf(viewAllCategories));
         viewAllCategories.click();
     }
 
@@ -95,6 +97,7 @@ public class MensClothesPage extends BasePage {
     public void selectFirstAvailableSize() {
         new Actions(driver)
                 .scrollToElement(returnItems)
+                .pause(Duration.ofSeconds(2))
                 .perform();
         wait.until(ExpectedConditions.elementToBeClickable(dropdownSizeToggle));
         dropdownSizeToggle.click();
@@ -104,6 +107,11 @@ public class MensClothesPage extends BasePage {
         } else {
             throw new RuntimeException("No available sizes found");
         }
+    }
+
+    @Step("Get catalog price")
+    public String getCatalogPrice() {
+        return catalogProductPrice.getText();
     }
 
     @Step("Click button 'Add to bag")
@@ -117,11 +125,17 @@ public class MensClothesPage extends BasePage {
         return successfulAddedToBag.getText();
     }
 
+    @Step("Get cart price")
+    public String getCartPrice() {
+        return wait.until(ExpectedConditions.visibilityOf(cartProductPrice)).getText();
+    }
+
     @Step("Check added item on basket")
     public void clickViewButton() {
         viewItemInBagButton.click();
     }
 
+    @Step("Check that the add to cart button is available")
     public boolean isAddToCartButtonEnabled() {
         return addToCartButton.isEnabled();
     }
@@ -142,11 +156,25 @@ public class MensClothesPage extends BasePage {
         return clickCount;
     }
 
+    @Step("Select first available product from the catalog")
+    public void selectFirstAvailableProductFromCatalog() {
+        closePopUpIfAvailable();
+        movingToElementMen();
+        closePopUpIfAvailable();
+        selectChapterViewAll();
+        closePopUpIfAvailable();
+        selectFirstAvailableProductAndClickToIt();
+    }
+
     @Step("Select a product from the catalog and choose its size")
     public void selectProductAndItsSizeFromCatalog() {
+        closePopUpIfAvailable();
         movingToElementMen();
+        closePopUpIfAvailable();
         selectChapterViewAll();
+        closePopUpIfAvailable();
         selectFirstAvailableProductAndClickToIt();
+        closePopUpIfAvailable();
         selectFirstAvailableSize();
     }
 }

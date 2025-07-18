@@ -9,11 +9,11 @@ import pages.BasePage;
 
 @Getter
 public class CreateNewAccountPage extends BasePage {
-    WebDriver driver;
+    static WebDriver driver;
 
     public CreateNewAccountPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
+        CreateNewAccountPage.driver = driver;
         PageFactory.initElements(driver, this);
     }
 
