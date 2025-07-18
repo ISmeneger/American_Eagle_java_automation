@@ -39,11 +39,17 @@ public class FooterComponent {
         return copyrightText.getText();
     }
 
+    @Step("Scroll footer img text")
+    public void scrollingToElementFooterImg() {
+        new Actions(driver)
+                .scrollToElement(footerImg)
+                .pause(Duration.ofSeconds(2))
+                .perform();
+    }
+
     @Step("Check footer img is displayed")
     public Boolean footerImgIsDisplayed() {
-        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.visibilityOf(footerImg));
+        wait.until(ExpectedConditions.visibilityOf(footerImg));
         return footerImg.isDisplayed();
     }
 }
