@@ -65,8 +65,8 @@ public class MensClothesPage extends BasePage {
         wait.until(ExpectedConditions.visibilityOf(menFormMenu));
         new Actions(driver)
                 .moveToElement(menFormMenu)
-                .click()
                 .perform();
+        wait.until(ExpectedConditions.visibilityOf(viewAllCategories));
     }
 
     @Step("Select chapter 'View all'")
