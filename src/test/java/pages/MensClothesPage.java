@@ -64,10 +64,14 @@ public class MensClothesPage extends BasePage {
     public void movingToElementMen() {
         wait.until(ExpectedConditions.visibilityOf(menFormMenu));
         new Actions(driver)
-                .moveToElement(menFormMenu)
                 .pause(Duration.ofSeconds(2))
+                .scrollToElement(menFormMenu)
                 .perform();
-        wait.until(ExpectedConditions.visibilityOf(viewAllCategories));
+        wait.until(ExpectedConditions.visibilityOf(menFormMenu));
+        new Actions(driver)
+                .pause(Duration.ofSeconds(2))
+                .moveToElement(menFormMenu)
+                .perform();
     }
 
     @Step("Select chapter 'View all'")
