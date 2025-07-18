@@ -63,7 +63,6 @@ class HomePageTests extends BaseTest {
     void homePageTitleTest() {
         String expectedTitle = "Men’s & Women’s Jeans, Clothes & Accessories | American Eagle";
 
-        homePage.chooseCountrySale();
         String actualTitle = homePage.getWebTitle();
 
         assertAll("Validating Home Page title",
@@ -270,7 +269,7 @@ class HomePageTests extends BaseTest {
         FooterComponent footer = homePage.getFooter();
         assertNotNull(footer, "Footer component must not be null");
 
-        footer.scrollingToElement();
+        footer.scrollingToElementFooterImg();
 
         assertThat(footer.footerImgIsDisplayed())
                 .as("Footer image should be visible on the homepage")
