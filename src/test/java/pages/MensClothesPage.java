@@ -62,20 +62,20 @@ public class MensClothesPage extends BasePage {
 
     @Step("Move mouse to element Mens clothes")
     public void movingToElementMen() {
-        new Actions(driver)
-                .pause(Duration.ofSeconds(2))
-                .scrollToElement(menFormMenu)
-                .perform();
         wait.until(ExpectedConditions.visibilityOf(menFormMenu));
         new Actions(driver)
                 .moveToElement(menFormMenu)
+                .click()
                 .perform();
     }
 
     @Step("Select chapter 'View all'")
     public void selectChapterViewAll() {
         wait.until(ExpectedConditions.visibilityOf(viewAllCategories));
-        viewAllCategories.click();
+        new Actions(driver)
+                .moveToElement(viewAllCategories)
+                .click()
+                .perform();
     }
 
     @Step("Get subpage title")
