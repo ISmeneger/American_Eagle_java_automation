@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static io.qameta.allure.SeverityLevel.CRITICAL;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("API")
 @ExtendWith(GuestTokenExtension.class)
 class BagApiTests {
     private final BagController bag = new BagController();

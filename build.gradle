@@ -41,6 +41,42 @@ test {
     systemProperties(System.getProperties())
 }
 
+tasks.register('smoke', Test) {
+    useJUnitPlatform() {
+        includeTags 'smoke'
+        excludeTags 'defect'
+    }
+    systemProperties(System.getProperties())
+}
+
+tasks.register('allExceptDefect', Test) {
+    useJUnitPlatform() {
+        includeTags 'UI'
+        includeTags 'API'
+        excludeTags 'defect'
+    }
+    systemProperties(System.getProperties())
+}
+
+tasks.register('allExceptDefectRemote', Test) {
+    useJUnitPlatform() {
+        includeTags 'UI'
+        includeTags 'API'
+        excludeTags 'defect'
+    }
+    systemProperties(System.getProperties())
+    maxParallelForks = 1
+}
+
+tasks.register('apiTests', Test) {
+    useJUnitPlatform() {
+        includeTags 'API'
+        excludeTags 'UI'
+        excludeTags 'defect'
+    }
+    systemProperties(System.getProperties())
+}
+
 tasks.register('uiTests', Test) {
     useJUnitPlatform() {
         includeTags 'UI'
@@ -52,16 +88,11 @@ tasks.register('uiTests', Test) {
 
 tasks.register('defect', Test) {
     useJUnitPlatform() {
-        includeTags 'UI'
+        includeTags 'defect'
     }
     systemProperties(System.getProperties())
 }
 
-tasks.register('apiTests', Test) {
-    useJUnitPlatform() {
-        includeTags 'API'
-        excludeTags 'UI'
-    }
-    systemProperties(System.getProperties())
-}
+
+
 

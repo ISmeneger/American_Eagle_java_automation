@@ -13,6 +13,7 @@ import java.time.Duration;
 
 public class FooterComponent {
     WebDriver driver;
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
     @FindBy(xpath = "//p[contains(@class, 'copyright')]")
     private WebElement copyrightText;
@@ -29,6 +30,7 @@ public class FooterComponent {
     public void scrollingToElement() {
         new Actions(driver)
                 .scrollToElement(copyrightText)
+                .pause(Duration.ofSeconds(2))
                 .perform();
     }
 
@@ -39,7 +41,8 @@ public class FooterComponent {
 
     @Step("Check footer img is displayed")
     public Boolean footerImgIsDisplayed() {
-        new WebDriverWait(driver, Duration.ofSeconds(10))
+        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        new WebDriverWait(driver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.visibilityOf(footerImg));
         return footerImg.isDisplayed();
     }

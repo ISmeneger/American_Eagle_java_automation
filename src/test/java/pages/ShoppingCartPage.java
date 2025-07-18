@@ -7,17 +7,14 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
 public class ShoppingCartPage extends BasePage {
     WebDriver driver;
-    WebDriverWait wait;
 
     public ShoppingCartPage(WebDriver driver) {
         super(driver);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }
@@ -37,23 +34,8 @@ public class ShoppingCartPage extends BasePage {
     @FindBy(xpath = "//button[@aria-label='increase']")
     private WebElement addItemToBag;
 
-    @FindBy(css = "span.text-bold._sale-price_6tsvav")
-    private WebElement itemCost;
-
     @FindBy(css = "h3.cart-item-name")
     private WebElement productName;
-
-    @FindBy(xpath = "//div[text()='Shipping']")
-    private WebElement shippingCost;
-
-    @FindBy(xpath = "//div[text()='Sub Total']")
-    private WebElement subTotalCost;
-
-    @FindBy(xpath = "//div[@data-testid='row-shipping-value']")
-    private WebElement shippingCostValue;
-
-    @FindBy(xpath = "//div[@data-testid='row-total-value']")
-    private WebElement subTotalCostValue;
 
     @FindBy(name = "removeCommerceItem")
     private WebElement removeButton;
@@ -76,10 +58,11 @@ public class ShoppingCartPage extends BasePage {
     @FindBy(css = "h1.page-header")
     private WebElement pageCartHeader;
 
-    @Step("Check title in bag")
-    public String getCartTitleText() {
-        return shoppingCartText.getText();
-    }
+    @FindBy(css = "span[data-test-free-shipping]")
+    private WebElement freeShipping;
+
+    @FindBy(css = "div[data-testid='row-shipping-value']")
+    private WebElement freeShippingInOrderSummary;
 
     @Step("Check Quantity of items in the cart")
     public String getQuantityOfItemsText() {
@@ -96,6 +79,7 @@ public class ShoppingCartPage extends BasePage {
         wait.until(ExpectedConditions.visibilityOf(updateBagButton));
         new Actions(driver)
                 .moveToElement(updateBagButton)
+                .pause(Duration.ofSeconds(2))
                 .perform();
     }
 
@@ -109,28 +93,12 @@ public class ShoppingCartPage extends BasePage {
         updateBagButton.click();
     }
 
-    @Step("Check item cost in the cart")
-    public String getItemCostInCart() {
-        wait.until(ExpectedConditions.visibilityOf(itemCost));
-        return itemCost.getText();
-    }
-
     @Step("Check product name in the cart")
     public String getProductName() {
         return productName.getText();
     }
 
-    @Step("Check shipping cost value")
-    public String getShippingCostValue() {
-        return shippingCostValue.getText();
-    }
-
-    @Step("Check sub total cost value")
-    public String getSubTotalCostValue() {
-        return subTotalCostValue.getText();
-    }
-
-    @Step("Remove product in bag Bag")
+    @Step("Remove product in bag")
     public void removeProductInBag() {
         removeButton.click();
     }
@@ -148,7 +116,6 @@ public class ShoppingCartPage extends BasePage {
 
     @Step("Input email field")
     public void inputEmailField(String email) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.until(ExpectedConditions.visibilityOf(inputEmail)).sendKeys(email);
     }
 
@@ -166,5 +133,15 @@ public class ShoppingCartPage extends BasePage {
     public String getPageCartHeaderText() {
         wait.until(ExpectedConditions.visibilityOf(pageCartHeader));
         return pageCartHeader.getText();
+    }
+
+    @Step("Check that free shipping displayed in cart")
+    public boolean isFreeShippingMessageDisplayed() {
+        return freeShipping.isDisplayed();
+    }
+
+    @Step("Get the text about free shipping available in 'Order Summary")
+    public String getFreeShippingTextInOrderSummary() {
+        return freeShippingInOrderSummary.getText();
     }
 }
