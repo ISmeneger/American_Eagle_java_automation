@@ -9,7 +9,6 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
@@ -98,19 +97,8 @@ public class AccountPage extends BasePage {
     @FindBy(css = "div[data-label-code='error.account.loyalty.postalCode.empty']")
     private WebElement errorEmptyZipCodeText;
 
-    @Step("Click account button")
-    public void clickAccountButton() {
-        iconAccount.click();
-    }
-
-    @Step("Click Create account button")
-    public void clickCreateAccountButton() {
-        createAccountButton.click();
-    }
-
     @Step("Input email field")
     public void inputEmailField(String email) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.until(ExpectedConditions.visibilityOf(inputEmail)).sendKeys(email);
     }
 
@@ -163,6 +151,7 @@ public class AccountPage extends BasePage {
     public void scrollToSubmitButton() {
         new Actions(driver)
                 .moveToElement(submitAccountButton)
+                .pause(Duration.ofSeconds(2))
                 .perform();
     }
 
@@ -226,7 +215,7 @@ public class AccountPage extends BasePage {
         return errorAccountInvalidPasswordText.getText();
     }
 
-    @Step("Checking that the form error is displayed specifically for email field")
+    @Step("Checking that the form error is displayed specifically for password field")
     public boolean getErrorAccountInvalidPasswordMessageIsDisplayed() {
         return errorAccountInvalidPasswordText.isDisplayed();
     }

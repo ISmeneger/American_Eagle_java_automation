@@ -5,11 +5,13 @@ import io.qameta.allure.Allure;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.AllureExtension;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,6 +24,7 @@ class BaseTest {
     protected WebDriverWait wait;
 
     @BeforeEach
+    @ExtendWith(AllureExtension.class)
     void setup() {
         initDriver();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
@@ -29,6 +32,7 @@ class BaseTest {
     }
 
     @AfterEach
+    @ExtendWith(AllureExtension.class)
     void tearDown() {
         driver.quit();
     }
