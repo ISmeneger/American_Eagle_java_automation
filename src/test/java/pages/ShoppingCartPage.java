@@ -71,6 +71,10 @@ public class ShoppingCartPage extends BasePage {
 
     @Step("Click on edit item")
     public void editItemButton() {
+        new Actions(driver)
+                .scrollToElement(editItem)
+                .pause(Duration.ofSeconds(2))
+                .perform();
         editItem.click();
     }
 
@@ -100,6 +104,10 @@ public class ShoppingCartPage extends BasePage {
 
     @Step("Remove product in bag")
     public void removeProductInBag() {
+        new Actions(driver)
+                .scrollToElement(removeButton)
+                .pause(Duration.ofSeconds(2))
+                .perform();
         removeButton.click();
     }
 
