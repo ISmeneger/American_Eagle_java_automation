@@ -29,6 +29,8 @@ public class BagController {
                 .contentType(JSON)
                 .baseUri(configProperties.getApiBaseUrl())
                 .header("aesite", "AEO_US")
+                .header("Aecountry", "US")
+                .header("Aelang", "en_US")
                 .header("x-access-token", TokenManager.getToken())
                 .filter(new AllureRestAssured());
     }
@@ -45,7 +47,7 @@ public class BagController {
                 .andReturn();
     }
 
-    @Step("Get bag")
+    @Step("Get bag and check status code")
     public BagResponse getBag() {
         return given(this.requestSpecification)
                 .when()
