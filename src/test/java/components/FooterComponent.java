@@ -45,11 +45,11 @@ public class FooterComponent {
                 .scrollToElement(footerImg)
                 .pause(Duration.ofSeconds(2))
                 .perform();
+        wait.until(ExpectedConditions.visibilityOf(footerImg));
     }
 
     @Step("Check footer img is displayed")
-    public Boolean footerImgIsDisplayed() {
-        wait.until(ExpectedConditions.visibilityOf(footerImg));
+    public boolean footerImgIsDisplayed() {
         return footerImg.isDisplayed();
     }
 }
