@@ -66,11 +66,12 @@ public class MensClothesPage extends BasePage {
                 .pause(Duration.ofSeconds(2))
                 .scrollToElement(menFormMenu)
                 .perform();
-        wait.until(ExpectedConditions.visibilityOf(menFormMenu));
+        wait.until(ExpectedConditions.visibilityOfAllElements(menFormMenu));
         new Actions(driver)
                 .pause(Duration.ofSeconds(2))
                 .moveToElement(menFormMenu)
                 .perform();
+        wait.until(ExpectedConditions.visibilityOf(viewAllCategories));
     }
 
     @Step("Select chapter 'View all'")
@@ -79,7 +80,7 @@ public class MensClothesPage extends BasePage {
                 .moveToElement(viewAllCategories)
                 .pause(Duration.ofSeconds(2))
                 .perform();
-        wait.until(ExpectedConditions.visibilityOf(viewAllCategories)).click();
+        viewAllCategories.click();
     }
 
     @Step("Get subpage title")
