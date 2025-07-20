@@ -25,7 +25,7 @@ public class ShoppingCartPage extends BasePage {
     @FindBy(css = "h2.text-capitalize._items-qty-msg_1yy6sp")
     private WebElement quantityOfItems;
 
-    @FindBy(name = "editCommerceItem")
+    @FindBy(css = "button[data-test-btn='editCommerceItem']")
     private WebElement editItem;
 
     @FindBy(xpath = "//button[text()='Update Bag']")
@@ -37,7 +37,7 @@ public class ShoppingCartPage extends BasePage {
     @FindBy(css = "h3.cart-item-name")
     private WebElement productName;
 
-    @FindBy(name = "removeCommerceItem")
+    @FindBy(css = "button[data-test-btn='removeCommerceItem']")
     private WebElement removeButton;
 
     @FindBy(xpath = "//h2[text()='Your bag is empty. Find something you love!']")
@@ -75,6 +75,7 @@ public class ShoppingCartPage extends BasePage {
                 .scrollToElement(editItem)
                 .pause(Duration.ofSeconds(2))
                 .perform();
+        wait.until(ExpectedConditions.elementToBeClickable(editItem));
         editItem.click();
     }
 
@@ -108,6 +109,7 @@ public class ShoppingCartPage extends BasePage {
                 .scrollToElement(removeButton)
                 .pause(Duration.ofSeconds(2))
                 .perform();
+        wait.until(ExpectedConditions.elementToBeClickable(editItem));
         removeButton.click();
     }
 
