@@ -1,12 +1,8 @@
 package tests.ui;
 
-import configs.TestPropertiesConfig;
-import io.qameta.allure.Allure;
-import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -20,7 +16,6 @@ import java.time.Duration;
 import java.util.Map;
 
 class BaseTest {
-    TestPropertiesConfig configProperties = ConfigFactory.create(TestPropertiesConfig.class, System.getProperties());
     static WebDriver driver;
     protected WebDriverWait wait;
 
@@ -28,8 +23,13 @@ class BaseTest {
     @ExtendWith(AllureExtension.class)
     void setup() {
         initDriver();
+        String remoteUrl = System.getenv("SELENIUM_REMOTE_URL");
+        if (remoteUrl != null && !remoteUrl.isEmpty()) {
+            driver.manage().window().fullscreen();
+        } else {
+            driver.manage().window().maximize();
+        }
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     @AfterEach
@@ -38,19 +38,15 @@ class BaseTest {
         driver.quit();
     }
 
-    private WebDriver initDriver() {
+    private void initDriver() {
         String remoteUrl = System.getenv("SELENIUM_REMOTE_URL");
-        if (remoteUrl == null || remoteUrl.isEmpty()) {
-            remoteUrl = configProperties.getSeleniumRemoteUrl();
-        }
-
-        if (remoteUrl != null) {
-            Allure.addAttachment("RemoteUrl", remoteUrl);
+        if (remoteUrl != null && !remoteUrl.isEmpty()) {
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--headless");  // Add headless mode
-            options.addArguments("--disable-gpu"); // Switch off GPU, because we don't need it in headless mode
-            options.addArguments("--no-sandbox"); // Switch off sandbox to prevent access rights issues
-            options.addArguments("--disable-dev-shm-usage"); // Use /tmp instead of /dev/shm
+            options.addArguments("--headless");
+            options.addArguments("--window-size=1920,1080");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
             options.setCapability("goog:loggingPrefs", Map.of("browser", "ALL"));
             try {
                 driver = new RemoteWebDriver(new URL(remoteUrl), options);
@@ -58,11 +54,7 @@ class BaseTest {
                 throw new RuntimeException("Malformed URL for Selenium Remote WebDriver", e);
             }
         } else {
-            Allure.addAttachment("Local run", "No remote driver");
             driver = new ChromeDriver();
         }
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
-        return driver;
     }
 }
