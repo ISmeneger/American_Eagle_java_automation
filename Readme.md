@@ -90,22 +90,55 @@ Allure отчет включает:
 ---
 
 ## 🚀 Запуск тестов
-📌 Перед запуском заполните email и password в default.properties.
+📌 **Перед запуском** локально заполните `email` и `password` в файле `default.properties`:
 #### Пример использования:
+
 - email=your_email@example.com
 - password=your_password
 
 ## 🔧 Команды для запуска:
 
-| Тип тестов            | Команда                                          |
-| --------------------- |--------------------------------------------------|
-| Все (без дефектных)   | `gradle allExceptDefect`                         |
-| Только smoke-тесты    | `gradle smoke`                                   |
-| Только API            | `gradle apiTests`                                |
-| Только UI             | `gradle uiTests`                                 |
-| Только defect-тесты   | `gradle defect`                                  |
-| Полный запуск         | `gradle test`                                    |
-| Удалённый запуск (CI) | `./gradlew allExceptDefectRemote -Denv=default -Demail=EMAIL_INPUT -Dpassword=PASSWORD_INPUT` |
+| Тип тестов                   | Команда                                                                                  |
+|------------------------------|------------------------------------------------------------------------------------------|
+| **1. Все (без дефектных)**   | `gradle allExceptDefect`                                                                 |
+| **2. Только smoke-тесты**    | `gradle smoke`                                                                           |
+| **3. Только API**            | `gradle apiTests`                                                                        |
+| **4. Только UI**             | `gradle uiTests`                                                                         |
+| **5. Только defect-тесты**   | `gradle defect`                                                                          |
+| **6. Полный запуск**         | `gradle test`                                                                            |
+| **7. Удалённый запуск (CI)** | `./gradlew allExceptDefectRemote -Denv=default -Demail=EMAIL_INPUT -Dpassword=PASSWORD_INPUT` |
+
+1.
+```bash
+   gradle allExceptDefect
+```
+2. 
+```bash
+    gradle smoke
+```
+3. 
+```bash
+   gradle apiTests
+```
+4.
+```bash
+   gradle uiTests
+```
+5. 
+```bash
+   gradle defect
+```
+6. 
+```bash
+   gradle test
+```
+7. 
+```bash
+   ./gradlew allExceptDefectRemote -Denv=default -Demail=EMAIL_INPUT -Dpassword=PASSWORD_INPUT
+```
+
+- ✅ Все команды запускаются из корня проекта.
+- 📦 Используется Gradle Wrapper (./gradlew), глобальный Gradle не требуется.
 
 ---
 
@@ -147,4 +180,12 @@ Allure отчет включает:
 
 <p align="center"> <img src="images/screenShots/Allure_report_behaviors.png" alt="Allure report behaviors" width="700"/> </p>
 
+## 🧩 Дополнительно
+✅ Реализовано логическое разделение по типам тестов (UI, API, smoke, defect)
+
+✅ Используется шаблон Page Object Model (POM)
+
+✅ Настроены теги @Tag для гибкой фильтрации тестов
+
+✅ Поддержка CI/CD и Allure отчётности
 
