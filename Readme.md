@@ -122,7 +122,7 @@ Allure отчет включает:
 
 4. Нажмите `Run workflow`
 
-<p align="center"> <img src="images/screenShots/run_workflow.png" alt="Run workflow button" width="700"/> </p>
+<p align="center"> <img src="images/screenShots/Run_workflow.png" alt="Run workflow button" width="700"/> </p>
 
 5. Дождитесь завершения выполнения тестов
 
