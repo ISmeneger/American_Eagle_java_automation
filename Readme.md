@@ -49,16 +49,16 @@
 
 ## 🧰 Технологический стек
 
-<p align="center"> 
-  <a href="https://www.jetbrains.com/idea/" rel="nofollow"><img width="10%" title="IntelliJ IDEA" src="images/logo/Intelij_IDEA.svg" alt="Intellij_IDEA" style="max-width: 100%;"></a>
-  <a href="https://www.java.com/" rel="nofollow"><img width="10%" title="Java" src="images/logo/Java.png" alt="Java" style="max-width: 100%;"></a>
-  <a href="https://rest-assured.io/" rel="nofollow"><img width="10%" title="Rest Assured" src="images/logo/RestAssured.png" alt="RestAssured" style="max-width: 100%;"></a>
-  <a href="https://gradle.org/" rel="nofollow"><img width="10%" title="Gradle" src="images/logo/Gradle.png" alt="Gradle"></a>
-  <a href="https://junit.org/junit5/" rel="nofollow"><img width="10%" title="JUnit5" src="images/logo/JUnit5.png" alt="JUnit5" style="max-width: 100%;"></a>
-  <a href="https://www.selenium.dev/" rel="nofollow"><img width="10%" title="Selenium" src="images/logo/selenium.png" alt="Selenium" style="max-width: 100%;"></a>
-  <a href="https://github.com/" rel="nofollow"><img width="10%" title="GitHub" src="images/logo/GitHub.png" alt="GitHub" style="max-width: 100%;"></a>
-  <a href="https://github.com/features/actions" rel="nofollow"><img width="10%" title="Github Actions" src="images/logo/Github_Actions.png" alt="Github Actions" style="max-width: 100%;"></a>
-<a href="https://allurereport.org/" rel="nofollow"><img width="10%" title="Allure Report" src="images/logo/Allure_Report.jpg" alt="Allure" style="max-width: 100%;"></a>
+<p align="center">
+  <a href="https://jetbrains.com/idea/" target="_blank"> <img src="images/logo/Intelij_IDEA.svg" alt="Intelij_IDEA" width="60" height="60"/> </a> 
+  <a href="https://www.oracle.com/java/" target="_blank"> <img src="images/logo/Java.png" alt="Java" width="90" height="60"/> </a> 
+  <a href="https://rest-assured.io/" target="_blank"> <img src="images/logo/RestAssured.png" alt="RestAssured" width="60" height="60"/> </a>
+  <a href="https://gradle.org/" target="_blank"> <img src="images/logo/Gradle.png" alt="Gradle" width="60" height="60"/> </a>
+  <a href="https://junit.org/junit5/" target="_blank"> <img src="images/logo/JUnit5.png" alt="JUnit5" width="90" height="60"/> </a>
+  <a href="https://www.selenium.dev/" target="_blank"> <img src="images/logo/Selenium.png" alt="Selenium" width="60" height="60"/> </a> 
+  <a href="https://www.selenium.dev/" target="_blank"> <img src="images/logo/GitHub.png" alt="GitHub" width="90" height="60"/> </a> 
+  <a href="https://www.selenium.dev/" target="_blank"> <img src="images/logo/Github_Actions.png" alt="Github Actions" width="90" height="60"/> </a> 
+  <a href="https://www.selenium.dev/" target="_blank"> <img src="images/logo/Allure_Report.jpg" alt="Allure Report" width="90" height="60"/> </a>
 </p>
 
 - Язык: Java 17
@@ -179,6 +179,10 @@ Allure отчет включает:
 <p align="center"> <img src="images/screenShots/Allure_report_overview.png" alt="Allure report overview" width="700"/> </p>
 
 <p align="center"> <img src="images/screenShots/Allure_report_behaviors.png" alt="Allure report behaviors" width="700"/> </p>
+
+<p align="center"> <img src="images/screenShots/Packages_api_tests.png" alt="Packages api tests" width="700"/> </p>
+
+<p align="center"> <img src="images/screenShots/Packages_ui_tests.png" alt="Packages ui tests" width="700"/> </p>
 
 ## 🧩 Дополнительно
 ✅ Реализовано логическое разделение по типам тестов (UI, API, smoke, defect)
