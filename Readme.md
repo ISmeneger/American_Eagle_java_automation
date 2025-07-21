@@ -55,7 +55,7 @@
   <a href="https://rest-assured.io/" target="_blank"> <img src="images/logo/RestAssured.png" alt="RestAssured" width="60" height="60"/> </a>
   <a href="https://gradle.org/" target="_blank"> <img src="images/logo/Gradle.png" alt="Gradle" width="60" height="60"/> </a>
   <a href="https://junit.org/junit5/" target="_blank"> <img src="images/logo/JUnit5.png" alt="JUnit5" width="90" height="60"/> </a>
-  <a href="https://www.selenium.dev/" target="_blank"> <img src="images/logo/Selenium.png" alt="Selenium" width="60" height="60"/> </a> 
+  <a href="https://www.selenium.dev/" target="_blank"> <img src="images/logo/selenium.png" alt="selenium" width="60" height="60"/> </a> 
   <a href="https://www.selenium.dev/" target="_blank"> <img src="images/logo/GitHub.png" alt="GitHub" width="90" height="60"/> </a> 
   <a href="https://www.selenium.dev/" target="_blank"> <img src="images/logo/Github_Actions.png" alt="Github Actions" width="90" height="60"/> </a> 
   <a href="https://www.selenium.dev/" target="_blank"> <img src="images/logo/Allure_Report.jpg" alt="Allure Report" width="90" height="60"/> </a>
