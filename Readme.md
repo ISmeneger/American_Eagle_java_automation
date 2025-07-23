@@ -50,15 +50,15 @@
 ## 🧰 Технологический стек
 
 <p align="center">
-  <a href="https://jetbrains.com/idea/" target="_blank"> <img src="images/logo/Intelij_IDEA.svg" alt="Intelij_IDEA" width="60" height="60"/> </a> 
-  <a href="https://www.oracle.com/java/" target="_blank"> <img src="images/logo/Java.png" alt="Java" width="90" height="60"/> </a> 
+  <a href="https://jetbrains.com/idea/" target="_blank"> <img src="images/logo/intellij.png" alt="Intelij_IDEA" width="60" height="60"/> </a> 
+  <a href="https://www.oracle.com/java/" target="_blank"> <img src="images/logo/java.png" alt="Java" width="60" height="60"/> </a> 
   <a href="https://rest-assured.io/" target="_blank"> <img src="images/logo/RestAssured.png" alt="RestAssured" width="60" height="60"/> </a>
   <a href="https://gradle.org/" target="_blank"> <img src="images/logo/Gradle.png" alt="Gradle" width="60" height="60"/> </a>
   <a href="https://junit.org/junit5/" target="_blank"> <img src="images/logo/JUnit5.png" alt="JUnit5" width="90" height="60"/> </a>
   <a href="https://www.selenium.dev/" target="_blank"> <img src="images/logo/selenium.png" alt="selenium" width="60" height="60"/> </a> 
-  <a href="https://www.selenium.dev/" target="_blank"> <img src="images/logo/GitHub.png" alt="GitHub" width="90" height="60"/> </a> 
-  <a href="https://www.selenium.dev/" target="_blank"> <img src="images/logo/Github_Actions.png" alt="Github Actions" width="90" height="60"/> </a> 
-  <a href="https://www.selenium.dev/" target="_blank"> <img src="images/logo/Allure_Report.jpg" alt="Allure Report" width="90" height="60"/> </a>
+  <a href="https://github.com/" target="_blank"> <img src="images/logo/GitHub.png" alt="GitHub" width="60" height="60"/> </a> 
+  <a href="https://docs.github.com/en/actions" target="_blank"> <img src="images/logo/Github_Actions.png" alt="Github Actions" width="90" height="60"/> </a> 
+  <a href="https://docs.qameta.io/allure/" target="_blank"> <img src="images/logo/Allure_Report.jpg" alt="Allure Report" width="90" height="60"/> </a>
 </p>
 
 - Язык: Java 17
