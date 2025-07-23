@@ -51,7 +51,7 @@
 
 <p align="center">
   <a href="https://jetbrains.com/idea/" target="_blank"> <img src="images/logo/intellij.png" alt="Intelij_IDEA" width="60" height="60"/> </a> 
-  <a href="https://www.oracle.com/java/" target="_blank"> <img src="images/logo/java.png" alt="Java" width="60" height="60"/> </a> 
+  <a href="https://www.oracle.com/java/" target="_blank"> <img src="images/logo/Java.png" alt="Java" width="60" height="60"/> </a> 
   <a href="https://rest-assured.io/" target="_blank"> <img src="images/logo/RestAssured.png" alt="RestAssured" width="60" height="60"/> </a>
   <a href="https://gradle.org/" target="_blank"> <img src="images/logo/Gradle.png" alt="Gradle" width="60" height="60"/> </a>
   <a href="https://junit.org/junit5/" target="_blank"> <img src="images/logo/JUnit5.png" alt="JUnit5" width="90" height="60"/> </a>
