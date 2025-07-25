@@ -15,11 +15,11 @@ import utils.TestDataGeneratorForCreationAccount;
 import java.time.Duration;
 
 import static constants.CommonConstants.*;
-import static io.qameta.allure.SeverityLevel.CRITICAL;
+import static io.qameta.allure.SeverityLevel.NORMAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Tags({@Tag("UI"), @Tag("Extended")})
+@Tags({@Tag("UI"), @Tag("extended")})
 class AccountPageTests extends BaseTest {
     HomePage homePage;
     AccountPage accountPage;
@@ -49,8 +49,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive"), @Tag("defect")})
+    @Severity(NORMAL)
+    @Tags({@Tag("positive"), @Tag("defect")})
     @DisplayName("Check successful account creation")
     void shouldCreateAccountSuccessfullyTest() {
         String email = TestDataGeneratorForCreationAccount.generateEmail();
@@ -89,8 +89,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("negative")})
+    @Severity(NORMAL)
+    @Tag("negative")
     @DisplayName("Check account creation with invalid email")
     void createAccountPageWithInvalidEmailTest() {
         String invalidEmail = "user.gmail.com" ;
@@ -127,8 +127,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("negative")})
+    @Severity(NORMAL)
+    @Tag("negative")
     @DisplayName("Check account creation with empty email")
     void createAccountPageWithEmptyEmailTest(){
         String emptyEmail = "" ;
@@ -165,8 +165,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("negative")})
+    @Severity(NORMAL)
+    @Tag("negative")
     @DisplayName("Check account creation with empty 'First Name' and empty 'Last Name'")
     void createAccountPageWithEmptyNamesFieldsTest(){
         String email = TestDataGeneratorForCreationAccount.generateEmail();
@@ -211,8 +211,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("negative")})
+    @Severity(NORMAL)
+    @Tag("negative")
     @DisplayName("Check account creation with empty password")
     void createAccountPageWithEmptyPasswordTest(){
         String email = TestDataGeneratorForCreationAccount.generateEmail();
@@ -249,8 +249,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("negative")})
+    @Severity(NORMAL)
+    @Tag("negative")
     @DisplayName("Check account creation with empty 'Zip Code'")
     void createAccountPageWithEmptyZipCodeTest(){
         String email = TestDataGeneratorForCreationAccount.generateEmail();
@@ -287,8 +287,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("negative")})
+    @Severity(NORMAL)
+    @Tag("negative")
     @DisplayName("Check account creation with empty 'Birthday' field and the checkbox 'I accept' unchecked")
     void createAccountPageWithEmptyBirthDateTest(){
         String email = TestDataGeneratorForCreationAccount.generateEmail();
@@ -318,8 +318,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive"), @Tag("defect")})
+    @Severity(NORMAL)
+    @Tags({@Tag("positive"), @Tag("defect")})
     @DisplayName("Check successful 'Sign In' account")
     void signInPageTest() {
         accountPage = new AccountPage(driver);
@@ -343,8 +343,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("negative")})
+    @Severity(NORMAL)
+    @Tag("negative")
     @DisplayName("Check 'Sign In' with invalid email input")
     void invalidEmailSignInPageTest() {
         String invalidEmail = "user.gmail.com";
@@ -378,8 +378,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("negative")})
+    @Severity(NORMAL)
+    @Tag("negative")
     @DisplayName("Check 'Sign In' with invalid password")
     void invalidPasswordSignInPageTest() {
         String invalidPassword = "123456789";
@@ -412,8 +412,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("negative")})
+    @Severity(NORMAL)
+    @Tag("negative")
     @DisplayName("Check 'Sign In' with empty email input")
     void emptyEmailSignInPageTest() {
         String emptyEmail = "";
@@ -447,8 +447,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("negative")})
+    @Severity(NORMAL)
+    @Tag("negative")
     @DisplayName("Check 'Sign In' with empty password input")
     void emptyPasswordSignInPageTest() {
         String emptyPassword = "";
@@ -482,8 +482,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("negative")})
+    @Severity(NORMAL)
+    @Tag("negative")
     @DisplayName("Check 'Sign In' with empty email and empty password input")
     void emptyEmailAndEmptyPasswordSignInPageTest() {
         String emptyEmail = "";
@@ -526,8 +526,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("negative")})
+    @Severity(NORMAL)
+    @Tag("negative")
     @DisplayName("Check 'Sign In' with password shorter than 8 characters")
     void shortPasswordSignInPageTest() {
         String shortPassword = "12345";
@@ -561,8 +561,8 @@ class AccountPageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("negative")})
+    @Severity(NORMAL)
+    @Tag("negative")
     @DisplayName("Check 'Sign In' with password longer than 25 characters")
     void longPasswordSignInPageTest() {
         String longPassword = "12345qwerrttfgfhdhfhdfhfdhdfhdfh";
