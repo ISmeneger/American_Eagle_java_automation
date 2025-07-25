@@ -14,7 +14,7 @@ import static io.qameta.allure.SeverityLevel.CRITICAL;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(AllureExtension.class)
-@Tags({@Tag("UI"), @Tag("Extended")})
+@Tags({@Tag("UI"), @Tag("extended")})
 class MensClothesChapterUnauthorizedUserTests extends BaseTest {
     HomePage homePage;
     MensClothesPage mensClothesPage;
@@ -27,7 +27,7 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Tag("positive")
     @DisplayName("Verify Men's Clothes page is opened correctly")
     void checkMensFormPageTest() {
         mensClothesPage = new MensClothesPage(driver);
@@ -45,7 +45,7 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Tag("positive")
     @DisplayName("Add item from catalog to cart and verify success message is shown")
     void addItemFromCatalogToCartTest(){
         mensClothesPage = new MensClothesPage(driver);
@@ -60,7 +60,7 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Tag("positive")
     @DisplayName("Check that product price in catalog matches the price in cart")
     void priceMatchesBetweenCatalogAndCartTest() {
         String expectedQuantityText = "1 Item";
@@ -106,7 +106,7 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Tag("positive")
     @DisplayName("Add item to bag and change quantity")
     void addItemAndChangeQuantityInBagTest() {
         String quantityOfItemsBeforeUpdate = "1 Item";
@@ -139,7 +139,7 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Tag("positive")
     @DisplayName("Unlock 'Free Shipping' when total exceeds threshold")
     void addItemsUntilFreeShippingTest() {
         String quantityOfItemsBeforeUpdate = "1 Item";
@@ -187,7 +187,7 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Tag("positive")
     @DisplayName("Verify maximum quantity of items allowed in cart")
     void addMaximumQuantityToCartTest() {
         int expectedMaxItemCount = 9;
@@ -207,7 +207,7 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Tag("positive")
     @DisplayName("Remove item from cart and verify it's empty")
     void removeItemFromCartTest() {
         String expectedQuantityText = "1 Item";
