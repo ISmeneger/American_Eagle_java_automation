@@ -21,7 +21,4 @@ public interface TestPropertiesConfig extends org.aeonbits.owner.Config {
 
     @Key("password")
     String getPassword();
-
-    @Key("selenium.remote.url")
-    String getSeleniumRemoteUrl();
 }
