@@ -9,13 +9,12 @@ import pages.HomePage;
 import utils.AllureExtension;
 
 import static constants.CommonConstants.BASE_URL;
-import static io.qameta.allure.SeverityLevel.CRITICAL;
-import static io.qameta.allure.SeverityLevel.NORMAL;
+import static io.qameta.allure.SeverityLevel.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(AllureExtension.class)
-@Tag("UI")
+@Tags({@Tag("UI"), @Tag("smoke")})
 class HomePageTests extends BaseTest {
     HomePage homePage;
 
@@ -42,7 +41,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Tag("positive")
     @DisplayName("Verify that the Home Page URL is correct after page load")
     void shouldLoadCorrectHomePageUrlTest() {
         String actualUrl = homePage.getCurrentUrl();
@@ -58,7 +57,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Tag("positive")
     @DisplayName("Verify that Home Page browser title is correct")
     void homePageTitleTest() {
         String expectedTitle = "Men’s & Women’s Jeans, Clothes & Accessories | American Eagle";
@@ -75,7 +74,7 @@ class HomePageTests extends BaseTest {
 
     @Test
     @Severity(NORMAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Tag("positive")
     @DisplayName("Verify that all header tab texts are displayed correctly")
     void shouldDisplayCorrectHeaderTabTextsTest() {
         HeaderComponent header = homePage.getHeader();
@@ -114,8 +113,8 @@ class HomePageTests extends BaseTest {
     }
 
     @Test
-    @Severity(NORMAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Severity(MINOR)
+    @Tag("positive")
     @DisplayName("Verify that search button is visible on the homepage header")
     void shouldDisplaySearchButtonOnHomePageTest(){
         HeaderComponent header = homePage.getHeader();
@@ -127,8 +126,8 @@ class HomePageTests extends BaseTest {
     }
 
     @Test
-    @Severity(NORMAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Severity(MINOR)
+    @Tag("positive")
     @DisplayName("Click on search button and check search input field is displayed on homepage")
     void shouldDisplaySearchInputAfterClickingSearchButtonTest() {
         HeaderComponent header = homePage.getHeader();
@@ -147,8 +146,8 @@ class HomePageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Severity(NORMAL)
+    @Tag("positive")
     @DisplayName("Verify account button is visible on the homepage header")
     void shouldDisplayAccountButtonOnHomePageTest() {
         HeaderComponent header = homePage.getHeader();
@@ -160,7 +159,8 @@ class HomePageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
+    @Severity(NORMAL)
+    @Tag("positive")
     @DisplayName("Click on account button and verify 'Sign In' is visible")
     void shouldDisplaySignInButtonWhenAccountButtonClickedTest() {
         HeaderComponent header = homePage.getHeader();
@@ -177,8 +177,8 @@ class HomePageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Severity(NORMAL)
+    @Tag("positive")
     @DisplayName("Click on account button and verify 'Create Account' button is visible")
     void shouldDisplayCreateAccountButtonAfterClickingAccountTest() {
         HeaderComponent header = homePage.getHeader();
@@ -195,8 +195,8 @@ class HomePageTests extends BaseTest {
     }
 
     @Test
-    @Severity(NORMAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Severity(MINOR)
+    @Tag("positive")
     @DisplayName("Verify 'Favorites' button is visible on the homepage")
     void shouldDisplayFavoritesButtonOnHomePageTest(){
         HeaderComponent header = homePage.getHeader();
@@ -207,8 +207,8 @@ class HomePageTests extends BaseTest {
     }
 
     @Test
-    @Severity(NORMAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Severity(MINOR)
+    @Tag("positive")
     @DisplayName("Click 'Favorites' button and verify 'Favorites' title text is displayed")
     void shouldDisplayFavoritesTitleAfterClickingFavoritesButtonTest() {
         HeaderComponent header = homePage.getHeader();
@@ -221,8 +221,8 @@ class HomePageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Severity(MINOR)
+    @Tag("positive")
     @DisplayName("Verify that the basket (cart) button is visible on the homepage")
     void shouldDisplayBasketButtonOnHomePageTest() {
         HeaderComponent header = homePage.getHeader();
@@ -232,8 +232,8 @@ class HomePageTests extends BaseTest {
     }
 
     @Test
-    @Severity(CRITICAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Severity(MINOR)
+    @Tag("positive")
     @DisplayName("Verify clicking the basket button displays the 'Shopping Bag' title")
     void shouldDisplayShoppingBagTitleAfterClickingBasketButtonTest() {
         HeaderComponent header = homePage.getHeader();
@@ -247,8 +247,8 @@ class HomePageTests extends BaseTest {
     }
 
     @Test
-    @Severity(NORMAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Severity(MINOR)
+    @Tag("positive")
     @DisplayName("Verify the footer displays the correct copyright text")
     void shouldDisplayCorrectCopyrightTextTest() {
         FooterComponent footer = homePage.getFooter();
@@ -262,8 +262,8 @@ class HomePageTests extends BaseTest {
     }
 
     @Test
-    @Severity(NORMAL)
-    @Tags({@Tag("smoke"), @Tag("positive")})
+    @Severity(MINOR)
+    @Tag("positive")
     @DisplayName("Verify that the footer image is displayed")
     void shouldDisplayFooterImageTest() {
         FooterComponent footer = homePage.getFooter();

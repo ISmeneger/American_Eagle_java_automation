@@ -7,7 +7,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.AllureExtension;
 
 import java.net.MalformedURLException;
@@ -17,7 +16,6 @@ import java.util.Map;
 
 class BaseTest {
     static WebDriver driver;
-    protected WebDriverWait wait;
 
     @BeforeEach
     @ExtendWith(AllureExtension.class)
