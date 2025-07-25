@@ -79,9 +79,6 @@ public class HeaderComponent {
     @FindBy(xpath = "//h1[text()='Shopping Bag']")
     private WebElement basketText;
 
-    @FindBy(xpath = "//a[@href='/us/en/c/men/mens?pagetype=clp']")
-    WebElement viewAllCategories;
-
     @Step("Get text in logo link")
     public String getAeoLogoSubtitleText() {
         return subTitleAeoLogo.getText();
