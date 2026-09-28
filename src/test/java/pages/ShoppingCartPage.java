@@ -8,21 +8,11 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.time.Duration;
-
 public class ShoppingCartPage extends BasePage {
-    WebDriver driver;
 
-    public ShoppingCartPage(WebDriver driver) {
-        super(driver);
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
-    }
+    private final WebDriver driver;
 
-    @FindBy(css = "h1.page-header")
-    private WebElement shoppingCartText;
-
-    @FindBy(css = "h2.text-capitalize._items-qty-msg_1yy6sp")
+    @FindBy(css = "h2[data-test-items-qty-msg]")
     private WebElement quantityOfItems;
 
     @FindBy(css = "button[data-test-btn='editCommerceItem']")
@@ -32,10 +22,13 @@ public class ShoppingCartPage extends BasePage {
     private WebElement updateBagButton;
 
     @FindBy(xpath = "//button[@aria-label='increase']")
-    private WebElement addItemToBag;
+    private WebElement increaseQuantityButton;
 
     @FindBy(css = "h3.cart-item-name")
     private WebElement productName;
+
+    @FindBy(css = "[data-testid='size']")
+    private WebElement productSize;
 
     @FindBy(css = "button[data-test-btn='removeCommerceItem']")
     private WebElement removeButton;
@@ -43,17 +36,8 @@ public class ShoppingCartPage extends BasePage {
     @FindBy(xpath = "//h2[text()='Your bag is empty. Find something you love!']")
     private WebElement emptyBagText;
 
-    @FindBy(name = "loginMessage")
+    @FindBy(css = "a[data-testid='sign-in-link']")
     private WebElement signInButton;
-
-    @FindBy(xpath = "//input[@placeholder='Email']")
-    private WebElement inputEmail;
-
-    @FindBy(xpath = "//input[@placeholder='Password']")
-    private WebElement inputPassword;
-
-    @FindBy(xpath = "//button[@name='submit']")
-    private WebElement submitButton;
 
     @FindBy(css = "h1.page-header")
     private WebElement pageCartHeader;
@@ -61,97 +45,141 @@ public class ShoppingCartPage extends BasePage {
     @FindBy(css = "span[data-test-free-shipping]")
     private WebElement freeShipping;
 
-    @FindBy(css = "div[data-testid='row-shipping-value']")
-    private WebElement freeShippingInOrderSummary;
+    @FindBy(css = "span[data-test-cart-item-sale-price]")
+    private WebElement cartProductPrice;
 
-    @Step("Check Quantity of items in the cart")
-    public String getQuantityOfItemsText() {
-        return quantityOfItems.getText();
+    @FindBy(css = "[data-testid='row-total-value']")
+    private WebElement subtotalValue;
+
+    public ShoppingCartPage(WebDriver driver) {
+        super(driver);
+        this.driver = driver;
+        PageFactory.initElements(driver, this);
     }
 
-    @Step("Click on edit item")
+    @Step("Get quantity of items in the cart")
+    public String getQuantityOfItemsText() {
+        return wait.until(
+                ExpectedConditions.visibilityOf(quantityOfItems)
+        ).getText();
+    }
+
+    @Step("Click edit item button")
     public void editItemButton() {
+
+        WebElement editButton = wait.until(
+                ExpectedConditions.elementToBeClickable(editItem)
+        );
+
         new Actions(driver)
-                .scrollToElement(editItem)
-                .pause(Duration.ofSeconds(2))
+                .scrollToElement(editButton)
                 .perform();
-        wait.until(ExpectedConditions.elementToBeClickable(editItem));
-        editItem.click();
+
+        wait.until(
+                ExpectedConditions.elementToBeClickable(editButton)
+        ).click();
     }
 
     @Step("Move to 'Update Bag' button")
     public void movingToElementUpdateBagButton() {
-        wait.until(ExpectedConditions.visibilityOf(updateBagButton));
+
+        WebElement updateButton = wait.until(
+                ExpectedConditions.visibilityOf(updateBagButton)
+        );
+
         new Actions(driver)
-                .moveToElement(updateBagButton)
-                .pause(Duration.ofSeconds(2))
+                .scrollToElement(updateButton)
+                .moveToElement(updateButton)
                 .perform();
     }
 
-    @Step("Add item to bag")
-    public void addItemToBag() {
-        addItemToBag.click();
+    @Step("Increase product quantity")
+    public void increaseProductQuantity() {
+        wait.until(
+                ExpectedConditions.elementToBeClickable(increaseQuantityButton)
+        ).click();
     }
 
-    @Step("Update Bag")
+    @Step("Update bag")
     public void updateBag() {
-        updateBagButton.click();
+        wait.until(
+                ExpectedConditions.elementToBeClickable(updateBagButton)
+        ).click();
     }
 
-    @Step("Check product name in the cart")
+    @Step("Get product name in the cart")
     public String getProductName() {
-        return productName.getText();
+        return wait.until(
+                ExpectedConditions.visibilityOf(productName)
+        ).getText();
     }
 
-    @Step("Remove product in bag")
+    @Step("Get product size in cart")
+    public String getProductSize() {
+        String sizeText = wait.until(
+                ExpectedConditions.visibilityOf(productSize)
+        ).getText();
+
+        return sizeText
+                .replace("Size:", "")
+                .trim();
+    }
+
+    @Step("Remove product from bag")
     public void removeProductInBag() {
+
+        WebElement remove = wait.until(
+                ExpectedConditions.visibilityOf(removeButton)
+        );
+
         new Actions(driver)
-                .scrollToElement(removeButton)
-                .pause(Duration.ofSeconds(2))
+                .scrollToElement(remove)
                 .perform();
-        wait.until(ExpectedConditions.elementToBeClickable(editItem));
-        removeButton.click();
+
+        wait.until(
+                ExpectedConditions.elementToBeClickable(remove)
+        ).click();
     }
 
-    @Step("Check bag is empty")
+    @Step("Get empty bag message")
     public String getItemEmptyText() {
-        wait.until(ExpectedConditions.visibilityOf(emptyBagText));
-        return emptyBagText.getText();
+        return wait.until(
+                ExpectedConditions.visibilityOf(emptyBagText)
+        ).getText();
     }
 
-    @Step("Click on button 'Sign in'")
+    @Step("Click 'Sign In' button in cart")
     public void signInButtonClick() {
-        signInButton.click();
+        wait.until(
+                ExpectedConditions.elementToBeClickable(signInButton)
+        ).click();
     }
 
-    @Step("Input email field")
-    public void inputEmailField(String email) {
-        wait.until(ExpectedConditions.visibilityOf(inputEmail)).sendKeys(email);
-    }
-
-    @Step("Input password field")
-    public void inputPasswordField(String password) {
-        inputPassword.sendKeys(password);
-    }
-
-    @Step("Click on submit button")
-    public void submitButtonClick() {
-        submitButton.click();
-    }
-
-    @Step("Check page header in cart")
+    @Step("Get cart page header")
     public String getPageCartHeaderText() {
-        wait.until(ExpectedConditions.visibilityOf(pageCartHeader));
-        return pageCartHeader.getText();
+        return wait.until(
+                ExpectedConditions.visibilityOf(pageCartHeader)
+        ).getText();
     }
 
-    @Step("Check that free shipping displayed in cart")
+    @Step("Check that free shipping is displayed in cart")
     public boolean isFreeShippingMessageDisplayed() {
-        return freeShipping.isDisplayed();
+        return wait.until(
+                ExpectedConditions.visibilityOf(freeShipping)
+        ).isDisplayed();
     }
 
-    @Step("Get the text about free shipping available in 'Order Summary")
-    public String getFreeShippingTextInOrderSummary() {
-        return freeShippingInOrderSummary.getText();
+    @Step("Get product price in cart")
+    public String getCartPrice() {
+        return wait.until(
+                ExpectedConditions.visibilityOf(cartProductPrice)
+        ).getText();
+    }
+
+    @Step("Get subtotal value in cart")
+    public String getSubtotalText() {
+        return wait.until(
+                ExpectedConditions.visibilityOf(subtotalValue)
+        ).getText().trim();
     }
 }
