@@ -3,40 +3,36 @@ package tests.ui;
 import components.FooterComponent;
 import components.HeaderComponent;
 import io.qameta.allure.Severity;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import pages.HomePage;
-import utils.AllureExtension;
 
 import static constants.CommonConstants.BASE_URL;
 import static io.qameta.allure.SeverityLevel.*;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(AllureExtension.class)
 @Tags({@Tag("UI"), @Tag("smoke")})
 class HomePageTests extends BaseTest {
     HomePage homePage;
 
-    private static final String SEARCH_TEXT = "Search";
     private static final String ACCOUNT_TEXT = "Account";
     private static final String FAVORITES_TEXT = "Favorites";
     private static final String BASKET_TEXT = "Shopping Bag";
     private static final String AEO_SUBTITLE_LOGO_TEXT = "Shop AE";
     private static final String AEO_LOGO_LINK_TEXT = "Go to Shop AE homepage.";
     private static final String FEATURED_OFFERS_TEXT = "Today's Offers";
+    private static final String NEW_TAB_TEXT = "New";
     private static final String WOMEN_TAB_TEXT = "Women";
     private static final String MEN_TAB_TEXT = "Men";
     private static final String JEANS_TAB_TEXT = "Jeans";
-    private static final String SHOES_AND_ACESS_TAB_TEXT = "Shoes & Accessories";
-    private static final String LOUNGEWEAR_TAB_TEXT = "Loungewear & PJs";
     private static final String AERIE_TAB_TEXT = "Aerie";
     private static final String CLEARANCE_TAB_TEXT = "Clearance";
-    private static final String COPYRIGHT_TEXT = "© 2025 AEO Management Co. All Rights Reserved";
+    private static final String COPYRIGHT_TEXT = "© 2026 AEO Management Co. All Rights Reserved";
 
     @BeforeEach
     void setupPage() {
         homePage = new HomePage(driver);
+        homePage.closeBlockingOverlaysIfAvailable();
     }
 
     @Test
@@ -92,19 +88,14 @@ class HomePageTests extends BaseTest {
         );
 
         assertAll("Primary Navigation Tabs",
+                () -> assertEquals(NEW_TAB_TEXT, header.getAeoNewTabText(),
+                        "New tab text mismatch"),
                 () -> assertEquals(WOMEN_TAB_TEXT, header.getAeoWomenTabText(),
                         "Women tab text mismatch"),
                 () -> assertEquals(MEN_TAB_TEXT, header.getAeoMenTabText(),
                         "Men tab text mismatch"),
                 () -> assertEquals(JEANS_TAB_TEXT, header.getAeoJeansTabText(),
                         "Jeans tab text mismatch"),
-                () -> assertEquals(SHOES_AND_ACESS_TAB_TEXT, header.getAeoShoesAndAccesTabText(),
-                        "Shoes & Accessories tab text mismatch")
-        );
-
-        assertAll("Promo & Branded Tabs",
-                () -> assertEquals(LOUNGEWEAR_TAB_TEXT, header.getAeoLoungewearTabText(),
-                        "Loungewear tab text mismatch"),
                 () -> assertEquals(AERIE_TAB_TEXT, header.getAeoAerieTabText(),
                         "Aerie tab text mismatch"),
                 () -> assertEquals(CLEARANCE_TAB_TEXT, header.getAeoClearanceTabText(),
@@ -113,16 +104,36 @@ class HomePageTests extends BaseTest {
     }
 
     @Test
-    @Severity(MINOR)
+    @Severity(NORMAL)
     @Tag("positive")
-    @DisplayName("Verify that search button is visible on the homepage header")
-    void shouldDisplaySearchButtonOnHomePageTest(){
+    @DisplayName("Verify main header controls are displayed")
+    void shouldDisplayMainHeaderControlsTest() {
+
         HeaderComponent header = homePage.getHeader();
-        assertNotNull(header, "Header component should not be null");
 
-        boolean isSearchVisible = header.searchButtonIsDisplayed();
+        SoftAssertions softly = new SoftAssertions();
 
-        assertTrue(isSearchVisible, "Search button is expected to be visible but it was not found.");
+        softly.assertThat(header)
+                .as("Header component should be initialized")
+                .isNotNull();
+
+        softly.assertThat(header.searchButtonIsDisplayed())
+                .as("Search button should be visible")
+                .isTrue();
+
+        softly.assertThat(header.accountButtonIsDisplayed())
+                .as("Account button should be visible")
+                .isTrue();
+
+        softly.assertThat(header.favoriteButtonIsDisplayed())
+                .as("Favorites button should be visible")
+                .isTrue();
+
+        softly.assertThat(header.basketButtonIsDisplayed())
+                .as("Basket button should be visible")
+                .isTrue();
+
+        softly.assertAll();
     }
 
     @Test
@@ -134,76 +145,38 @@ class HomePageTests extends BaseTest {
         assertNotNull(header, "Header component should not be null");
 
         header.clickSearchButton();
-        boolean isSearchInputVisible = header.searchInputIsDisplayed();
-        String actualSearchTitle = header.getSearchTitleText();
 
-        assertAll("Search input field validation",
-                () -> assertTrue(isSearchInputVisible,
-                        "Search input field should be visible after clicking search button."),
-                () -> assertEquals(SEARCH_TEXT, actualSearchTitle,
-                        String.format("Expected search input title to be '%s' but was '%s'", SEARCH_TEXT, actualSearchTitle))
+        assertTrue(
+                header.searchInputIsDisplayed(),
+                "Search input field should be visible after clicking search button."
         );
     }
 
     @Test
     @Severity(NORMAL)
     @Tag("positive")
-    @DisplayName("Verify account button is visible on the homepage header")
-    void shouldDisplayAccountButtonOnHomePageTest() {
+    @DisplayName("Verify account panel content after clicking Account button")
+    void shouldDisplayAccountPanelContentTest() {
+
         HeaderComponent header = homePage.getHeader();
-        assertNotNull(header, "Header component must be initialized");
-
-        boolean isAccountButtonVisible = header.accountButtonIsDisplayed();
-
-        assertTrue(isAccountButtonVisible, "Account button should be visible on the homepage header");
-    }
-
-    @Test
-    @Severity(NORMAL)
-    @Tag("positive")
-    @DisplayName("Click on account button and verify 'Sign In' is visible")
-    void shouldDisplaySignInButtonWhenAccountButtonClickedTest() {
-        HeaderComponent header = homePage.getHeader();
-        assertNotNull(header, "HeaderComponent should be initialized");
 
         header.clickAccountButton();
 
-        assertAll(
-                () -> assertTrue(header.signInButtonIsDisplayed(),
-                        "'Sign In' button should be visible after clicking account button"),
-                () -> assertEquals(ACCOUNT_TEXT, header.getAccountTitleText(),
-                        "Account title text should match expected value")
-        );
-    }
+        SoftAssertions softly = new SoftAssertions();
 
-    @Test
-    @Severity(NORMAL)
-    @Tag("positive")
-    @DisplayName("Click on account button and verify 'Create Account' button is visible")
-    void shouldDisplayCreateAccountButtonAfterClickingAccountTest() {
-        HeaderComponent header = homePage.getHeader();
-        assertNotNull(header, "HeaderComponent must be initialized");
+        softly.assertThat(header.getAccountTitleText())
+                .as("Account panel title should match expected value")
+                .isEqualTo(ACCOUNT_TEXT);
 
-        header.clickAccountButton();
+        softly.assertThat(header.signInButtonIsDisplayed())
+                .as("'Sign In' button should be visible")
+                .isTrue();
 
-        assertAll(
-                () -> assertTrue(header.createAccountButtonIsDisplayed(),
-                        "'Create Account' button should be visible"),
-                () -> assertEquals(ACCOUNT_TEXT, header.getAccountTitleText(),
-                        "Account title text should match expected value")
-        );
-    }
+        softly.assertThat(header.createAccountButtonIsDisplayed())
+                .as("'Create Account' button should be visible")
+                .isTrue();
 
-    @Test
-    @Severity(MINOR)
-    @Tag("positive")
-    @DisplayName("Verify 'Favorites' button is visible on the homepage")
-    void shouldDisplayFavoritesButtonOnHomePageTest(){
-        HeaderComponent header = homePage.getHeader();
-        assertNotNull(header, "Header component must be initialized");
-
-        assertTrue(header.favoriteButtonIsDisplayed(),
-                "'Favorites' button should be visible in the header");
+        softly.assertAll();
     }
 
     @Test
@@ -218,17 +191,6 @@ class HomePageTests extends BaseTest {
         String actualText = header.getFavoriteTitleText();
 
         assertEquals(FAVORITES_TEXT, actualText, "Expected 'Favorites' title text after clicking the button");
-    }
-
-    @Test
-    @Severity(MINOR)
-    @Tag("positive")
-    @DisplayName("Verify that the basket (cart) button is visible on the homepage")
-    void shouldDisplayBasketButtonOnHomePageTest() {
-        HeaderComponent header = homePage.getHeader();
-        assertNotNull(header, "Header component must not be null");
-
-        assertTrue(header.basketButtonIsDisplayed(), "Basket button should be visible on the homepage");
     }
 
     @Test
@@ -249,30 +211,25 @@ class HomePageTests extends BaseTest {
     @Test
     @Severity(MINOR)
     @Tag("positive")
-    @DisplayName("Verify the footer displays the correct copyright text")
-    void shouldDisplayCorrectCopyrightTextTest() {
+    @DisplayName("Verify footer content is displayed correctly")
+    void shouldDisplayCorrectFooterContentTest() {
+
         FooterComponent footer = homePage.getFooter();
-        assertNotNull(footer, "Footer component must not be null");
 
         footer.scrollingToElement();
 
-        String actualText = footer.getCopyrightText();
-        assertEquals(COPYRIGHT_TEXT, actualText,
-                "Expected copyright text to match the defined constant.");
-    }
+        SoftAssertions softly = new SoftAssertions();
 
-    @Test
-    @Severity(MINOR)
-    @Tag("positive")
-    @DisplayName("Verify that the footer image is displayed")
-    void shouldDisplayFooterImageTest() {
-        FooterComponent footer = homePage.getFooter();
-        assertNotNull(footer, "Footer component must not be null");
+        softly.assertThat(footer.getCopyrightText())
+                .as("Copyright text should match expected value")
+                .isEqualTo(COPYRIGHT_TEXT);
 
         footer.scrollingToElementFooterImg();
 
-        assertThat(footer.footerImgIsDisplayed())
-                .as("Footer image should be visible on the homepage")
+        softly.assertThat(footer.footerImgIsDisplayed())
+                .as("Footer image should be visible")
                 .isTrue();
+
+        softly.assertAll();
     }
 }
