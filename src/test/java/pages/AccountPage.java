@@ -10,20 +10,19 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 
-import java.time.Duration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class AccountPage extends BasePage {
-    WebDriver driver;
 
-    public static final String VALUE_NAME = "value";
+    WebDriver driver;
 
     public AccountPage(WebDriver driver) {
         super(driver);
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }
+
+    // =========================
+    // ACCOUNT / SIGN IN
+    // =========================
 
     @FindBy(css = "svg[data-testid='icon-account']")
     private WebElement iconAccount;
@@ -34,41 +33,49 @@ public class AccountPage extends BasePage {
     @FindBy(xpath = "//input[@placeholder='Email']")
     private WebElement inputEmail;
 
-    @FindBy(xpath = "//input[@name='firstname']")
+    @FindBy(id = "kc-login")
+    private WebElement continueButton;
+
+    @FindBy(id = "PASSWORD")
+    private WebElement passwordSignInMethod;
+
+    // =========================
+    // CREATE ACCOUNT
+    // =========================
+
+    @FindBy(id = "firstName")
     private WebElement inputFirstName;
 
-    @FindBy(xpath = "//input[@name='lastname']")
+    @FindBy(id = "lastName")
     private WebElement inputLastName;
 
-    @FindBy(xpath = "//h2[text()='Sign Up for Emails & Texts']")
-    private WebElement signUpText;
-
-    @FindBy(xpath = "//input[@placeholder='Password']")
+    @FindBy(id = "password")
     private WebElement inputPassword;
 
-    @FindBy(xpath = "//input[@name='confirm_password']")
+    @FindBy(id = "password-confirm")
     private WebElement confirmPassword;
 
-    @FindBy(xpath = "//input[@name='postalCode']")
+    @FindBy(id = "postalCode")
     private WebElement zipCode;
 
-    @FindBy(xpath = "//select[@name='month']")
+    @FindBy(id = "birthMonth")
     private WebElement dropdownSelectMenuMonth;
 
-    @FindBy(xpath = "//select[@name='day']")
+    @FindBy(id = "birthDay")
     private WebElement dropdownSelectMenuDay;
 
-    @FindBy(name = "acceptTerms")
+    @FindBy(id = "termsAccepted")
     private WebElement checkboxAcceptTerms;
 
-    @FindBy(xpath = "//button[@name='submit']")
+    @FindBy(id = "kc-register-button")
     private WebElement submitAccountButton;
+
+    // =========================
+    // RESULT / MESSAGES
+    // =========================
 
     @FindBy(xpath = "//h6[text()='Account created!']")
     private WebElement accountCreatedText;
-
-    @FindBy(xpath = "//button[@name='submit']")
-    private WebElement submitSignInButton;
 
     @FindBy(css = "h2.modal-title")
     private WebElement successfulAccountText;
@@ -76,197 +83,393 @@ public class AccountPage extends BasePage {
     @FindBy(css = "h6.alert-header")
     private WebElement errorWarningText;
 
-    @FindBy(css = "div[data-label-code='error.account.email.empty']")
-    private WebElement errorAccountEmptyEmailFieldText;
+    @FindBy(xpath = "//input[@id='email']/following-sibling::span[contains(@class,'kc-feedback-text')]")
+    private WebElement emailValidationErrorText;
 
-    @FindBy(css = "div[data-label-code='error.account.password.empty']")
+    @FindBy(xpath = "//input[@id='password']/following-sibling::span[contains(@class,'kc-feedback-text')]")
     private WebElement errorAccountEmptyPasswordFieldText;
-
-    @FindBy(css = "div[data-label-code='error.account.email.invalid']")
-    private WebElement errorAccountInvalidEmailText;
 
     @FindBy(css = "div[data-label-code='error.account.login.passwordInvalid']")
     private WebElement errorAccountInvalidPasswordText;
 
-    @FindBy(css = "div[data-label-code='error.checkout.shippingAddress.firstName.empty']")
+    @FindBy(xpath = "//input[@id='firstName']/following-sibling::span[contains(@class,'kc-feedback-text')]")
     private WebElement errorEmptyFirstNameText;
 
-    @FindBy(css = "div[data-label-code='error.checkout.shippingAddress.lastName.empty']")
+    @FindBy(xpath = "//input[@id='lastName']/following-sibling::span[contains(@class,'kc-feedback-text')]")
     private WebElement errorEmptyLastNameText;
 
-    @FindBy(css = "div[data-label-code='error.account.loyalty.postalCode.empty']")
+    @FindBy(xpath = "//input[@id='postalCode']/following-sibling::span[contains(@class,'kc-feedback-text')]")
     private WebElement errorEmptyZipCodeText;
+
+    @FindBy(xpath = "//span[contains(@class,'kc-feedback-text') and normalize-space()='Please enter a valid email address.']")
+    private WebElement signInInvalidEmailErrorText;
+
+    // =========================
+    // COMMON INPUT METHOD
+    // =========================
+
+    private void typeIntoField(WebElement field, String value) {
+
+        WebElement input = wait.until(
+                ExpectedConditions.elementToBeClickable(field)
+        );
+
+        input.clear();
+        input.sendKeys(value);
+    }
+
+    // =========================
+    // INPUT METHODS
+    // =========================
 
     @Step("Input email field")
     public void inputEmailField(String email) {
-        wait.until(ExpectedConditions.visibilityOf(inputEmail)).sendKeys(email);
+        typeIntoField(inputEmail, email);
     }
 
     @Step("Input first name field")
     public void inputFirstNameField(String firstName) {
-        inputFirstName.sendKeys(firstName);
+        typeIntoField(inputFirstName, firstName);
     }
 
     @Step("Input last name field")
     public void inputLastNameField(String lastName) {
-        inputLastName.sendKeys(lastName);
+        typeIntoField(inputLastName, lastName);
     }
 
     @Step("Input password field")
     public void inputPasswordField(String password) {
-        inputPassword.sendKeys(password);
+        typeIntoField(inputPassword, password);
     }
 
     @Step("Confirm password field")
     public void confirmPasswordField(String password) {
-        confirmPassword.sendKeys(password);
+        typeIntoField(confirmPassword, password);
     }
 
-    @Step("Zip code field")
+    @Step("Input zip code field")
     public void enterZipCode(String postalCode) {
-        zipCode.sendKeys(postalCode);
+        typeIntoField(zipCode, postalCode);
     }
 
-    @Step("Click dropdown month and choose value")
+    // =========================
+    // SIGN IN
+    // =========================
+
+    @Step("Click Continue button")
+    public void continueButtonClick() {
+        wait.until(
+                ExpectedConditions.elementToBeClickable(continueButton)
+        ).click();
+    }
+
+    @Step("Select password as sign-in method")
+    public void selectPasswordSignInMethod() {
+        wait.until(
+                ExpectedConditions.elementToBeClickable(passwordSignInMethod)
+        ).click();
+    }
+
+    @Step("Click on 'Sign In' / Continue button")
+    public void submitSignInButtonClick() {
+        wait.until(
+                ExpectedConditions.elementToBeClickable(continueButton)
+        ).click();
+    }
+
+    // =========================
+    // BIRTH DATE
+    // =========================
+
+    @Step("Select birth month: {value}")
     public void dropdownMonthSelectorByValue(String value) {
-        Select select = new Select(dropdownSelectMenuMonth);
-        select.selectByValue(value);
-        assertEquals(value, select.getFirstSelectedOption().getDomProperty(VALUE_NAME));
+
+        WebElement monthDropdown = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        dropdownSelectMenuMonth
+                )
+        );
+
+        new Select(monthDropdown)
+                .selectByValue(value);
     }
 
-    @Step("Click dropdown day and choose value")
+    @Step("Select birth day: {value}")
     public void dropdownDaySelectorByValue(String value) {
-        Select select = new Select(dropdownSelectMenuDay);
-        select.selectByValue(value);
-        assertEquals(value, select.getFirstSelectedOption().getDomProperty(VALUE_NAME));
+
+        WebElement dayDropdown = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        dropdownSelectMenuDay
+                )
+        );
+
+        new Select(dayDropdown)
+                .selectByValue(value);
     }
 
-    @Step("Select BirthDate")
-    public void selectBirthDate(String valueMonth, String valueDay) {
+    @Step("Select birth date")
+    public void selectBirthDate(
+            String valueMonth,
+            String valueDay
+    ) {
         dropdownMonthSelectorByValue(valueMonth);
         dropdownDaySelectorByValue(valueDay);
     }
 
+    @Step("Get selected birth month")
+    public String getSelectedBirthMonth() {
+
+        WebElement monthDropdown = wait.until(
+                ExpectedConditions.visibilityOf(
+                        dropdownSelectMenuMonth
+                )
+        );
+
+        return new Select(monthDropdown)
+                .getFirstSelectedOption()
+                .getDomProperty("value");
+    }
+
+    @Step("Get selected birth day")
+    public String getSelectedBirthDay() {
+
+        WebElement dayDropdown = wait.until(
+                ExpectedConditions.visibilityOf(
+                        dropdownSelectMenuDay
+                )
+        );
+
+        return new Select(dayDropdown)
+                .getFirstSelectedOption()
+                .getDomProperty("value");
+    }
+
+    // =========================
+    // CREATE ACCOUNT BUTTON
+    // =========================
+
     @Step("Move to 'Create Account' button")
     public void scrollToSubmitButton() {
+
+        WebElement button = wait.until(
+                ExpectedConditions.visibilityOf(submitAccountButton)
+        );
+
         new Actions(driver)
-                .moveToElement(submitAccountButton)
-                .pause(Duration.ofSeconds(2))
+                .scrollToElement(button)
+                .moveToElement(button)
                 .perform();
     }
 
     @Step("Click checkbox 'I Accept'")
     public void acceptTermsAndConditions() {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].click();", checkboxAcceptTerms);
+
+        WebElement checkbox = wait.until(
+                ExpectedConditions.presenceOfElementLocated(
+                        org.openqa.selenium.By.id("termsAccepted")
+                )
+        );
+
+        JavascriptExecutor js =
+                (JavascriptExecutor) driver;
+
+        js.executeScript(
+                "arguments[0].click();",
+                checkbox
+        );
     }
 
+    @Step("Check terms checkbox is selected")
     public boolean isTermsCheckboxSelected() {
         return checkboxAcceptTerms.isSelected();
     }
 
     @Step("Check 'Create Account' button is enabled")
     public Boolean submitAccountButtonIsEnabled() {
-        return submitAccountButton.isEnabled();
+        return wait.until(
+                ExpectedConditions.visibilityOf(submitAccountButton)
+        ).isEnabled();
     }
 
-    @Step("Click submit button")
+    @Step("Click 'Create Account' button")
     public void clickSubmitButton() {
-        submitAccountButton.click();
+
+        wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        submitAccountButton
+                )
+        ).click();
     }
+
+    // =========================
+    // SUCCESS MESSAGES
+    // =========================
 
     @Step("Check successful created account")
     public String getSuccessfulCreatedAccountText() {
-        return accountCreatedText.getText();
-    }
 
-    @Step("Click on 'Sign In' button")
-    public void submitSignInButtonClick() {
-        submitSignInButton.click();
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        accountCreatedText
+                )
+        ).getText();
     }
 
     @Step("Check successful entered to account")
     public String getSuccessfulEnteredAccountText() {
-        return successfulAccountText.getText();
+
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        successfulAccountText
+                )
+        ).getText();
     }
 
-    @Step("Get text about problem")
+    // =========================
+    // LOGIN ERRORS
+    // =========================
+
+    @Step("Get text about login problem")
     public String getLoginWarningError() {
-        return errorWarningText.getText();
+        return wait.until(
+                ExpectedConditions.visibilityOf(errorWarningText)
+        ).getText();
     }
 
-    @Step("Checking that the form error is displayed specifically for email field")
+    @Step("Check login warning is displayed")
     public boolean getLoginWarningErrorIsDisplayed() {
-        return errorWarningText.isDisplayed();
+        return wait.until(
+                ExpectedConditions.visibilityOf(errorWarningText)
+        ).isDisplayed();
     }
 
-    @Step("Get text describing the problem under the password, when it's not valid")
-    public String getErrorEmailMessage() {
-        return errorAccountInvalidEmailText.getText();
-    }
-
-    @Step("Checking that the form error is displayed specifically for email field")
-    public boolean getErrorEmailMessageIsDisplayed() {
-        return errorAccountInvalidEmailText.isDisplayed();
-    }
-
-    @Step("Get text describing the problem under the password, when it's not valid")
+    @Step("Get invalid password error message")
     public String getErrorAccountInvalidPasswordMessage() {
-        return errorAccountInvalidPasswordText.getText();
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        errorAccountInvalidPasswordText
+                )
+        ).getText();
     }
 
-    @Step("Checking that the form error is displayed specifically for password field")
+    @Step("Check invalid password error is displayed")
     public boolean getErrorAccountInvalidPasswordMessageIsDisplayed() {
-        return errorAccountInvalidPasswordText.isDisplayed();
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        errorAccountInvalidPasswordText
+                )
+        ).isDisplayed();
     }
 
-    @Step("Get text describing the problem under the email field, when it's empty")
-    public String getErrorEmptyEmailMessage() {
-        return errorAccountEmptyEmailFieldText.getText();
+    // =========================
+    // REGISTRATION VALIDATION ERRORS
+    // =========================
+
+    @Step("Get email validation error message")
+    public String getEmailValidationErrorMessage() {
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        emailValidationErrorText
+                )
+        ).getText();
     }
 
-    @Step("Checking that the empty form error is displayed specifically for email field")
-    public boolean getErrorEmptyEmailMessageIsDisplayed() {
-        return errorAccountEmptyEmailFieldText.isDisplayed();
+    @Step("Check email validation error is displayed")
+    public boolean isEmailValidationErrorDisplayed() {
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        emailValidationErrorText
+                )
+        ).isDisplayed();
     }
 
-    @Step("Get text describing the problem under the password field, when it's empty")
+    @Step("Get empty password error message")
     public String getErrorEmptyPasswordMessage() {
-        return errorAccountEmptyPasswordFieldText.getText();
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        errorAccountEmptyPasswordFieldText
+                )
+        ).getText();
     }
 
-    @Step("Checking that the empty form error is displayed specifically for password field")
+    @Step("Check empty password error is displayed")
     public boolean getErrorEmptyPasswordMessageIsDisplayed() {
-        return errorAccountEmptyPasswordFieldText.isDisplayed();
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        errorAccountEmptyPasswordFieldText
+                )
+        ).isDisplayed();
     }
 
-    @Step("Get text describing the problem under the 'First Name' field, when it's empty")
+    @Step("Get empty First Name error message")
     public String getErrorEmptyFirstNameMessage() {
-        return errorEmptyFirstNameText.getText();
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        errorEmptyFirstNameText
+                )
+        ).getText();
     }
 
-    @Step("Checking that the empty form error is displayed specifically for 'First Name' field")
+    @Step("Check empty First Name error is displayed")
     public boolean getErrorEmptyFirstNameMessageIsDisplayed() {
-        return errorEmptyFirstNameText.isDisplayed();
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        errorEmptyFirstNameText
+                )
+        ).isDisplayed();
     }
 
-    @Step("Get text describing the problem under the 'Last Name' field, when it's empty")
+    @Step("Get empty Last Name error message")
     public String getErrorEmptyLastNameMessage() {
-        return errorEmptyLastNameText.getText();
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        errorEmptyLastNameText
+                )
+        ).getText();
     }
 
-    @Step("Checking that the empty form error is displayed specifically for 'Last Name' field")
+    @Step("Check empty Last Name error is displayed")
     public boolean getErrorEmptyLastNameMessageIsDisplayed() {
-        return errorEmptyLastNameText.isDisplayed();
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        errorEmptyLastNameText
+                )
+        ).isDisplayed();
     }
 
-    @Step("Get text describing the problem under the 'Zip Cde' field, when it's empty")
-    public String getErrorEmptyZipCOdeMessage() {
-        return errorEmptyZipCodeText.getText();
+    @Step("Get empty Zip Code error message")
+    public String getErrorEmptyZipCodeMessage() {
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        errorEmptyZipCodeText
+                )
+        ).getText();
     }
 
-    @Step("Checking that the empty form error is displayed specifically for 'Zip Cde' field")
-    public boolean getErrorEmptyZipCOdeMessageIsDisplayed() {
-        return errorEmptyZipCodeText.isDisplayed();
+    @Step("Check empty Zip Code error is displayed")
+    public boolean getErrorEmptyZipCodeMessageIsDisplayed() {
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        errorEmptyZipCodeText
+                )
+        ).isDisplayed();
+    }
+
+    @Step("Get invalid email error message on Sign In page")
+    public String getSignInInvalidEmailErrorMessage() {
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        signInInvalidEmailErrorText
+                )
+        ).getText();
+    }
+
+    @Step("Check invalid email error is displayed on Sign In page")
+    public boolean isSignInInvalidEmailErrorDisplayed() {
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        signInInvalidEmailErrorText
+                )
+        ).isDisplayed();
     }
 }

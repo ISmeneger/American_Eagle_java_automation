@@ -1,36 +1,49 @@
 package tests.api;
 
-import controller.BagController;
+import api.controller.BagController;
+import api.controller.ProductController;
 import dto.BagResponse;
 import extensions.GuestTokenExtension;
 import io.qameta.allure.Severity;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import utils.AllureExtension;
+
+import java.util.List;
 
 import static io.qameta.allure.SeverityLevel.CRITICAL;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Tag("API")
 @ExtendWith(GuestTokenExtension.class)
-@ExtendWith(AllureExtension.class)
 class BagApiTests {
-    private final BagController bag = new BagController();
 
-    private static final String TEST_SKU_ID = "0043023894"; //AE Mariner Jacket
-    private static final String TEST_SKU_ID_2 = "0043421411";
+    private static final String TEST_CATEGORY_ID = "cat10025";
+
+    private BagController bag;
+    private ProductController product;
 
     @BeforeEach
-    void clearBagBeforeEachTest() {
+    void setUp() {
+
+        bag = new BagController();
+        product = new ProductController();
+
         BagResponse currentBag = bag.getBag();
+
         for (BagResponse.Item item : currentBag.getData().getItems()) {
             bag.deleteItem(item.getItemId())
                     .then()
                     .statusCode(202);
         }
+
+        BagResponse emptyBag = bag.getBag();
+
+        assertThat(emptyBag.getData().getItemCount())
+                .as("Cart must be empty before test")
+                .isZero();
+
+        assertThat(emptyBag.getData().getItems())
+                .as("Cart items list must be empty before test")
+                .isEmpty();
     }
 
     @Test
@@ -40,26 +53,29 @@ class BagApiTests {
     void addItemTest() {
         int qty = 1;
 
-        BagResponse beforeAdd = bag.getBag();
-        assertThat(beforeAdd.getData().getItemCount())
-                .as("Cart must be empty before adding")
-                .isZero();
+        String skuId =
+                product.getFirstSkuFromAvailableProducts(TEST_CATEGORY_ID);
 
-        bag.addItem(TEST_SKU_ID, qty)
+        bag.addItem(skuId, qty)
                 .then()
                 .statusCode(202);
 
         BagResponse afterAdd = bag.getBag();
+
         assertThat(afterAdd.getData().getItemCount())
                 .as("After adding one item, the cart should contain %d product(s)", qty)
                 .isEqualTo(qty);
 
-        BagResponse finalBag = bag.getBag();
-        assertThat(finalBag.getData().getItems())
+        assertThat(afterAdd.getData().getItems())
                 .as("The cart must contain a product with the required SKU")
                 .anySatisfy(item -> {
-                    assertThat(item.getSku()).isEqualTo(TEST_SKU_ID);
-                    assertThat(item.getQuantity()).isEqualTo(qty);
+                    assertThat(item.getSku())
+                            .as("SKU must match added SKU")
+                            .isEqualTo(skuId);
+
+                    assertThat(item.getQuantity())
+                            .as("Product quantity must be %d", qty)
+                            .isEqualTo(qty);
                 });
     }
 
@@ -69,17 +85,11 @@ class BagApiTests {
     @DisplayName("Check get product in cart")
     void getItemTest() {
         int qty = 1;
-        String productName = "AE Mariner Jacket";
-        String size = "XS";
-        double originalPrice = 89.95;
-        double price = 62.96;
 
-        BagResponse beforeAdd = bag.getBag();
-        assertThat(beforeAdd.getData().getItemCount())
-                .as("Cart must be empty before adding")
-                .isZero();
+        String skuId =
+                product.getFirstSkuFromAvailableProducts(TEST_CATEGORY_ID);
 
-        bag.addItem(TEST_SKU_ID, qty)
+        bag.addItem(skuId, qty)
                 .then()
                 .statusCode(202);
 
@@ -89,29 +99,32 @@ class BagApiTests {
                 .as("After adding one item, the cart should contain %d product(s)", qty)
                 .isEqualTo(qty);
 
-        BagResponse finalBag = bag.getBag();
-
-        assertThat(finalBag.getData().getItems())
-                .as("The cart must contain a product with the specified parameters")
+        assertThat(afterAdd.getData().getItems())
+                .as("The cart must contain the added product")
                 .anySatisfy(item -> {
                     assertThat(item.getSku())
-                            .as("Product SKU must be %s", TEST_SKU_ID)
-                            .isEqualTo(TEST_SKU_ID);
+                            .as("SKU must match added SKU")
+                            .isEqualTo(skuId);
+
                     assertThat(item.getQuantity())
-                            .as("The quantity of the product must be %d", qty)
+                            .as("Product quantity must be %d", qty)
                             .isEqualTo(qty);
+
                     assertThat(item.getProductName())
-                            .as("Product name must be %s", productName)
-                            .isEqualTo(productName);
+                            .as("Product name must not be empty")
+                            .isNotBlank();
+
                     assertThat(item.getSize())
-                            .as("Product size must be %s", size)
-                            .isEqualTo(size);
+                            .as("Product size must not be empty")
+                            .isNotBlank();
+
                     assertThat(item.getOriginalPrice())
-                            .as("The original price of the product must be %.2f", originalPrice)
-                            .isEqualTo(originalPrice);
+                            .as("Original price must be greater than zero")
+                            .isPositive();
+
                     assertThat(item.getPrice())
-                            .as("The price of the product must be %.2f", price)
-                            .isEqualTo(price);
+                            .as("Product price must be greater than zero")
+                            .isPositive();
                 });
     }
 
@@ -123,28 +136,47 @@ class BagApiTests {
         int initialQty = 1;
         int updatedQty = 2;
 
-        bag.addItem(TEST_SKU_ID, initialQty)
+        String skuId =
+                product.getFirstSkuFromAvailableProducts(TEST_CATEGORY_ID);
+
+        bag.addItem(skuId, initialQty)
                 .then()
                 .statusCode(202);
 
         BagResponse afterAdd = bag.getBag();
+
         assertThat(afterAdd.getData().getItemCount())
                 .as("Expected %d item(s) after adding", initialQty)
                 .isEqualTo(initialQty);
 
-        String itemId = afterAdd.getData().getItems().get(0).getItemId();
+        BagResponse.Item addedItem = afterAdd.getData().getItems().stream()
+                .filter(item -> item.getSku().equals(skuId))
+                .findFirst()
+                .orElseThrow(() ->
+                        new AssertionError(
+                                "Product with SKU " + skuId + " not found in cart"
+                        )
+                );
 
-        bag.updateItem(TEST_SKU_ID, updatedQty, itemId)
+        String itemId = addedItem.getItemId();
+
+        bag.updateItem(skuId, updatedQty, itemId)
                 .then()
                 .statusCode(202);
 
         BagResponse afterUpdate = bag.getBag();
+
         assertThat(afterUpdate.getData().getItems())
-                .as("The cart must contain a product with SKU %s and quantity %d", TEST_SKU_ID, updatedQty)
+                .as(
+                        "The cart must contain a product with SKU %s and quantity %d",
+                        skuId,
+                        updatedQty
+                )
                 .anySatisfy(item -> {
                     assertThat(item.getSku())
-                            .as("SKU must be %s", TEST_SKU_ID)
-                            .isEqualTo(TEST_SKU_ID);
+                            .as("SKU must be %s", skuId)
+                            .isEqualTo(skuId);
+
                     assertThat(item.getQuantity())
                             .as("Expected quantity %d", updatedQty)
                             .isEqualTo(updatedQty);
@@ -158,7 +190,10 @@ class BagApiTests {
     void deleteItemTest() {
         int qty = 1;
 
-        bag.addItem(TEST_SKU_ID, qty)
+        String skuId =
+                product.getFirstSkuFromAvailableProducts(TEST_CATEGORY_ID);
+
+        bag.addItem(skuId, qty)
                 .then()
                 .statusCode(202);
 
@@ -169,9 +204,13 @@ class BagApiTests {
                 .isEqualTo(qty);
 
         BagResponse.Item itemToDelete = afterAdd.getData().getItems().stream()
-                .filter(i -> i.getSku().equals(TEST_SKU_ID))
+                .filter(item -> item.getSku().equals(skuId))
                 .findFirst()
-                .orElseThrow(() -> new AssertionError("Product with SKU " + TEST_SKU_ID + " not found in cart"));
+                .orElseThrow(() ->
+                        new AssertionError(
+                                "Product with SKU " + skuId + " not found in cart"
+                        )
+                );
 
         String itemId = itemToDelete.getItemId();
 
@@ -180,40 +219,60 @@ class BagApiTests {
                 .statusCode(202);
 
         BagResponse afterDelete = bag.getBag();
+
         assertThat(afterDelete.getData().getItemCount())
-                .as("The recycle bin was expected to be empty after deletion")
+                .as("Cart should be empty after deleting the product")
                 .isZero();
+
+        assertThat(afterDelete.getData().getItems())
+                .as("Deleted product must not remain in the cart")
+                .noneSatisfy(item ->
+                        assertThat(item.getSku()).isEqualTo(skuId)
+                );
     }
 
     @Test
     @Severity(CRITICAL)
     @Tag("Smoke")
-    @DisplayName("Check get different products in cart")
-    void addAndGetItemsTest() {
+    @DisplayName("Check get different product variants in cart")
+    void addAndGetProductVariantsTest() {
         int qty = 1;
         int expectedTotalQty = 2;
 
-        BagResponse beforeAdd = bag.getBag();
-        assertThat(beforeAdd.getData().getItemCount())
-                .as("Cart must be empty before adding")
-                .isZero();
+        String productId =
+                product.getProductWithAtLeastTwoSkus(TEST_CATEGORY_ID);
 
-        bag.addItem(TEST_SKU_ID, qty)
+        List<String> skuIds =
+                product.getSkuList(productId);
+
+        assertThat(skuIds)
+                .as("Product must contain at least two SKUs")
+                .hasSizeGreaterThanOrEqualTo(2);
+
+        String firstSku = skuIds.get(0);
+        String secondSku = skuIds.get(1);
+
+        assertThat(firstSku)
+                .as("First and second SKU must be different")
+                .isNotEqualTo(secondSku);
+
+        bag.addItem(firstSku, qty)
                 .then()
                 .statusCode(202);
 
-        bag.addItem(TEST_SKU_ID_2, qty)
+        bag.addItem(secondSku, qty)
                 .then()
                 .statusCode(202);
 
         BagResponse afterAdd = bag.getBag();
+
         assertThat(afterAdd.getData().getItemCount())
-                .as("There must be %d item(s) in your cart", expectedTotalQty)
+                .as("There must be %d item(s) in the cart", expectedTotalQty)
                 .isEqualTo(expectedTotalQty);
 
         assertThat(afterAdd.getData().getItems())
                 .extracting(BagResponse.Item::getSku)
-                .as("Cart must contain both SKUs")
-                .containsExactlyInAnyOrder(TEST_SKU_ID, TEST_SKU_ID_2);
+                .as("Cart must contain both dynamically selected SKUs")
+                .containsExactlyInAnyOrder(firstSku, secondSku);
     }
 }

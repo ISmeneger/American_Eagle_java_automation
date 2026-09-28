@@ -1,6 +1,6 @@
 package support;
 
-import controller.TokenClient;
+import api.controller.TokenClient;
 import enums.UserRole;
 
 import java.util.EnumMap;
@@ -41,7 +41,6 @@ public class TokenManager {
         };
     }
 
-    @SuppressWarnings("unused")
     public static void clear() {
         currentRole.remove();
         threadTokens.remove();
