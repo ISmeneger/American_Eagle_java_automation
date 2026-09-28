@@ -1,4 +1,4 @@
-package controller;
+package api.controller;
 
 import configs.TestPropertiesConfig;
 import io.qameta.allure.Step;
@@ -13,11 +13,17 @@ import static io.restassured.http.ContentType.JSON;
 import static io.restassured.http.ContentType.URLENC;
 
 public class TokenClient {
-    private static final String TOKEN_ENDPOINT = "/ugp-api/auth/oauth/v4/token";
 
-    static TestPropertiesConfig configProperties = ConfigFactory.create(TestPropertiesConfig.class, System.getProperties());
+    private static final String TOKEN_ENDPOINT =
+            "/ugp-api/auth/oauth/v5/token";
 
-    public static RequestSpecification guestAuthSpec() {
+    private static final TestPropertiesConfig configProperties =
+            ConfigFactory.create(
+                    TestPropertiesConfig.class,
+                    System.getProperties()
+            );
+
+    private static RequestSpecification guestAuthSpec() {
         return given()
                 .baseUri(configProperties.getApiBaseUrl())
                 .accept(JSON)
@@ -25,25 +31,42 @@ public class TokenClient {
                 .header("aelang", "en_US")
                 .header("aesite", "AEO_US")
                 .header("aecountry", "US")
-                .header("authorization", configProperties.getGuestHeaderAuth())
+                .header(
+                        "authorization",
+                        configProperties.getGuestHeaderAuth()
+                )
                 .filter(new AllureRestAssured());
     }
 
     @Step("Get guest token")
     public static String getGuestToken() {
+
         Response response = guestAuthSpec()
                 .when()
                 .formParam("grant_type", "client_credentials")
                 .post(TOKEN_ENDPOINT)
-                .then()
-                .statusCode(200)
-                .extract()
-                .response();
-        return response.jsonPath().getString("access_token");
+                .andReturn();
+
+        System.out.println("TOKEN STATUS: " + response.statusCode());
+
+        response.then()
+                .statusCode(200);
+
+        String token = response.jsonPath()
+                .getString("access_token");
+
+        System.out.println(
+                "GUEST TOKEN RECEIVED: "
+                        + (token != null && !token.isBlank())
+        );
+
+        return token;
     }
 
     @Step("Get auth token")
     public static String getAuthToken() {
-        throw new NotImplementedException("Not yet implemented!");
+        throw new NotImplementedException(
+                "Not yet implemented!"
+        );
     }
 }

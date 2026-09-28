@@ -12,8 +12,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class FooterComponent {
-    WebDriver driver;
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+    private final WebDriver driver;
+    private final WebDriverWait wait;
 
     @FindBy(xpath = "//p[contains(@class, 'copyright')]")
     private WebElement copyrightText;
@@ -23,33 +24,49 @@ public class FooterComponent {
 
     public FooterComponent(WebDriver driver) {
         this.driver = driver;
+        this.wait = new WebDriverWait(
+                driver,
+                Duration.ofSeconds(10)
+        );
+
         PageFactory.initElements(driver, this);
     }
 
     @Step("Scroll to copyright text")
     public void scrollingToElement() {
+
         new Actions(driver)
                 .scrollToElement(copyrightText)
-                .pause(Duration.ofSeconds(2))
                 .perform();
+
+        wait.until(
+                ExpectedConditions.visibilityOf(copyrightText)
+        );
     }
 
     @Step("Get copyright text")
     public String getCopyrightText() {
-        return copyrightText.getText();
+        return wait.until(
+                ExpectedConditions.visibilityOf(copyrightText)
+        ).getText();
     }
 
-    @Step("Scroll footer img text")
+    @Step("Scroll to footer image")
     public void scrollingToElementFooterImg() {
+
         new Actions(driver)
                 .scrollToElement(footerImg)
-                .pause(Duration.ofSeconds(2))
                 .perform();
-        wait.until(ExpectedConditions.visibilityOf(footerImg));
+
+        wait.until(
+                ExpectedConditions.visibilityOf(footerImg)
+        );
     }
 
-    @Step("Check footer img is displayed")
+    @Step("Check footer image is displayed")
     public boolean footerImgIsDisplayed() {
-        return footerImg.isDisplayed();
+        return wait.until(
+                ExpectedConditions.visibilityOf(footerImg)
+        ).isDisplayed();
     }
 }
