@@ -40,3 +40,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Local project files ###
+.idea/
+src/test/java.zip
