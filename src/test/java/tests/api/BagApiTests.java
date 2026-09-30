@@ -15,6 +15,7 @@ import static io.qameta.allure.SeverityLevel.CRITICAL;
 import static io.qameta.allure.SeverityLevel.NORMAL;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("API")
 @ExtendWith(GuestTokenExtension.class)
 class BagApiTests {
 
@@ -50,7 +51,10 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("smoke")
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
     @DisplayName("Check add product to cart")
     void addItemTest() {
         int qty = 1;
@@ -83,7 +87,10 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("smoke")
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
     @DisplayName("Check get product in cart")
     void getItemTest() {
         int qty = 1;
@@ -132,7 +139,10 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("smoke")
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
     @DisplayName("Check update product in cart")
     void updateItemTest() {
         int initialQty = 1;
@@ -187,7 +197,10 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("smoke")
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
     @DisplayName("Check delete product in cart")
     void deleteItemTest() {
         int qty = 1;
@@ -235,7 +248,10 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("smoke")
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
     @DisplayName("Check get different product variants in cart")
     void addAndGetProductVariantsTest() {
         int qty = 1;
@@ -280,6 +296,10 @@ class BagApiTests {
 
     @Test
     @Severity(NORMAL)
+    @Tags({
+            @Tag("extended"),
+            @Tag("negative")
+    })
     @DisplayName("Add item with invalid SKU")
     void addItemWithInvalidSkuTest() {
 
@@ -309,8 +329,12 @@ class BagApiTests {
 
     @Test
     @Severity(NORMAL)
+    @Tags({
+            @Tag("extended"),
+            @Tag("negative")
+    })
     @DisplayName("Add item with zero quantity")
-    void addItemWithZeroQuantityDiagnosticTest() {
+    void addItemWithZeroQuantityTest() {
 
         String skuId =
                 product.getFirstSkuFromAvailableProducts(TEST_CATEGORY_ID);
