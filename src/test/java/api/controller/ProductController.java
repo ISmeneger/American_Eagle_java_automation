@@ -3,6 +3,7 @@ package api.controller;
 import io.restassured.response.Response;
 import support.TokenManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -147,6 +148,53 @@ public class ProductController {
 
         throw new IllegalStateException(
                 "No available product with SKUs found in category: "
+                        + categoryId
+        );
+    }
+
+    public List<String> getSkusFromTwoDifferentProducts(String categoryId) {
+
+        List<String> productIds = getAvailableProductIds(categoryId);
+
+        List<String> skuIds = new ArrayList<>();
+
+        for (String productId : productIds) {
+
+            Response response = getInventoryByProduct(productId);
+
+            if (response.statusCode() != 200) {
+                System.out.println(
+                        "SKIP PRODUCT " + productId +
+                                " — inventory status: " + response.statusCode()
+                );
+                continue;
+            }
+
+            List<String> productSkuIds = response.jsonPath()
+                    .getList(
+                            "data.'" + productId + "'.skuId",
+                            String.class
+                    );
+
+            if (productSkuIds != null && !productSkuIds.isEmpty()) {
+
+                String skuId = productSkuIds.get(0);
+
+                skuIds.add(skuId);
+
+                System.out.println(
+                        "PRODUCT " + productId +
+                                " — SELECTED SKU: " + skuId
+                );
+
+                if (skuIds.size() == 2) {
+                    return skuIds;
+                }
+            }
+        }
+
+        throw new IllegalStateException(
+                "Less than two available products with SKUs found in category: "
                         + categoryId
         );
     }
