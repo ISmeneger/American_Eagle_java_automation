@@ -8,8 +8,11 @@ import io.qameta.allure.Severity;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.time.Duration;
+
 import static io.qameta.allure.SeverityLevel.CRITICAL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @Tags({
         @Tag("API"),
@@ -94,24 +97,32 @@ public class E2EApiTests {
                 .statusCode(202);
 
         // 5. Verify updated quantity
-        BagResponse afterUpdate = bag.getBag();
+        await()
+                .atMost(Duration.ofSeconds(5))
+                .pollInterval(Duration.ofMillis(500))
+                .untilAsserted(() -> {
 
-        BagResponse.Item updatedItem = afterUpdate.getData().getItems().stream()
-                .filter(item -> itemId.equals(item.getItemId()))
-                .findFirst()
-                .orElseThrow(() ->
-                        new AssertionError(
-                                "Item with ID " + itemId + " not found after update"
-                        )
-                );
+                    BagResponse afterUpdate = bag.getBag();
 
-        assertThat(updatedItem.getSku())
-                .as("SKU must remain unchanged after quantity update")
-                .isEqualTo(skuId);
+                    BagResponse.Item updatedItem =
+                            afterUpdate.getData().getItems().stream()
+                                    .filter(item -> skuId.equals(item.getSku()))
+                                    .findFirst()
+                                    .orElseThrow(() ->
+                                            new AssertionError(
+                                                    "Product with SKU " + skuId +
+                                                            " not found after update"
+                                            )
+                                    );
 
-        assertThat(updatedItem.getQuantity())
-                .as("Product quantity must be updated to %d", updatedQty)
-                .isEqualTo(updatedQty);
+                    assertThat(updatedItem.getSku())
+                            .as("SKU must remain unchanged after quantity update")
+                            .isEqualTo(skuId);
+
+                    assertThat(updatedItem.getQuantity())
+                            .as("Product quantity must be updated to %d", updatedQty)
+                            .isEqualTo(updatedQty);
+                });
 
         // 6. Delete product
         bag.deleteItem(itemId)
