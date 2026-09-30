@@ -84,6 +84,29 @@ jobs:
           path: build/allure-results
           if-no-files-found: warn
 
+  allure-report:
+    if: always()
+    needs:
+      - api-tests
+      - ui-tests
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download API Allure results
+        uses: actions/download-artifact@v4
+        with:
+          name: api-allure-results
+          path: build/allure-results
+
+      - name: Download UI Allure results
+        uses: actions/download-artifact@v4
+        with:
+          name: ui-allure-results
+          path: build/allure-results
+
   build:
 
     runs-on: ubuntu-latest
