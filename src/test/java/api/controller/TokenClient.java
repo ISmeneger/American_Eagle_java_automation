@@ -38,8 +38,8 @@ public class TokenClient {
                 .filter(new AllureRestAssured());
     }
 
-    @Step("Get guest token")
-    public static String getGuestToken() {
+    @Step("Get guest token response")
+    public static Response getGuestTokenResponse() {
 
         Response response = guestAuthSpec()
                 .when()
@@ -47,7 +47,17 @@ public class TokenClient {
                 .post(TOKEN_ENDPOINT)
                 .andReturn();
 
-        System.out.println("TOKEN STATUS: " + response.statusCode());
+        System.out.println(
+                "TOKEN STATUS: " + response.statusCode()
+        );
+
+        return response;
+    }
+
+    @Step("Get guest token")
+    public static String getGuestToken() {
+
+        Response response = getGuestTokenResponse();
 
         response.then()
                 .statusCode(200);
