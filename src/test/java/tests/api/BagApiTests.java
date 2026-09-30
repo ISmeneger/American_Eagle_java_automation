@@ -295,6 +295,58 @@ class BagApiTests {
     }
 
     @Test
+    @Severity(CRITICAL)
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
+    @DisplayName("Check adding different products from the same category to cart")
+    void addDifferentProductsFromSameCategoryTest() {
+
+        int qty = 1;
+        int expectedTotalQty = 2;
+
+        List<String> skuIds =
+                product.getSkusFromTwoDifferentProducts(TEST_CATEGORY_ID);
+
+        assertThat(skuIds)
+                .as("Two SKUs from different products must be found")
+                .hasSize(2);
+
+        String firstSku = skuIds.get(0);
+        String secondSku = skuIds.get(1);
+
+        assertThat(firstSku)
+                .as("SKUs from different products must be different")
+                .isNotEqualTo(secondSku);
+
+        bag.addItem(firstSku, qty)
+                .then()
+                .statusCode(202);
+
+        bag.addItem(secondSku, qty)
+                .then()
+                .statusCode(202);
+
+        BagResponse afterAdd = bag.getBag();
+
+        assertThat(afterAdd.getData().getItemCount())
+                .as("There must be %d item(s) in the cart", expectedTotalQty)
+                .isEqualTo(expectedTotalQty);
+
+        assertThat(afterAdd.getData().getItems())
+                .extracting(BagResponse.Item::getSku)
+                .as("Cart must contain SKUs from both different products")
+                .containsExactlyInAnyOrder(firstSku, secondSku);
+
+        assertThat(afterAdd.getData().getItems())
+                .extracting(BagResponse.Item::getProductId)
+                .as("Cart must contain two different products")
+                .doesNotHaveDuplicates()
+                .hasSize(2);
+    }
+
+    @Test
     @Severity(NORMAL)
     @Tags({
             @Tag("extended"),
