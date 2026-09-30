@@ -49,6 +49,22 @@ tasks.register('smoke', Test) {
     systemProperties(System.getProperties())
 }
 
+tasks.register('positive', Test) {
+    useJUnitPlatform() {
+        includeTags 'positive'
+        excludeTags 'defect'
+    }
+    systemProperties(System.getProperties())
+}
+
+tasks.register('negative', Test) {
+    useJUnitPlatform() {
+        includeTags 'negative'
+        excludeTags 'defect'
+    }
+    systemProperties(System.getProperties())
+}
+
 tasks.register('allExceptDefect', Test) {
     useJUnitPlatform() {
         includeTags 'UI'
