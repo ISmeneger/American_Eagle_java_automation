@@ -5,12 +5,14 @@ import api.controller.ProductController;
 import dto.BagResponse;
 import extensions.GuestTokenExtension;
 import io.qameta.allure.Severity;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
 import static io.qameta.allure.SeverityLevel.CRITICAL;
+import static io.qameta.allure.SeverityLevel.NORMAL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(GuestTokenExtension.class)
@@ -274,5 +276,64 @@ class BagApiTests {
                 .extracting(BagResponse.Item::getSku)
                 .as("Cart must contain both dynamically selected SKUs")
                 .containsExactlyInAnyOrder(firstSku, secondSku);
+    }
+
+    @Test
+    @Severity(NORMAL)
+    @DisplayName("Add item with invalid SKU")
+    void addItemWithInvalidSkuTest() {
+
+        String invalidSkuId = "invalid-sku-id";
+
+        Response response =
+                bag.addItem(invalidSkuId, 1);
+
+        response.then()
+                .statusCode(422);
+
+        assertThat(response.jsonPath().getString("errors[0].key"))
+                .as("Error key must indicate a cart error")
+                .isEqualTo("error.cart.general");
+
+        assertThat(response.jsonPath().getString("errors[0].message"))
+                .as("Error message must indicate that SKU was not found")
+                .isEqualTo("catalog.error.sku_not_found");
+
+        List<String> errorFields = response.jsonPath()
+                .getList("errors[0].fields", String.class);
+
+        assertThat(errorFields)
+                .as("Error must be related to skuId")
+                .contains("skuId");
+    }
+
+    @Test
+    @Severity(NORMAL)
+    @DisplayName("Add item with zero quantity")
+    void addItemWithZeroQuantityDiagnosticTest() {
+
+        String skuId =
+                product.getFirstSkuFromAvailableProducts(TEST_CATEGORY_ID);
+
+        Response response =
+                bag.addItem(skuId, 0);
+
+        response.then()
+                .statusCode(400);
+
+        assertThat(response.jsonPath().getInt("status"))
+                .as("Response status must be 400")
+                .isEqualTo(400);
+
+        assertThat(response.jsonPath().getString("errors[0].key"))
+                .as("Error key must indicate invalid item quantity")
+                .isEqualTo("error.cart.item_qty_invalid");
+
+        List<String> errorFields = response.jsonPath()
+                .getList("errors[0].fields", String.class);
+
+        assertThat(errorFields)
+                .as("Error must be related to item quantity")
+                .contains("items[0].quantity");
     }
 }
