@@ -65,6 +65,14 @@ tasks.register('negative', Test) {
     systemProperties(System.getProperties())
 }
 
+tasks.register('e2e', Test) {
+    useJUnitPlatform() {
+        includeTags 'E2E'
+        excludeTags 'defect'
+    }
+    systemProperties(System.getProperties())
+}
+
 tasks.register('allExceptDefect', Test) {
     useJUnitPlatform() {
         includeTags 'UI'
