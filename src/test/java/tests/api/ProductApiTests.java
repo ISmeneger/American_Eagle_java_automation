@@ -4,9 +4,7 @@ import api.controller.ProductController;
 import extensions.GuestTokenExtension;
 import io.qameta.allure.Severity;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
@@ -15,6 +13,7 @@ import static io.qameta.allure.SeverityLevel.CRITICAL;
 import static io.qameta.allure.SeverityLevel.NORMAL;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("API")
 @ExtendWith(GuestTokenExtension.class)
 public class ProductApiTests {
 
@@ -26,7 +25,10 @@ public class ProductApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("smoke")
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
     @DisplayName("Get products by category")
     void getProductsByCategoryTest() {
 
@@ -58,7 +60,10 @@ public class ProductApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("smoke")
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
     @DisplayName("Get inventory by product ID")
     void getInventoryByProductTest() {
 
@@ -100,6 +105,10 @@ public class ProductApiTests {
 
     @Test
     @Severity(NORMAL)
+    @Tags({
+            @Tag("extended"),
+            @Tag("positive")
+    })
     @DisplayName("Get available product IDs from category")
     void getAvailableProductIdsTest() {
 
@@ -122,6 +131,10 @@ public class ProductApiTests {
 
     @Test
     @Severity(NORMAL)
+    @Tags({
+            @Tag("extended"),
+            @Tag("positive")
+    })
     @DisplayName("Get first SKU from available product")
     void getFirstSkuFromAvailableProductsTest() {
 
@@ -141,6 +154,10 @@ public class ProductApiTests {
 
     @Test
     @Severity(NORMAL)
+    @Tags({
+            @Tag("extended"),
+            @Tag("positive")
+    })
     @DisplayName("Find available product with at least two SKUs")
     void getProductWithAtLeastTwoSkusTest() {
 
@@ -160,6 +177,10 @@ public class ProductApiTests {
 
     @Test
     @Severity(NORMAL)
+    @Tags({
+            @Tag("extended"),
+            @Tag("negative")
+    })
     @DisplayName("Get inventory with invalid product ID")
     void getInventoryWithInvalidProductIdTest() {
 
@@ -191,6 +212,10 @@ public class ProductApiTests {
 
     @Test
     @Severity(NORMAL)
+    @Tags({
+            @Tag("extended"),
+            @Tag("negative")
+    })
     @DisplayName("Get products with invalid category ID")
     void getProductsWithInvalidCategoryIdTest() {
 
