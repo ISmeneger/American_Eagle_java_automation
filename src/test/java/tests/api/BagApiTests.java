@@ -48,7 +48,7 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("Smoke")
+    @Tag("smoke")
     @DisplayName("Check add product to cart")
     void addItemTest() {
         int qty = 1;
@@ -81,7 +81,7 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("Smoke")
+    @Tag("smoke")
     @DisplayName("Check get product in cart")
     void getItemTest() {
         int qty = 1;
@@ -130,7 +130,7 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("Smoke")
+    @Tag("smoke")
     @DisplayName("Check update product in cart")
     void updateItemTest() {
         int initialQty = 1;
@@ -185,7 +185,7 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("Smoke")
+    @Tag("smoke")
     @DisplayName("Check delete product in cart")
     void deleteItemTest() {
         int qty = 1;
@@ -233,7 +233,7 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("Smoke")
+    @Tag("smoke")
     @DisplayName("Check get different product variants in cart")
     void addAndGetProductVariantsTest() {
         int qty = 1;
