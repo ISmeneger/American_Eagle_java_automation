@@ -5,14 +5,17 @@ import api.controller.ProductController;
 import dto.BagResponse;
 import extensions.GuestTokenExtension;
 import io.qameta.allure.Severity;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
 import static io.qameta.allure.SeverityLevel.CRITICAL;
+import static io.qameta.allure.SeverityLevel.NORMAL;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("API")
 @ExtendWith(GuestTokenExtension.class)
 class BagApiTests {
 
@@ -48,7 +51,10 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("Smoke")
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
     @DisplayName("Check add product to cart")
     void addItemTest() {
         int qty = 1;
@@ -81,7 +87,10 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("Smoke")
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
     @DisplayName("Check get product in cart")
     void getItemTest() {
         int qty = 1;
@@ -130,7 +139,10 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("Smoke")
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
     @DisplayName("Check update product in cart")
     void updateItemTest() {
         int initialQty = 1;
@@ -185,7 +197,10 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("Smoke")
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
     @DisplayName("Check delete product in cart")
     void deleteItemTest() {
         int qty = 1;
@@ -233,7 +248,10 @@ class BagApiTests {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("Smoke")
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
     @DisplayName("Check get different product variants in cart")
     void addAndGetProductVariantsTest() {
         int qty = 1;
@@ -274,5 +292,124 @@ class BagApiTests {
                 .extracting(BagResponse.Item::getSku)
                 .as("Cart must contain both dynamically selected SKUs")
                 .containsExactlyInAnyOrder(firstSku, secondSku);
+    }
+
+    @Test
+    @Severity(CRITICAL)
+    @Tags({
+            @Tag("smoke"),
+            @Tag("positive")
+    })
+    @DisplayName("Check adding different products from the same category to cart")
+    void addDifferentProductsFromSameCategoryTest() {
+
+        int qty = 1;
+        int expectedTotalQty = 2;
+
+        List<String> skuIds =
+                product.getSkusFromTwoDifferentProducts(TEST_CATEGORY_ID);
+
+        assertThat(skuIds)
+                .as("Two SKUs from different products must be found")
+                .hasSize(2);
+
+        String firstSku = skuIds.get(0);
+        String secondSku = skuIds.get(1);
+
+        assertThat(firstSku)
+                .as("SKUs from different products must be different")
+                .isNotEqualTo(secondSku);
+
+        bag.addItem(firstSku, qty)
+                .then()
+                .statusCode(202);
+
+        bag.addItem(secondSku, qty)
+                .then()
+                .statusCode(202);
+
+        BagResponse afterAdd = bag.getBag();
+
+        assertThat(afterAdd.getData().getItemCount())
+                .as("There must be %d item(s) in the cart", expectedTotalQty)
+                .isEqualTo(expectedTotalQty);
+
+        assertThat(afterAdd.getData().getItems())
+                .extracting(BagResponse.Item::getSku)
+                .as("Cart must contain SKUs from both different products")
+                .containsExactlyInAnyOrder(firstSku, secondSku);
+
+        assertThat(afterAdd.getData().getItems())
+                .extracting(BagResponse.Item::getProductId)
+                .as("Cart must contain two different products")
+                .doesNotHaveDuplicates()
+                .hasSize(2);
+    }
+
+    @Test
+    @Severity(NORMAL)
+    @Tags({
+            @Tag("extended"),
+            @Tag("negative")
+    })
+    @DisplayName("Add item with invalid SKU")
+    void addItemWithInvalidSkuTest() {
+
+        String invalidSkuId = "invalid-sku-id";
+
+        Response response =
+                bag.addItem(invalidSkuId, 1);
+
+        response.then()
+                .statusCode(422);
+
+        assertThat(response.jsonPath().getString("errors[0].key"))
+                .as("Error key must indicate a cart error")
+                .isEqualTo("error.cart.general");
+
+        assertThat(response.jsonPath().getString("errors[0].message"))
+                .as("Error message must indicate that SKU was not found")
+                .isEqualTo("catalog.error.sku_not_found");
+
+        List<String> errorFields = response.jsonPath()
+                .getList("errors[0].fields", String.class);
+
+        assertThat(errorFields)
+                .as("Error must be related to skuId")
+                .contains("skuId");
+    }
+
+    @Test
+    @Severity(NORMAL)
+    @Tags({
+            @Tag("extended"),
+            @Tag("negative")
+    })
+    @DisplayName("Add item with zero quantity")
+    void addItemWithZeroQuantityTest() {
+
+        String skuId =
+                product.getFirstSkuFromAvailableProducts(TEST_CATEGORY_ID);
+
+        Response response =
+                bag.addItem(skuId, 0);
+
+        response.then()
+                .statusCode(400);
+
+        assertThat(response.jsonPath().getInt("status"))
+                .as("Response status must be 400")
+                .isEqualTo(400);
+
+        assertThat(response.jsonPath().getString("errors[0].key"))
+                .as("Error key must indicate invalid item quantity")
+                .isEqualTo("error.cart.item_qty_invalid");
+
+        List<String> errorFields = response.jsonPath()
+                .getList("errors[0].fields", String.class);
+
+        assertThat(errorFields)
+                .as("Error must be related to item quantity")
+                .contains("items[0].quantity");
     }
 }
