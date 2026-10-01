@@ -18,7 +18,10 @@ import static constants.CommonConstants.BASE_URL;
 import static io.qameta.allure.SeverityLevel.NORMAL;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Tags({@Tag("UI"), @Tag("extended")})
+@Tags({
+        @Tag("UI"),
+        @Tag("extended")
+})
 class RegistrationTests extends BaseTest {
 
     private HomePage homePage;
@@ -80,7 +83,10 @@ class RegistrationTests extends BaseTest {
                     "Registration form filling works, but submission results in Access Denied."
     )
     @Severity(NORMAL)
-    @Tags({@Tag("positive"), @Tag("defect")})
+    @Tags({
+            @Tag("positive"),
+            @Tag("defect")
+    })
     @DisplayName("Check successful account creation")
     void shouldCreateAccountSuccessfullyTest() {
 

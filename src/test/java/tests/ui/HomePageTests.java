@@ -11,7 +11,10 @@ import static constants.CommonConstants.BASE_URL;
 import static io.qameta.allure.SeverityLevel.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@Tags({@Tag("UI"), @Tag("smoke")})
+@Tags({
+        @Tag("UI"),
+        @Tag("smoke")
+})
 class HomePageTests extends BaseTest {
     HomePage homePage;
 

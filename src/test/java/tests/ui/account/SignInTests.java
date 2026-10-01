@@ -18,7 +18,10 @@ import static io.qameta.allure.SeverityLevel.NORMAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Tags({@Tag("UI"), @Tag("extended")})
+@Tags({
+        @Tag("UI"),
+        @Tag("extended")
+})
 class SignInTests extends BaseTest {
 
     private HomePage homePage;
@@ -60,7 +63,10 @@ class SignInTests extends BaseTest {
                     "Manual sign-in works successfully."
     )
     @Severity(NORMAL)
-    @Tags({@Tag("positive"), @Tag("defect")})
+    @Tags({
+            @Tag("positive"),
+            @Tag("defect")
+    })
     @DisplayName("Check successful sign in")
     void signInPageTest() {
 
@@ -145,7 +151,10 @@ class SignInTests extends BaseTest {
                     "because automated sign-in is blocked by anti-bot protection."
     )
     @Severity(NORMAL)
-    @Tags({@Tag("negative"), @Tag("defect")})
+    @Tags({
+            @Tag("negative"),
+            @Tag("defect")
+    })
     @DisplayName("Check sign in with invalid password")
     void invalidPasswordSignInPageTest() {
 
@@ -227,7 +236,10 @@ class SignInTests extends BaseTest {
                     "because automated sign-in is blocked by anti-bot protection."
     )
     @Severity(NORMAL)
-    @Tags({@Tag("negative"), @Tag("defect")})
+    @Tags({
+            @Tag("negative"),
+            @Tag("defect")
+    })
     @DisplayName("Check sign in with empty password")
     void emptyPasswordSignInPageTest() {
 
@@ -272,7 +284,10 @@ class SignInTests extends BaseTest {
                     "because automated sign-in is blocked by anti-bot protection."
     )
     @Severity(NORMAL)
-    @Tags({@Tag("negative"), @Tag("defect")})
+    @Tags({
+            @Tag("negative"),
+            @Tag("defect")
+    })
     @DisplayName("Check sign in with short password")
     void shortPasswordSignInPageTest() {
 
@@ -317,7 +332,10 @@ class SignInTests extends BaseTest {
                     "because automated sign-in is blocked by anti-bot protection."
     )
     @Severity(NORMAL)
-    @Tags({@Tag("negative"), @Tag("defect")})
+    @Tags({
+            @Tag("negative"),
+            @Tag("defect")
+    })
     @DisplayName("Check sign in with long password")
     void longPasswordSignInPageTest() {
 
