@@ -14,7 +14,10 @@ import static constants.CommonConstants.*;
 import static io.qameta.allure.SeverityLevel.CRITICAL;
 import static org.junit.jupiter.api.Assertions.*;
 
-@Tags({@Tag("UI"), @Tag("extended")})
+@Tags({
+        @Tag("UI"),
+        @Tag("extended")
+})
 class MensClothesChapterAuthorizedUserTests extends BaseTest {
 
     HomePage homePage;
@@ -41,7 +44,10 @@ class MensClothesChapterAuthorizedUserTests extends BaseTest {
                     "Manual sign-in works successfully."
     )
     @Severity(CRITICAL)
-    @Tags({@Tag("positive"), @Tag("defect")})
+    @Tags({
+            @Tag("positive"),
+            @Tag("defect")
+    })
     @DisplayName("Authorized user add a product to the cart")
     void checkAuthorizedAddItemToCartTest() {
 
