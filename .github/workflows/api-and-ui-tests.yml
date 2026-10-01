@@ -107,6 +107,21 @@ jobs:
           name: ui-allure-results
           path: build/allure-results
 
+      - name: Copy History
+        uses: actions/checkout@v2
+        if: always()
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Build Report
+        uses: simple-elf/allure-report-action@v1.15
+        if: always()
+        with:
+          allure_results: build/allure-results
+          allure_history: allure-history
+          keep_reports: 20
+
   build:
 
     runs-on: ubuntu-latest
