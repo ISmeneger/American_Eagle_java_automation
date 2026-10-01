@@ -63,7 +63,10 @@ class SearchTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
-    @Tag("negative")
+    @Tags({
+            @Tag("negative"),
+            @Tag("defect")
+    })
     @DisplayName("Search for non-existing product")
     void searchNonExistingProductTest() {
 

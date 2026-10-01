@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.seleniumhq.selenium:selenium-java:4.33.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
     testImplementation 'org.assertj:assertj-core:3.27.3'
+    testImplementation 'org.awaitility:awaitility:4.3.0'
     implementation 'org.aeonbits.owner:owner:1.0.12'
     testImplementation "io.qameta.allure:allure-junit5:${allureVersion}"
     implementation "io.qameta.allure:allure-rest-assured:${allureVersion}"
@@ -44,6 +45,30 @@ test {
 tasks.register('smoke', Test) {
     useJUnitPlatform() {
         includeTags 'smoke'
+        excludeTags 'defect'
+    }
+    systemProperties(System.getProperties())
+}
+
+tasks.register('positive', Test) {
+    useJUnitPlatform() {
+        includeTags 'positive'
+        excludeTags 'defect'
+    }
+    systemProperties(System.getProperties())
+}
+
+tasks.register('negative', Test) {
+    useJUnitPlatform() {
+        includeTags 'negative'
+        excludeTags 'defect'
+    }
+    systemProperties(System.getProperties())
+}
+
+tasks.register('e2e', Test) {
+    useJUnitPlatform() {
+        includeTags 'E2E'
         excludeTags 'defect'
     }
     systemProperties(System.getProperties())
