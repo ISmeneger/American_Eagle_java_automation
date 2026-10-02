@@ -16,6 +16,14 @@
 
 ➡️ **[Open Allure Report](https://ismeneger.github.io/American_Eagle_java_automation/)**
 
+### ✅ Current CI status
+
+- **43 automated tests**
+- **17 API tests**
+- **26 UI tests**
+- **100% passed** in the latest CI run
+- Combined **API + UI Allure Report**
+
 ---
 
 <a id="contents"></a>
@@ -37,7 +45,7 @@
 - [🧪 API E2E сценарий](#api-e2e)
 - [📁 Структура проекта](#project-structure)
 - [📈 CI/CD результат](#cicd-result)
-- [👤 AUTHORIZEDor](#AUTHORIZEDor)
+- [👤 Автор](#author)
 
 ---
 
@@ -290,9 +298,14 @@ Negative-сценарий поиска без результатов был ис
 
 ### API
 
+Для локального запуска API-тестов guest credential передаётся через переменную окружения и JVM system property.
+
 ```powershell
-.\gradlew apiTests
+$env:AE_GUEST_AUTH="Basic <guest-api-credential>"
+.\gradlew apiTests --rerun-tasks "-Dguest.header.auth=$env:AE_GUEST_AUTH"
 ```
+
+> Не добавляйте реальное значение `AE_GUEST_AUTH` в репозиторий.
 
 ### UI
 
@@ -339,14 +352,23 @@ Negative-сценарий поиска без результатов был ис
 
 В GitHub Actions используются GitHub Secrets:
 
-- `EMAIL`
-- `PASSWORD`
+- `AE_GUEST_AUTH` — Basic credential для получения guest access token;
+- `EMAIL` — email тестового пользователя;
+- `PASSWORD` — пароль тестового пользователя.
+
+Пример запуска API job:
+
+```bash
+./gradlew apiTests -Dguest.header.auth="$AE_GUEST_AUTH"
+```
 
 Пример запуска UI job:
 
 ```bash
-./gradlew uiTests -Denv=default -Demail=$EMAIL_INPUT -Dpassword=$PASSWORD_INPUT
+./gradlew uiTests -Denv=default -Demail="$EMAIL_INPUT" -Dpassword="$PASSWORD_INPUT"
 ```
+
+Секретные значения не хранятся в `*.properties` и не должны попадать в Git-историю.
 
 [⬆️ К содержанию](#contents)
 
@@ -367,13 +389,14 @@ ui-tests ──► ui-allure-results ────┘
 
 - поднимает Java 21;
 - настраивает Gradle;
-- запускает `./gradlew apiTests`;
+- получает `AE_GUEST_AUTH` из GitHub Secrets;
+- запускает `./gradlew apiTests -Dguest.header.auth="$AE_GUEST_AUTH"`;
 - сохраняет `build/allure-results` как artifact `api-allure-results`.
 
 ### `ui-tests`
 
 - поднимает Selenium Standalone Chrome;
-- передаёт credentials через GitHub Secrets;
+- передаёт `EMAIL` и `PASSWORD` через GitHub Secrets;
 - запускает `./gradlew uiTests`;
 - сохраняет `build/allure-results` как artifact `ui-allure-results`.
 
@@ -555,7 +578,7 @@ src
         ├── default.properties
         ├── dev.properties
         ├── test.properties
-        └── TestPlan.pdf
+        └── American_Eagle_TestPlan_2026.pdf
 ```
 
 Такая структура разделяет:
@@ -578,6 +601,7 @@ src
 
 Текущий CI:
 
+- последний проверенный CI-запуск: **43 теста, 100% passed**;
 - API и UI выполняются независимо;
 - падение тестового job не мешает сохранению его Allure results благодаря `if: always()`;
 - отчёт формируется отдельным job;
@@ -610,8 +634,8 @@ src
 
 ---
 
-<a id="AUTHORIZEDor"></a>
-## 👤 AUTHORIZEDor
+<a id="author"></a>
+## 👤 Автор
 
 **Ilya Sidorychev**
 
