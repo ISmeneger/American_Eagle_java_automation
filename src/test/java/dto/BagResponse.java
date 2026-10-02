@@ -8,14 +8,16 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class BagResponse {
+
     private BagData data;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @Data
     public static class BagData {
+
         private String id;
         private String currencyCode;
-        public Summary summary;
+        private Summary summary;
         private List<Item> items;
         private int itemCount;
     }
@@ -23,6 +25,7 @@ public class BagResponse {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @Data
     public static class Item {
+
         private String itemId;
         private String productId;
         private String productName;
@@ -37,50 +40,53 @@ public class BagResponse {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @Data
     public static class Summary {
-        public String id;
-        public double shipping;
-        public double shippingTax;
-        public double subtotal;
-        public double discount;
-        public double donation;
-        public double subtotalMinusDiscount;
-        public double tax;
-        public double shippingItemsCost;
-        public double pickupItemsCost;
-        public double total;
-        public double amountUntilFreeShipping;
-        public double freeShippingThreshold;
-        public double giftCardTotal;
-        public double giftCardStandardTotal;
-        public double giftCardInstantCreditTotal;
 
-        public List<AppliedPromotion> appliedPromotions;
-        public OrderSummarySavings orderSummarySavings;
-        public double creditSavingsAmount;
-        public double netTotal;
+        private String id;
+        private double shipping;
+        private double shippingTax;
+        private double subtotal;
+        private double discount;
+        private double donation;
+        private double subtotalMinusDiscount;
+        private double tax;
+        private double shippingItemsCost;
+        private double pickupItemsCost;
+        private double total;
+        private double amountUntilFreeShipping;
+        private double freeShippingThreshold;
+        private double giftCardTotal;
+        private double giftCardStandardTotal;
+        private double giftCardInstantCreditTotal;
+
+        private List<AppliedPromotion> appliedPromotions;
+        private OrderSummarySavings orderSummarySavings;
+        private double creditSavingsAmount;
+        private double netTotal;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @Data
     public static class AppliedPromotion {
-        public String id;
-        public String name;
-        public String message;
-        public double discount;
-        public boolean qualified;
-        public int type;
-        public String discountType;
-        public int channel;
+
+        private String id;
+        private String name;
+        private String message;
+        private double discount;
+        private boolean qualified;
+        private int type;
+        private String discountType;
+        private int channel;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @Data
     public static class OrderSummarySavings {
-        public double listPriceTotal;
-        public double saleMarkdown;
-        public double discounts;
-        public double rawShipping;
-        public double subTotalBeforeDiscount;
-        public double savings;
+
+        private double listPriceTotal;
+        private double saleMarkdown;
+        private double discounts;
+        private double rawShipping;
+        private double subTotalBeforeDiscount;
+        private double savings;
     }
 }

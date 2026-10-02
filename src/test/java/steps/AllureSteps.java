@@ -24,25 +24,31 @@ public class AllureSteps {
 
         Allure.addAttachment(
                 "Screenshot on failure",
-                new ByteArrayInputStream(screenshot)
+                "image/png",
+                new ByteArrayInputStream(screenshot),
+                ".png"
         );
     }
 
     @Step("Attach current URL on test failure")
     public void attachCurrentUrl() {
+        String currentUrl = driver.getCurrentUrl();
+
         Allure.addAttachment(
                 "Current URL",
                 "text/plain",
-                driver.getCurrentUrl()
+                currentUrl != null ? currentUrl : "URL is unavailable"
         );
     }
 
     @Step("Attach page source on test failure")
     public void attachPageSource() {
+        String pageSource = driver.getPageSource();
+
         Allure.addAttachment(
                 "Page Source",
                 "text/html",
-                driver.getPageSource(),
+                pageSource != null ? pageSource : "Page source is unavailable",
                 ".html"
         );
     }

@@ -3,7 +3,11 @@ package tests.ui.search;
 import components.HeaderComponent;
 import io.qameta.allure.Severity;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
+import org.junit.jupiter.api.Test;
 import pages.HomePage;
 import pages.SearchResultsPage;
 import tests.ui.BaseTest;
@@ -16,15 +20,14 @@ import static io.qameta.allure.SeverityLevel.CRITICAL;
 })
 class SearchTests extends BaseTest {
 
-    HomePage homePage;
-    HeaderComponent headerComponent;
-    SearchResultsPage searchResultsPage;
+    private HeaderComponent headerComponent;
+    private SearchResultsPage searchResultsPage;
 
     @BeforeEach
     void setupPage() {
+        HomePage homePage = new HomePage(driver);
 
-        homePage = new HomePage(driver);
-        headerComponent = new HeaderComponent(driver);
+        headerComponent = homePage.getHeader();
         searchResultsPage = new SearchResultsPage(driver);
 
         homePage.closeBlockingOverlaysIfAvailable();

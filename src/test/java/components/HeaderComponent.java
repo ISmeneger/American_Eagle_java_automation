@@ -14,11 +14,9 @@ import java.time.Duration;
 
 public class HeaderComponent {
 
-    WebDriver driver;
-    WebDriverWait wait;
+    private final WebDriverWait wait;
 
     public HeaderComponent(WebDriver driver) {
-        this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         PageFactory.initElements(driver, this);
     }
@@ -50,14 +48,12 @@ public class HeaderComponent {
     @FindBy(name = "search-cta")
     private WebElement searchButton;
 
-    /*
-     * We use the account icon for display checks.
-     * For clicking, click its parent interactive element instead of the SVG itself.
-     */
+    // The SVG is used for visibility checks; click its parent interactive element.
+
     @FindBy(css = "svg[data-testid='icon-account']")
     private WebElement iconAccount;
 
-    private static final By ACCOUNT_BUTTON =
+    private static final By ACCOUNT_ICON =
             By.cssSelector("svg[data-testid='icon-account']");
 
     private static final By SEARCH_INPUT =
@@ -92,7 +88,7 @@ public class HeaderComponent {
     }
 
     @Step("Get main logo title")
-    public String getAeoLogoSubtitleValue() {
+    public String getAeoLogoTitle() {
         return wait.until(
                 ExpectedConditions.visibilityOf(subTitleAeoLogo)
         ).getDomProperty("title");
@@ -148,13 +144,13 @@ public class HeaderComponent {
     }
 
     @Step("Check 'Search' button is displayed")
-    public Boolean searchButtonIsDisplayed() {
+    public boolean searchButtonIsDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOf(searchButton)
         ).isDisplayed();
     }
 
-    @Step("Click search button")
+    @Step("Click 'Search' button")
     public void clickSearchButton() {
         wait.until(
                 ExpectedConditions.elementToBeClickable(searchButton)
@@ -162,7 +158,7 @@ public class HeaderComponent {
     }
 
     @Step("Check search input field is displayed")
-    public Boolean searchInputIsDisplayed() {
+    public boolean searchInputIsDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
                         SEARCH_INPUT
@@ -203,19 +199,19 @@ public class HeaderComponent {
         ).click();
     }
 
-    @Step("Check account icon is displayed")
-    public Boolean accountButtonIsDisplayed() {
+    @Step("Check 'Account' icon is displayed")
+    public boolean accountButtonIsDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOf(iconAccount)
         ).isDisplayed();
     }
 
-    @Step("Click account button")
+    @Step("Click 'Account' button")
     public void clickAccountButton() {
 
         WebElement accountIcon = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                        ACCOUNT_BUTTON
+                        ACCOUNT_ICON
                 )
         );
 
@@ -229,7 +225,7 @@ public class HeaderComponent {
         ).click();
     }
 
-    @Step("Click Create account button")
+    @Step("Click 'Create Account' button")
     public void clickCreateAccountButton() {
         wait.until(
                 ExpectedConditions.elementToBeClickable(
@@ -238,8 +234,8 @@ public class HeaderComponent {
         ).click();
     }
 
-    @Step("Check 'Sign in' button is displayed")
-    public Boolean signInButtonIsDisplayed() {
+    @Step("Check 'Sign In' button is displayed")
+    public boolean signInButtonIsDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOf(signInButton)
         ).isDisplayed();
@@ -253,21 +249,21 @@ public class HeaderComponent {
     }
 
     @Step("Check 'Create Account' button is displayed")
-    public Boolean createAccountButtonIsDisplayed() {
+    public boolean createAccountButtonIsDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOf(createAccountButton)
         ).isDisplayed();
     }
 
     @Step("Check 'Favorites' button is displayed")
-    public boolean favoriteButtonIsDisplayed() {
+    public boolean favoritesButtonIsDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOf(favoritesButton)
         ).isDisplayed();
     }
 
-    @Step("Click 'Favorite' button")
-    public void clickFavoriteButton() {
+    @Step("Click 'Favorites' button")
+    public void clickFavoritesButton() {
         wait.until(
                 ExpectedConditions.elementToBeClickable(
                         favoritesButton
@@ -275,21 +271,21 @@ public class HeaderComponent {
         ).click();
     }
 
-    @Step("Get text in menu 'Favorites'")
-    public String getFavoriteTitleText() {
+    @Step("Get 'Favorites' page title")
+    public String getFavoritesTitleText() {
         return wait.until(
                 ExpectedConditions.visibilityOf(favoritesText)
         ).getText();
     }
 
-    @Step("Check basket button is displayed")
-    public Boolean basketButtonIsDisplayed() {
+    @Step("Check 'Basket' button is displayed")
+    public boolean basketButtonIsDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOf(basketButton)
         ).isDisplayed();
     }
 
-    @Step("Click basket button")
+    @Step("Click 'Basket' button")
     public void clickBasketButton() {
         wait.until(
                 ExpectedConditions.elementToBeClickable(

@@ -5,12 +5,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class ShoppingCartPage extends BasePage {
-
-    private final WebDriver driver;
 
     @FindBy(css = "h2[data-test-items-qty-msg]")
     private WebElement quantityOfItems;
@@ -53,19 +50,17 @@ public class ShoppingCartPage extends BasePage {
 
     public ShoppingCartPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
     }
 
-    @Step("Get quantity of items in the cart")
+    @Step("Get quantity of items in cart")
     public String getQuantityOfItemsText() {
         return wait.until(
                 ExpectedConditions.visibilityOf(quantityOfItems)
         ).getText();
     }
 
-    @Step("Click edit item button")
-    public void editItemButton() {
+    @Step("Click 'Edit Item' button")
+    public void clickEditItemButton() {
 
         WebElement editButton = wait.until(
                 ExpectedConditions.elementToBeClickable(editItem)
@@ -81,7 +76,7 @@ public class ShoppingCartPage extends BasePage {
     }
 
     @Step("Move to 'Update Bag' button")
-    public void movingToElementUpdateBagButton() {
+    public void moveToUpdateBagButton() {
 
         WebElement updateButton = wait.until(
                 ExpectedConditions.visibilityOf(updateBagButton)
@@ -96,7 +91,9 @@ public class ShoppingCartPage extends BasePage {
     @Step("Increase product quantity")
     public void increaseProductQuantity() {
         wait.until(
-                ExpectedConditions.elementToBeClickable(increaseQuantityButton)
+                ExpectedConditions.elementToBeClickable(
+                        increaseQuantityButton
+                )
         ).click();
     }
 
@@ -107,7 +104,7 @@ public class ShoppingCartPage extends BasePage {
         ).click();
     }
 
-    @Step("Get product name in the cart")
+    @Step("Get product name in cart")
     public String getProductName() {
         return wait.until(
                 ExpectedConditions.visibilityOf(productName)
@@ -126,7 +123,7 @@ public class ShoppingCartPage extends BasePage {
     }
 
     @Step("Remove product from bag")
-    public void removeProductInBag() {
+    public void removeProductFromBag() {
 
         WebElement remove = wait.until(
                 ExpectedConditions.visibilityOf(removeButton)
@@ -142,27 +139,27 @@ public class ShoppingCartPage extends BasePage {
     }
 
     @Step("Get empty bag message")
-    public String getItemEmptyText() {
+    public String getEmptyBagMessage() {
         return wait.until(
                 ExpectedConditions.visibilityOf(emptyBagText)
         ).getText();
     }
 
     @Step("Click 'Sign In' button in cart")
-    public void signInButtonClick() {
+    public void clickSignInButton() {
         wait.until(
                 ExpectedConditions.elementToBeClickable(signInButton)
         ).click();
     }
 
     @Step("Get cart page header")
-    public String getPageCartHeaderText() {
+    public String getCartPageHeader() {
         return wait.until(
                 ExpectedConditions.visibilityOf(pageCartHeader)
         ).getText();
     }
 
-    @Step("Check that free shipping is displayed in cart")
+    @Step("Check free shipping message is displayed")
     public boolean isFreeShippingMessageDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOf(freeShipping)
@@ -170,7 +167,7 @@ public class ShoppingCartPage extends BasePage {
     }
 
     @Step("Get product price in cart")
-    public String getCartPrice() {
+    public String getProductPriceInCart() {
         return wait.until(
                 ExpectedConditions.visibilityOf(cartProductPrice)
         ).getText();

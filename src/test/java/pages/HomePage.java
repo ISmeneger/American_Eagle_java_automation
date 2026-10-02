@@ -2,13 +2,15 @@ package pages;
 
 import components.FooterComponent;
 import components.HeaderComponent;
+import configs.ConfigProvider;
 import io.qameta.allure.Step;
 import lombok.Getter;
 import org.openqa.selenium.WebDriver;
 
-import static constants.CommonConstants.BASE_URL;
-
 public class HomePage extends BasePage {
+
+    private static final String UI_BASE_URL =
+            ConfigProvider.get().getUiBaseUrl();
 
     @Getter
     private final FooterComponent footer;
@@ -24,7 +26,7 @@ public class HomePage extends BasePage {
 
     @Step("Open homepage")
     private void open() {
-        driver.get(BASE_URL);
+        driver.get(UI_BASE_URL);
     }
 
     @Step("Get web title")

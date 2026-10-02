@@ -6,15 +6,16 @@ import org.aeonbits.owner.Config;
         "classpath:${env}.properties",
         "classpath:default.properties"
 })
-public interface TestPropertiesConfig extends org.aeonbits.owner.Config {
+public interface TestPropertiesConfig extends Config {
+
     @Key("baseUrl")
     String getApiBaseUrl();
 
-    @Key("guest.header.auth")
-    String getGuestHeaderAuth();
-
     @Key("uiBaseUrl")
     String getUiBaseUrl();
+
+    @Key("guest.header.auth")
+    String getGuestHeaderAuth();
 
     @Key("email")
     String getEmail();

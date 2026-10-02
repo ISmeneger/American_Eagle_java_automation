@@ -1,20 +1,30 @@
 package tests.ui;
 
+import configs.ConfigProvider;
 import io.qameta.allure.Severity;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
+import org.junit.jupiter.api.Test;
 import pages.HomePage;
 import pages.MensClothesPage;
 import pages.ProductPage;
 import pages.ShoppingCartPage;
 import steps.ProductCatalogSteps;
 
-
 import java.math.BigDecimal;
 
-import static constants.CommonConstants.*;
+import static constants.CommonConstants.ADDED_TO_BAG_MESSAGE;
+import static constants.CommonConstants.CART_PATH;
+import static constants.CommonConstants.GUEST_CART_TITLE;
+import static constants.CommonConstants.MENS_CLOTHES_TITLE;
+import static constants.CommonConstants.MEN_PATH;
 import static io.qameta.allure.SeverityLevel.CRITICAL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Tags({
         @Tag("UI"),
@@ -22,16 +32,37 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 class MensClothesChapterUnauthorizedUserTests extends BaseTest {
 
-    HomePage homePage;
-    MensClothesPage mensClothesPage;
-    ProductPage productPage;
-    ShoppingCartPage cartPage;
-    ProductCatalogSteps productCatalogSteps;
+    private static final String UI_BASE_URL =
+            ConfigProvider.get().getUiBaseUrl();
+
+    private static final String ONE_ITEM_TEXT =
+            "1 Item";
+
+    private static final String TWO_ITEMS_TEXT =
+            "2 Items";
+
+    private static final String EMPTY_BAG_MESSAGE =
+            "Your bag is empty. Find something you love!";
+
+    private static final BigDecimal FREE_SHIPPING_THRESHOLD =
+            new BigDecimal("75.00");
+
+    private static final int MAX_ALLOWED_QUANTITY = 10;
 
     @BeforeEach
     void setupPage() {
-        homePage = new HomePage(driver);
+        HomePage homePage = new HomePage(driver);
         homePage.closeBlockingOverlaysIfAvailable();
+    }
+
+    private BigDecimal parsePrice(String priceText) {
+        return new BigDecimal(
+                priceText
+                        .replace("Now", "")
+                        .replace("$", "")
+                        .replace(",", "")
+                        .trim()
+        );
     }
 
     @Test
@@ -40,20 +71,21 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
     @DisplayName("Verify Men's Clothes page is opened correctly")
     void checkMensFormPageTest() {
 
-        mensClothesPage = new MensClothesPage(driver);
+        MensClothesPage mensClothesPage =
+                new MensClothesPage(driver);
 
-        mensClothesPage.movingToElementMen();
-        mensClothesPage.selectChapterViewAll();
+        mensClothesPage.moveToMenMenu();
+        mensClothesPage.clickViewAllCategories();
         mensClothesPage.closePopUpIfAvailable();
 
         assertAll(
                 () -> assertEquals(
-                        SUB_TITLE_TEXT,
+                        MENS_CLOTHES_TITLE,
                         mensClothesPage.getMensPageTitle(),
                         "Sub-title should match expected text"
                 ),
                 () -> assertEquals(
-                        BASE_URL + CURRENT_MEN_URL,
+                        UI_BASE_URL + MEN_PATH,
                         mensClothesPage.getCurrentUrl(),
                         "Current URL should match expected men's clothing URL"
                 )
@@ -66,20 +98,23 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
     @DisplayName("Add item from catalog to cart and verify success message is shown")
     void addItemFromCatalogToCartTest() {
 
-        productCatalogSteps = new ProductCatalogSteps(driver);
-        productPage = new ProductPage(driver);
+        ProductCatalogSteps productCatalogSteps =
+                new ProductCatalogSteps(driver);
+
+        ProductPage productPage =
+                new ProductPage(driver);
 
         productCatalogSteps.openFirstAvailableMensProduct();
 
-        productPage.closePopUpIfPresent();
+        productPage.closePopUpIfAvailable();
         productPage.selectFirstAvailableSize();
         productPage.clickAddToBagButton();
 
         String actualMessage =
-                productPage.getSuccessfulAddedToBagText();
+                productPage.getAddedToBagMessage();
 
         assertEquals(
-                SUCCESSFUL_ADDED_TO_BAG,
+                ADDED_TO_BAG_MESSAGE,
                 actualMessage,
                 "Success message text should match expected"
         );
@@ -91,45 +126,55 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
     @DisplayName("Check that product price in catalog matches the price in cart")
     void priceMatchesBetweenCatalogAndCartTest() {
 
-        String expectedQuantityText = "1 Item";
+        ProductCatalogSteps productCatalogSteps =
+                new ProductCatalogSteps(driver);
 
-        productCatalogSteps = new ProductCatalogSteps(driver);
-        productPage = new ProductPage(driver);
-        cartPage = new ShoppingCartPage(driver);
+        ProductPage productPage =
+                new ProductPage(driver);
+
+        ShoppingCartPage cartPage =
+                new ShoppingCartPage(driver);
 
         productCatalogSteps.openFirstAvailableMensProduct();
 
-        productPage.closePopUpIfPresent();
+        productPage.closePopUpIfAvailable();
 
-        String productPriceRaw =
-                productPage.getProductPrice();
-
-        String productPrice = productPriceRaw
-                .replace("Now", "")
-                .trim();
+        String productPrice =
+                productPage.getProductPrice()
+                        .replace("Now", "")
+                        .trim();
 
         productPage.selectFirstAvailableSize();
         productPage.clickAddToBagButton();
         productPage.openShoppingBag();
 
         String cartPrice =
-                cartPage.getCartPrice();
+                cartPage.getProductPriceInCart();
 
-        SoftAssertions softly = new SoftAssertions();
+        SoftAssertions softly =
+                new SoftAssertions();
 
-        softly.assertThat(cartPage.getCurrentUrl())
+        softly.assertThat(
+                        cartPage.getCurrentUrl()
+                )
                 .as("User should be on cart page")
-                .isEqualTo(BASE_URL + CURRENT_CART_URL);
+                .isEqualTo(UI_BASE_URL + CART_PATH);
 
-        softly.assertThat(cartPage.getPageCartHeaderText())
+        softly.assertThat(
+                        cartPage.getCartPageHeader()
+                )
                 .as("Cart page title should match expected")
-                .isEqualTo(CART_TITLE_UNAUTHORIZED);
+                .isEqualTo(GUEST_CART_TITLE);
 
-        softly.assertThat(cartPage.getQuantityOfItemsText())
+        softly.assertThat(
+                        cartPage.getQuantityOfItemsText()
+                )
                 .as("Cart should contain 1 item")
-                .contains(expectedQuantityText);
+                .contains(ONE_ITEM_TEXT);
 
-        softly.assertThat(cartPage.getProductName())
+        softly.assertThat(
+                        cartPage.getProductName()
+                )
                 .as("Product name in cart should not be empty")
                 .isNotEmpty();
 
@@ -146,14 +191,18 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
     @DisplayName("Selected product size is preserved in cart")
     void selectedProductSizeMatchesCartSizeTest() {
 
-        productCatalogSteps = new ProductCatalogSteps(driver);
-        productPage = new ProductPage(driver);
-        cartPage = new ShoppingCartPage(driver);
+        ProductCatalogSteps productCatalogSteps =
+                new ProductCatalogSteps(driver);
+
+        ProductPage productPage =
+                new ProductPage(driver);
+
+        ShoppingCartPage cartPage =
+                new ShoppingCartPage(driver);
 
         productCatalogSteps.openFirstAvailableMensProduct();
 
-        productPage.closePopUpIfPresent();
-
+        productPage.closePopUpIfAvailable();
         productPage.selectFirstAvailableSize();
 
         String selectedSize =
@@ -178,62 +227,59 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
     @DisplayName("Add item to bag, change quantity and verify subtotal")
     void addItemAndChangeQuantityInBagTest() {
 
-        String quantityOfItemsBeforeUpdate = "1 Item";
-        String quantityOfItemsAfterUpdate = "2 Items";
         int expectedQuantity = 2;
 
-        productCatalogSteps = new ProductCatalogSteps(driver);
-        productPage = new ProductPage(driver);
-        cartPage = new ShoppingCartPage(driver);
+        ProductCatalogSteps productCatalogSteps =
+                new ProductCatalogSteps(driver);
+
+        ProductPage productPage =
+                new ProductPage(driver);
+
+        ShoppingCartPage cartPage =
+                new ShoppingCartPage(driver);
 
         productCatalogSteps.openFirstAvailableMensProduct();
 
-        productPage.closePopUpIfPresent();
+        productPage.closePopUpIfAvailable();
 
-        String productPriceRaw =
-                productPage.getProductPrice();
-
-        BigDecimal itemPrice = new BigDecimal(
-                productPriceRaw
-                        .replace("Now", "")
-                        .replace("$", "")
-                        .replace(",", "")
-                        .trim()
-        );
+        BigDecimal itemPrice =
+                parsePrice(
+                        productPage.getProductPrice()
+                );
 
         productPage.selectFirstAvailableSize();
         productPage.clickAddToBagButton();
         productPage.openShoppingBag();
 
-        SoftAssertions softly = new SoftAssertions();
+        SoftAssertions softly =
+                new SoftAssertions();
 
-        softly.assertThat(cartPage.getQuantityOfItemsText())
+        softly.assertThat(
+                        cartPage.getQuantityOfItemsText()
+                )
                 .as("Initial quantity should be 1")
-                .contains(quantityOfItemsBeforeUpdate);
+                .contains(ONE_ITEM_TEXT);
 
-        cartPage.editItemButton();
-        cartPage.movingToElementUpdateBagButton();
+        cartPage.clickEditItemButton();
+        cartPage.moveToUpdateBagButton();
         cartPage.increaseProductQuantity();
         cartPage.updateBag();
 
-        softly.assertThat(cartPage.getQuantityOfItemsText())
+        softly.assertThat(
+                        cartPage.getQuantityOfItemsText()
+                )
                 .as("Quantity after update should be 2")
-                .contains(quantityOfItemsAfterUpdate);
+                .contains(TWO_ITEMS_TEXT);
 
         BigDecimal expectedSubtotal =
                 itemPrice.multiply(
                         BigDecimal.valueOf(expectedQuantity)
                 );
 
-        String subtotalRaw =
-                cartPage.getSubtotalText();
-
-        BigDecimal actualSubtotal = new BigDecimal(
-                subtotalRaw
-                        .replace("$", "")
-                        .replace(",", "")
-                        .trim()
-        );
+        BigDecimal actualSubtotal =
+                parsePrice(
+                        cartPage.getSubtotalText()
+                );
 
         softly.assertThat(actualSubtotal)
                 .as("Subtotal should equal product price multiplied by quantity")
@@ -248,51 +294,52 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
     @DisplayName("Unlock 'Free Shipping' when total exceeds threshold")
     void addItemsUntilFreeShippingTest() {
 
-        String quantityOfItemsBeforeUpdate = "1 Item";
-        double freeShippingThreshold = 75.0;
+        ProductCatalogSteps productCatalogSteps =
+                new ProductCatalogSteps(driver);
 
-        productCatalogSteps = new ProductCatalogSteps(driver);
-        productPage = new ProductPage(driver);
-        cartPage = new ShoppingCartPage(driver);
+        ProductPage productPage =
+                new ProductPage(driver);
+
+        ShoppingCartPage cartPage =
+                new ShoppingCartPage(driver);
 
         productCatalogSteps.openFirstAvailableMensProduct();
 
-        productPage.closePopUpIfPresent();
+        productPage.closePopUpIfAvailable();
 
-        String productPriceRaw =
-                productPage.getProductPrice();
-
-        double itemPrice = Double.parseDouble(
-                productPriceRaw
-                        .replace("Now", "")
-                        .replace("$", "")
-                        .replace(",", "")
-                        .trim()
-        );
+        BigDecimal itemPrice =
+                parsePrice(
+                        productPage.getProductPrice()
+                );
 
         productPage.selectFirstAvailableSize();
         productPage.clickAddToBagButton();
         productPage.openShoppingBag();
 
-        SoftAssertions softly = new SoftAssertions();
+        SoftAssertions softly =
+                new SoftAssertions();
 
-        softly.assertThat(cartPage.getQuantityOfItemsText())
+        softly.assertThat(
+                        cartPage.getQuantityOfItemsText()
+                )
                 .as("Initial quantity should be 1")
-                .contains(quantityOfItemsBeforeUpdate);
+                .contains(ONE_ITEM_TEXT);
 
-        cartPage.editItemButton();
-        cartPage.movingToElementUpdateBagButton();
+        cartPage.clickEditItemButton();
+        cartPage.moveToUpdateBagButton();
 
-        double total = itemPrice;
+        BigDecimal total = itemPrice;
 
-        while (total < freeShippingThreshold) {
+        while (total.compareTo(FREE_SHIPPING_THRESHOLD) < 0) {
             cartPage.increaseProductQuantity();
-            total += itemPrice;
+            total = total.add(itemPrice);
         }
 
         cartPage.updateBag();
 
-        softly.assertThat(cartPage.isFreeShippingMessageDisplayed())
+        softly.assertThat(
+                        cartPage.isFreeShippingMessageDisplayed()
+                )
                 .as("Free shipping message should be displayed after reaching threshold")
                 .isTrue();
 
@@ -305,14 +352,15 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
     @DisplayName("Verify maximum quantity of items allowed in cart")
     void addMaximumQuantityToCartTest() {
 
-        int expectedMaxQuantity = 10;
+        ProductCatalogSteps productCatalogSteps =
+                new ProductCatalogSteps(driver);
 
-        productCatalogSteps = new ProductCatalogSteps(driver);
-        productPage = new ProductPage(driver);
+        ProductPage productPage =
+                new ProductPage(driver);
 
         productCatalogSteps.openFirstAvailableMensProduct();
 
-        productPage.closePopUpIfPresent();
+        productPage.closePopUpIfAvailable();
         productPage.selectFirstAvailableSize();
 
         int actualMaxQuantity =
@@ -320,7 +368,7 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
 
         assertAll(
                 () -> assertEquals(
-                        expectedMaxQuantity,
+                        MAX_ALLOWED_QUANTITY,
                         actualMaxQuantity,
                         "Maximum allowed product quantity should be 10"
                 ),
@@ -338,16 +386,18 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
     @DisplayName("Remove item from cart")
     void removeItemFromCartTest() {
 
-        String expectedEmptyBagMessage =
-                "Your bag is empty. Find something you love!";
+        ProductCatalogSteps productCatalogSteps =
+                new ProductCatalogSteps(driver);
 
-        productCatalogSteps = new ProductCatalogSteps(driver);
-        productPage = new ProductPage(driver);
-        cartPage = new ShoppingCartPage(driver);
+        ProductPage productPage =
+                new ProductPage(driver);
+
+        ShoppingCartPage cartPage =
+                new ShoppingCartPage(driver);
 
         productCatalogSteps.openFirstAvailableMensProduct();
 
-        productPage.closePopUpIfPresent();
+        productPage.closePopUpIfAvailable();
         productPage.selectFirstAvailableSize();
         productPage.clickAddToBagButton();
         productPage.openShoppingBag();
@@ -360,13 +410,13 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
                 "Product name in cart should not be empty before removing"
         );
 
-        cartPage.removeProductInBag();
+        cartPage.removeProductFromBag();
 
         String actualEmptyBagMessage =
-                cartPage.getItemEmptyText();
+                cartPage.getEmptyBagMessage();
 
         assertEquals(
-                expectedEmptyBagMessage,
+                EMPTY_BAG_MESSAGE,
                 actualEmptyBagMessage,
                 "Empty bag message should match expected"
         );

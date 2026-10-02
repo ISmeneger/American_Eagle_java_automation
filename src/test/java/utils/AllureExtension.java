@@ -7,21 +7,16 @@ import steps.AllureSteps;
 
 import java.util.function.Supplier;
 
-public class AllureExtension
-        implements AfterTestExecutionCallback {
+public class AllureExtension implements AfterTestExecutionCallback {
 
     private final Supplier<WebDriver> driverSupplier;
 
-    public AllureExtension(
-            Supplier<WebDriver> driverSupplier
-    ) {
+    public AllureExtension(Supplier<WebDriver> driverSupplier) {
         this.driverSupplier = driverSupplier;
     }
 
     @Override
-    public void afterTestExecution(
-            ExtensionContext context
-    ) {
+    public void afterTestExecution(ExtensionContext context) {
 
         if (context.getExecutionException().isEmpty()) {
             return;
@@ -33,8 +28,7 @@ public class AllureExtension
             return;
         }
 
-        AllureSteps allureSteps =
-                new AllureSteps(driver);
+        AllureSteps allureSteps = new AllureSteps(driver);
 
         allureSteps.attachScreenshot();
         allureSteps.attachCurrentUrl();

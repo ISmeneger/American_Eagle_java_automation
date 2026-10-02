@@ -17,7 +17,8 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 
 public class BagController {
-    private final RequestSpecification requestSpecification = given();
+
+    private final RequestSpecification requestSpec = given();
 
     private static final String ITEMS_ENDPOINT = "/ugp-api/bag/v1/items";
     private static final String BAG_ENDPOINT = "/ugp-api/bag/v1";
@@ -30,33 +31,28 @@ public class BagController {
                         System.getProperties()
                 );
 
-        requestSpecification
+        requestSpec
                 .accept(JSON)
                 .contentType(JSON)
                 .baseUri(configProperties.getApiBaseUrl())
                 .header("aesite", "AEO_US")
-                .header("Aecountry", "US")
-                .header("Aelang", "en_US")
+                .header("aecountry", "US")
+                .header("aelang", "en_US")
                 .header("Authorization", "Bearer " + TokenManager.getToken())
                 .filter(new AllureRestAssured());
     }
 
-    @Step("Add item to bag")
+    @Step("Add item to bag: SKU {skuId}, quantity {quantity}")
     public Response addItem(String skuId, int quantity) {
 
         AddItemRequest.Item item = new AddItemRequest.Item(skuId, quantity);
         AddItemRequest request = new AddItemRequest(List.of(item));
 
-        Response response = given(this.requestSpecification)
+        Response response = given(this.requestSpec)
                 .body(request)
                 .when()
                 .post(ITEMS_ENDPOINT)
                 .andReturn();
-
-        System.out.println("ADD ITEM SKU: " + skuId);
-        System.out.println("ADD ITEM STATUS: " + response.statusCode());
-        System.out.println("ADD ITEM RESPONSE:");
-        System.out.println(response.asPrettyString());
 
         return response;
     }
@@ -64,16 +60,12 @@ public class BagController {
     @Step("Get bag")
     public BagResponse getBag() {
 
-        Response response = given(this.requestSpecification)
+        Response response = given(this.requestSpec)
                 .queryParam("couponErrorBehavior", "cart")
                 .queryParam("inventoryCheck", true)
                 .when()
                 .get(BAG_ENDPOINT)
                 .andReturn();
-
-        System.out.println("GET BAG STATUS: " + response.statusCode());
-        System.out.println("GET BAG RESPONSE:");
-        System.out.println(response.getBody().asPrettyString());
 
         response.then()
                 .statusCode(200);
@@ -81,23 +73,23 @@ public class BagController {
         return response.as(BagResponse.class);
     }
 
-    @Step("Update item in bag")
+    @Step("Update item in bag: SKU {skuId}, quantity {quantity}, itemId {itemId}")
     public Response updateItem(String skuId, int quantity, String itemId) {
 
         UpdateItemRequest.Item item = new UpdateItemRequest.Item(skuId, quantity, itemId);
         UpdateItemRequest request = new UpdateItemRequest(List.of(item));
 
-        return given(this.requestSpecification)
+        return given(this.requestSpec)
                 .body(request)
                 .when()
                 .patch(ITEMS_ENDPOINT)
                 .andReturn();
     }
 
-    @Step("Delete item in bag")
+    @Step("Delete item from bag: itemId {itemId}")
     public Response deleteItem(String itemId) {
 
-        return given(this.requestSpecification)
+        return given(this.requestSpec)
                 .queryParam("itemIds", itemId)
                 .when()
                 .delete(ITEMS_ENDPOINT)

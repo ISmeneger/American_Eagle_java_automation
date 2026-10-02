@@ -4,7 +4,10 @@ import api.controller.ProductController;
 import extensions.GuestTokenExtension;
 import io.qameta.allure.Severity;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
@@ -21,7 +24,6 @@ public class ProductApiTests {
 
     private final ProductController productController =
             new ProductController();
-
 
     @Test
     @Severity(CRITICAL)
@@ -46,16 +48,7 @@ public class ProductApiTests {
 
         assertThat(productIds)
                 .as("Category must contain products")
-                .isNotNull()
                 .isNotEmpty();
-
-        System.out.println(
-                "PRODUCT COUNT: " + productIds.size()
-        );
-
-        System.out.println(
-                "FIRST PRODUCT ID: " + productIds.get(0)
-        );
     }
 
     @Test
@@ -85,7 +78,6 @@ public class ProductApiTests {
 
         assertThat(skuIds)
                 .as("Product inventory must contain SKU IDs")
-                .isNotNull()
                 .isNotEmpty();
 
         assertThat(skuIds)
@@ -93,14 +85,6 @@ public class ProductApiTests {
                 .allSatisfy(skuId ->
                         assertThat(skuId).isNotBlank()
                 );
-
-        System.out.println(
-                "PRODUCT ID: " + productId
-        );
-
-        System.out.println(
-                "INVENTORY SKU IDS: " + skuIds
-        );
     }
 
     @Test
@@ -115,17 +99,8 @@ public class ProductApiTests {
         List<String> productIds =
                 productController.getAvailableProductIds(TEST_CATEGORY_ID);
 
-        System.out.println(
-                "AVAILABLE PRODUCT COUNT: " + productIds.size()
-        );
-
-        System.out.println(
-                "AVAILABLE PRODUCT IDS: " + productIds
-        );
-
         assertThat(productIds)
                 .as("Category must contain available products")
-                .isNotNull()
                 .isNotEmpty();
     }
 
@@ -142,10 +117,6 @@ public class ProductApiTests {
                 productController.getFirstSkuFromAvailableProducts(
                         TEST_CATEGORY_ID
                 );
-
-        System.out.println(
-                "FOUND AVAILABLE SKU: " + skuId
-        );
 
         assertThat(skuId)
                 .as("SKU ID must not be empty")
@@ -165,10 +136,6 @@ public class ProductApiTests {
                 productController.getProductWithAtLeastTwoSkus(
                         TEST_CATEGORY_ID
                 );
-
-        System.out.println(
-                "FOUND PRODUCT WITH AT LEAST TWO SKUS: " + productId
-        );
 
         assertThat(productId)
                 .as("Product ID must not be empty")
@@ -192,7 +159,9 @@ public class ProductApiTests {
         response.then()
                 .statusCode(400);
 
-        assertThat(response.jsonPath().getString("error.status"))
+        assertThat(
+                response.jsonPath().getString("error.status")
+        )
                 .as("Error status must be 400")
                 .isEqualTo("400");
 
@@ -203,7 +172,10 @@ public class ProductApiTests {
                 .isNull();
 
         List<String> errorFields = response.jsonPath()
-                .getList("error.errors[0].fields", String.class);
+                .getList(
+                        "error.errors[0].fields",
+                        String.class
+                );
 
         assertThat(errorFields)
                 .as("Error must be related to productIds")
@@ -227,16 +199,23 @@ public class ProductApiTests {
         response.then()
                 .statusCode(404);
 
-        assertThat(response.jsonPath().getString("errors[0].code"))
+        assertThat(
+                response.jsonPath().getString("errors[0].code")
+        )
                 .as("Error code must indicate an empty product list")
                 .isEqualTo("error.browse.emptyProductList");
 
-        assertThat(response.jsonPath().getString("errors[0].title"))
+        assertThat(
+                response.jsonPath().getString("errors[0].title")
+        )
                 .as("Error title must indicate that no products were found")
                 .isEqualTo("No Products Found");
 
         List<String> errorFields = response.jsonPath()
-                .getList("errors[0].meta.fields", String.class);
+                .getList(
+                        "errors[0].meta.fields",
+                        String.class
+                );
 
         assertThat(errorFields)
                 .as("Error must be related to categoryId")

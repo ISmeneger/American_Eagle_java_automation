@@ -6,14 +6,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
 public class MensClothesPage extends BasePage {
-
-    private final WebDriver driver;
 
     @FindBy(xpath = "//a[text()='Men']")
     private WebElement menFormMenu;
@@ -29,12 +26,10 @@ public class MensClothesPage extends BasePage {
 
     public MensClothesPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
     }
 
-    @Step("Move mouse to Men's clothes menu")
-    public void movingToElementMen() {
+    @Step("Move to Men's menu")
+    public void moveToMenMenu() {
 
         WebElement menMenu = wait.until(
                 ExpectedConditions.visibilityOf(menFormMenu)
@@ -50,8 +45,8 @@ public class MensClothesPage extends BasePage {
         );
     }
 
-    @Step("Select chapter 'View All'")
-    public void selectChapterViewAll() {
+    @Step("Click 'View All' in Men's menu")
+    public void clickViewAllCategories() {
 
         WebElement viewAll = wait.until(
                 ExpectedConditions.elementToBeClickable(viewAllCategories)
@@ -71,14 +66,14 @@ public class MensClothesPage extends BasePage {
         ).getText();
     }
 
-    @Step("Select first available product and open it")
-    public void selectFirstAvailableProductAndClickToIt() {
+    @Step("Open first available product")
+    public void openFirstAvailableProduct() {
 
         try {
             wait.until(
                     ExpectedConditions.visibilityOfAllElements(productItems)
             );
-        } catch (TimeoutException e) {
+        } catch (TimeoutException ignored) {
             closePopUpIfAvailable();
 
             wait.until(
