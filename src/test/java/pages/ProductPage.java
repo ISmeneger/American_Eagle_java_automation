@@ -6,7 +6,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -14,8 +13,6 @@ import java.time.Duration;
 import java.util.List;
 
 public class ProductPage extends BasePage {
-
-    private final WebDriver driver;
 
     @FindBy(css = "div[data-test-dropdown-toggle]")
     private WebElement dropdownSizeToggle;
@@ -43,8 +40,6 @@ public class ProductPage extends BasePage {
 
     public ProductPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
     }
 
     @Step("Select first available size")
@@ -77,7 +72,7 @@ public class ProductPage extends BasePage {
         );
 
         if (availableSizes.isEmpty()) {
-            throw new RuntimeException(
+            throw new IllegalStateException(
                     "No available sizes found"
             );
         }
@@ -106,7 +101,7 @@ public class ProductPage extends BasePage {
                 )
         );
 
-        wait.until(driver ->
+        wait.until(webDriver ->
                 selectedSizeText
                         .getText()
                         .trim()
@@ -152,8 +147,8 @@ public class ProductPage extends BasePage {
         );
     }
 
-    @Step("Get successful added to bag message")
-    public String getSuccessfulAddedToBagText() {
+    @Step("Get 'Added to bag' message")
+    public String getAddedToBagMessage() {
         return wait.until(
                 ExpectedConditions.visibilityOf(
                         successfulAddedToBag
@@ -182,7 +177,11 @@ public class ProductPage extends BasePage {
 
     @Step("Check increase quantity button is enabled")
     public boolean isIncreaseQuantityButtonEnabled() {
-        return increaseQuantityButton.isEnabled();
+        return wait.until(
+                ExpectedConditions.visibilityOf(
+                        increaseQuantityButton
+                )
+        ).isEnabled();
     }
 
     @Step("Increase product quantity")

@@ -37,7 +37,7 @@
 - [🧪 API E2E сценарий](#api-e2e)
 - [📁 Структура проекта](#project-structure)
 - [📈 CI/CD результат](#cicd-result)
-- [👤 Author](#author)
+- [👤 AUTHORIZEDor](#AUTHORIZEDor)
 
 ---
 
@@ -610,8 +610,8 @@ src
 
 ---
 
-<a id="author"></a>
-## 👤 Author
+<a id="AUTHORIZEDor"></a>
+## 👤 AUTHORIZEDor
 
 **Ilya Sidorychev**
 

@@ -1,10 +1,15 @@
 package tests.ui.account;
 
+import configs.ConfigProvider;
 import configs.TestPropertiesConfig;
 import io.qameta.allure.Severity;
-import org.aeonbits.owner.ConfigFactory;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.AccountPage;
@@ -13,7 +18,6 @@ import tests.ui.BaseTest;
 
 import java.time.Duration;
 
-import static constants.CommonConstants.BASE_URL;
 import static io.qameta.allure.SeverityLevel.NORMAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,19 +28,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 })
 class SignInTests extends BaseTest {
 
-    private HomePage homePage;
-    private AccountPage accountPage;
+    private static final TestPropertiesConfig CONFIG =
+            ConfigProvider.get();
 
-    private final TestPropertiesConfig config =
-            ConfigFactory.create(
-                    TestPropertiesConfig.class,
-                    System.getProperties()
-            );
+    private static final String UI_BASE_URL =
+            CONFIG.getUiBaseUrl();
 
     private static final String ACCOUNT_URL =
             "/myaccount/real-rewards/account-summary";
 
-    private static final String ACCOUNT_SUCCESSFUL_ENTERED_MESSAGE =
+    private static final String SIGNED_IN_ACCOUNT_TITLE =
             "Ilya's Account";
 
     private static final String EMAIL_VALIDATION_MESSAGE =
@@ -49,12 +50,20 @@ class SignInTests extends BaseTest {
     private static final String EMPTY_PASSWORD_MESSAGE =
             "Please enter your password.";
 
+    private HomePage homePage;
+    private AccountPage accountPage;
+
     @BeforeEach
     void setupPage() {
         homePage = new HomePage(driver);
         accountPage = new AccountPage(driver);
 
         homePage.closeBlockingOverlaysIfAvailable();
+    }
+
+    private void openSignInForm() {
+        homePage.getHeader().clickAccountButton();
+        homePage.getHeader().clickSignInButton();
     }
 
     @Test
@@ -70,15 +79,14 @@ class SignInTests extends BaseTest {
     @DisplayName("Check successful sign in")
     void signInPageTest() {
 
-        homePage.getHeader().clickAccountButton();
-        homePage.getHeader().clickSignInButton();
+        openSignInForm();
 
-        accountPage.inputEmailField(config.getEmail());
-        accountPage.continueButtonClick();
+        accountPage.inputEmailField(CONFIG.getEmail());
+        accountPage.clickContinueButton();
 
         accountPage.selectPasswordSignInMethod();
-        accountPage.inputPasswordField(config.getPassword());
-        accountPage.submitSignInButtonClick();
+        accountPage.inputPasswordField(CONFIG.getPassword());
+        accountPage.clickSubmitSignInButton();
 
         new WebDriverWait(
                 driver,
@@ -90,8 +98,8 @@ class SignInTests extends BaseTest {
         );
 
         assertEquals(
-                BASE_URL + ACCOUNT_URL,
-                driver.getCurrentUrl(),
+                UI_BASE_URL + ACCOUNT_URL,
+                accountPage.getCurrentUrl(),
                 "After successful sign in, user should be " +
                         "redirected to account page"
         );
@@ -104,7 +112,7 @@ class SignInTests extends BaseTest {
                                 "the signed-in user's account"
                 )
                 .isEqualTo(
-                        ACCOUNT_SUCCESSFUL_ENTERED_MESSAGE
+                        SIGNED_IN_ACCOUNT_TITLE
                 );
     }
 
@@ -116,11 +124,10 @@ class SignInTests extends BaseTest {
 
         String invalidEmail = "invalid-email";
 
-        homePage.getHeader().clickAccountButton();
-        homePage.getHeader().clickSignInButton();
+        openSignInForm();
 
         accountPage.inputEmailField(invalidEmail);
-        accountPage.continueButtonClick();
+        accountPage.clickContinueButton();
 
         SoftAssertions softly = new SoftAssertions();
 
@@ -160,20 +167,19 @@ class SignInTests extends BaseTest {
 
         String invalidPassword = "123456789";
 
-        homePage.getHeader().clickAccountButton();
-        homePage.getHeader().clickSignInButton();
+        openSignInForm();
 
-        accountPage.inputEmailField(config.getEmail());
-        accountPage.continueButtonClick();
+        accountPage.inputEmailField(CONFIG.getEmail());
+        accountPage.clickContinueButton();
 
         accountPage.selectPasswordSignInMethod();
         accountPage.inputPasswordField(invalidPassword);
-        accountPage.submitSignInButtonClick();
+        accountPage.clickSubmitSignInButton();
 
         SoftAssertions softly = new SoftAssertions();
 
         softly.assertThat(
-                        accountPage.getErrorAccountInvalidPasswordMessageIsDisplayed()
+                        accountPage.isInvalidPasswordErrorDisplayed()
                 )
                 .as(
                         "Password validation message should " +
@@ -201,11 +207,10 @@ class SignInTests extends BaseTest {
 
         String emptyEmail = "";
 
-        homePage.getHeader().clickAccountButton();
-        homePage.getHeader().clickSignInButton();
+        openSignInForm();
 
         accountPage.inputEmailField(emptyEmail);
-        accountPage.continueButtonClick();
+        accountPage.clickContinueButton();
 
         SoftAssertions softly = new SoftAssertions();
 
@@ -245,20 +250,19 @@ class SignInTests extends BaseTest {
 
         String emptyPassword = "";
 
-        homePage.getHeader().clickAccountButton();
-        homePage.getHeader().clickSignInButton();
+        openSignInForm();
 
-        accountPage.inputEmailField(config.getEmail());
-        accountPage.continueButtonClick();
+        accountPage.inputEmailField(CONFIG.getEmail());
+        accountPage.clickContinueButton();
 
         accountPage.selectPasswordSignInMethod();
         accountPage.inputPasswordField(emptyPassword);
-        accountPage.submitSignInButtonClick();
+        accountPage.clickSubmitSignInButton();
 
         SoftAssertions softly = new SoftAssertions();
 
         softly.assertThat(
-                        accountPage.getErrorEmptyPasswordMessageIsDisplayed()
+                        accountPage.isEmptyPasswordErrorDisplayed()
                 )
                 .as(
                         "Password validation message should be " +
@@ -293,20 +297,19 @@ class SignInTests extends BaseTest {
 
         String shortPassword = "12345";
 
-        homePage.getHeader().clickAccountButton();
-        homePage.getHeader().clickSignInButton();
+        openSignInForm();
 
-        accountPage.inputEmailField(config.getEmail());
-        accountPage.continueButtonClick();
+        accountPage.inputEmailField(CONFIG.getEmail());
+        accountPage.clickContinueButton();
 
         accountPage.selectPasswordSignInMethod();
         accountPage.inputPasswordField(shortPassword);
-        accountPage.submitSignInButtonClick();
+        accountPage.clickSubmitSignInButton();
 
         SoftAssertions softly = new SoftAssertions();
 
         softly.assertThat(
-                        accountPage.getErrorAccountInvalidPasswordMessageIsDisplayed()
+                        accountPage.isInvalidPasswordErrorDisplayed()
                 )
                 .as(
                         "Password validation message should be " +
@@ -342,20 +345,19 @@ class SignInTests extends BaseTest {
         String longPassword =
                 "12345qwerrttfgfhdhfhdfhfdhdfhdfh";
 
-        homePage.getHeader().clickAccountButton();
-        homePage.getHeader().clickSignInButton();
+        openSignInForm();
 
-        accountPage.inputEmailField(config.getEmail());
-        accountPage.continueButtonClick();
+        accountPage.inputEmailField(CONFIG.getEmail());
+        accountPage.clickContinueButton();
 
         accountPage.selectPasswordSignInMethod();
         accountPage.inputPasswordField(longPassword);
-        accountPage.submitSignInButtonClick();
+        accountPage.clickSubmitSignInButton();
 
         SoftAssertions softly = new SoftAssertions();
 
         softly.assertThat(
-                        accountPage.getErrorAccountInvalidPasswordMessageIsDisplayed()
+                        accountPage.isInvalidPasswordErrorDisplayed()
                 )
                 .as(
                         "Password validation message should be " +

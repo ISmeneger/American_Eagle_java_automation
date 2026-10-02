@@ -32,7 +32,7 @@ public class TokenClient {
                 .header("aesite", "AEO_US")
                 .header("aecountry", "US")
                 .header(
-                        "authorization",
+                        "Authorization",
                         configProperties.getGuestHeaderAuth()
                 )
                 .filter(new AllureRestAssured());
@@ -40,18 +40,11 @@ public class TokenClient {
 
     @Step("Get guest token response")
     public static Response getGuestTokenResponse() {
-
-        Response response = guestAuthSpec()
-                .when()
+        return guestAuthSpec()
                 .formParam("grant_type", "client_credentials")
+                .when()
                 .post(TOKEN_ENDPOINT)
                 .andReturn();
-
-        System.out.println(
-                "TOKEN STATUS: " + response.statusCode()
-        );
-
-        return response;
     }
 
     @Step("Get guest token")
@@ -62,19 +55,12 @@ public class TokenClient {
         response.then()
                 .statusCode(200);
 
-        String token = response.jsonPath()
+        return response.jsonPath()
                 .getString("access_token");
-
-        System.out.println(
-                "GUEST TOKEN RECEIVED: "
-                        + (token != null && !token.isBlank())
-        );
-
-        return token;
     }
 
-    @Step("Get auth token")
-    public static String getAuthToken() {
+    @Step("Get authorized token")
+    public static String getAuthorizedToken() {
         throw new NotImplementedException(
                 "Not yet implemented!"
         );

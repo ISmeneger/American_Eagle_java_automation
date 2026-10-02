@@ -1,14 +1,21 @@
 package pages;
 
 import io.qameta.allure.Step;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NoSuchShadowRootException;
+import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.List;
 
 public class BasePage {
 
@@ -28,57 +35,12 @@ public class BasePage {
         PageFactory.initElements(driver, this);
     }
 
-    @Step("Get current url")
+    @Step("Get current URL")
     public String getCurrentUrl() {
         return driver.getCurrentUrl();
     }
 
-    @Step("Close pop-up if present")
-    public boolean closePopUpIfPresent() {
-
-        By shadowHostLocator =
-                By.cssSelector("div.bloomreach-weblayer");
-
-        By closeButtonLocator =
-                By.cssSelector(
-                        "button.close-button[aria-label='Close'], " +
-                                "button.close[aria-label='Close']"
-                );
-
-        try {
-            List<WebElement> hosts =
-                    driver.findElements(shadowHostLocator);
-
-            if (hosts.isEmpty()) {
-                return false;
-            }
-
-            WebElement shadowHost = hosts.get(0);
-            SearchContext shadowRoot =
-                    shadowHost.getShadowRoot();
-
-            WebElement closeButton =
-                    shadowRoot.findElement(closeButtonLocator);
-
-            if (closeButton.isDisplayed()
-                    && closeButton.isEnabled()) {
-
-                closeButton.click();
-                return true;
-            }
-
-        } catch (NoSuchElementException
-                 | NoSuchShadowRootException
-                 | StaleElementReferenceException
-                 | ElementClickInterceptedException e) {
-
-            return false;
-        }
-
-        return false;
-    }
-
-    @Step("Close pop-up if available")
+    @Step("Close email pop-up if available")
     public void closePopUpIfAvailable() {
 
         By shadowHostLocator =
@@ -97,15 +59,12 @@ public class BasePage {
             popupWait.until(webDriver -> {
 
                 try {
-                    // Находим Shadow Host в основном DOM
                     WebElement shadowHost =
                             webDriver.findElement(shadowHostLocator);
 
-                    // Переходим внутрь Shadow DOM
                     SearchContext shadowRoot =
                             shadowHost.getShadowRoot();
 
-                    // Ищем кнопку закрытия уже внутри Shadow DOM
                     WebElement closeButton =
                             shadowRoot.findElement(closeButtonLocator);
 
@@ -116,10 +75,10 @@ public class BasePage {
                         return true;
                     }
 
-                } catch (NoSuchElementException
-                         | NoSuchShadowRootException
-                         | StaleElementReferenceException
-                         | ElementClickInterceptedException e) {
+                } catch (NoSuchElementException |
+                         NoSuchShadowRootException |
+                         StaleElementReferenceException |
+                         ElementClickInterceptedException ignored) {
 
                     return false;
                 }
@@ -127,13 +86,8 @@ public class BasePage {
                 return false;
             });
 
-            System.out.println("Email pop-up closed successfully.");
-
-        } catch (TimeoutException e) {
-
-            System.out.println(
-                    "Email pop-up was not found or could not be closed."
-            );
+        } catch (TimeoutException ignored) {
+            // Email pop-up is optional.
         }
     }
 
@@ -152,10 +106,9 @@ public class BasePage {
 
         } catch (TimeoutException |
                  NoSuchElementException |
-                 StaleElementReferenceException e) {
+                 StaleElementReferenceException ignored) {
 
-            // Cookie banner is not displayed.
-            // Continue the test.
+            // Cookie banner is optional.
         }
     }
 

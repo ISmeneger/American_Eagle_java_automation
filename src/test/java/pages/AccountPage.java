@@ -6,18 +6,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 
 public class AccountPage extends BasePage {
 
-    WebDriver driver;
-
     public AccountPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
     }
 
     // =========================
@@ -122,32 +117,32 @@ public class AccountPage extends BasePage {
     // INPUT METHODS
     // =========================
 
-    @Step("Input email field")
+    @Step("Input email: {email}")
     public void inputEmailField(String email) {
         typeIntoField(inputEmail, email);
     }
 
-    @Step("Input first name field")
+    @Step("Input first name: {firstName}")
     public void inputFirstNameField(String firstName) {
         typeIntoField(inputFirstName, firstName);
     }
 
-    @Step("Input last name field")
+    @Step("Input last name: {lastName}")
     public void inputLastNameField(String lastName) {
         typeIntoField(inputLastName, lastName);
     }
 
-    @Step("Input password field")
+    @Step("Input password")
     public void inputPasswordField(String password) {
         typeIntoField(inputPassword, password);
     }
 
-    @Step("Confirm password field")
+    @Step("Confirm password")
     public void confirmPasswordField(String password) {
         typeIntoField(confirmPassword, password);
     }
 
-    @Step("Input zip code field")
+    @Step("Input ZIP code: {postalCode}")
     public void enterZipCode(String postalCode) {
         typeIntoField(zipCode, postalCode);
     }
@@ -156,8 +151,8 @@ public class AccountPage extends BasePage {
     // SIGN IN
     // =========================
 
-    @Step("Click Continue button")
-    public void continueButtonClick() {
+    @Step("Click 'Continue' button")
+    public void clickContinueButton() {
         wait.until(
                 ExpectedConditions.elementToBeClickable(continueButton)
         ).click();
@@ -170,8 +165,8 @@ public class AccountPage extends BasePage {
         ).click();
     }
 
-    @Step("Click on 'Sign In' / Continue button")
-    public void submitSignInButtonClick() {
+    @Step("Click 'Sign In' / 'Continue' button")
+    public void clickSubmitSignInButton() {
         wait.until(
                 ExpectedConditions.elementToBeClickable(continueButton)
         ).click();
@@ -182,7 +177,7 @@ public class AccountPage extends BasePage {
     // =========================
 
     @Step("Select birth month: {value}")
-    public void dropdownMonthSelectorByValue(String value) {
+    public void selectBirthMonthByValue(String value) {
 
         WebElement monthDropdown = wait.until(
                 ExpectedConditions.elementToBeClickable(
@@ -195,7 +190,7 @@ public class AccountPage extends BasePage {
     }
 
     @Step("Select birth day: {value}")
-    public void dropdownDaySelectorByValue(String value) {
+    public void selectBirthDayByValue(String value) {
 
         WebElement dayDropdown = wait.until(
                 ExpectedConditions.elementToBeClickable(
@@ -207,13 +202,13 @@ public class AccountPage extends BasePage {
                 .selectByValue(value);
     }
 
-    @Step("Select birth date")
+    @Step("Select birth date: month {valueMonth}, day {valueDay}")
     public void selectBirthDate(
             String valueMonth,
             String valueDay
     ) {
-        dropdownMonthSelectorByValue(valueMonth);
-        dropdownDaySelectorByValue(valueDay);
+        selectBirthMonthByValue(valueMonth);
+        selectBirthDayByValue(valueDay);
     }
 
     @Step("Get selected birth month")
@@ -248,35 +243,22 @@ public class AccountPage extends BasePage {
     // CREATE ACCOUNT BUTTON
     // =========================
 
-    @Step("Move to 'Create Account' button")
+    @Step("Scroll to 'Create Account' button")
     public void scrollToSubmitButton() {
-
-        WebElement button = wait.until(
-                ExpectedConditions.visibilityOf(submitAccountButton)
+        ((JavascriptExecutor) driver).executeScript(
+                "arguments[0].scrollIntoView({block: 'center'});",
+                submitAccountButton
         );
-
-        new Actions(driver)
-                .scrollToElement(button)
-                .moveToElement(button)
-                .perform();
     }
 
-    @Step("Click checkbox 'I Accept'")
+    @Step("Accept terms and conditions")
     public void acceptTermsAndConditions() {
-
-        WebElement checkbox = wait.until(
-                ExpectedConditions.presenceOfElementLocated(
-                        org.openqa.selenium.By.id("termsAccepted")
-                )
-        );
-
-        JavascriptExecutor js =
-                (JavascriptExecutor) driver;
-
-        js.executeScript(
-                "arguments[0].click();",
-                checkbox
-        );
+        if (!checkboxAcceptTerms.isSelected()) {
+            ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].click();",
+                    checkboxAcceptTerms
+            );
+        }
     }
 
     @Step("Check terms checkbox is selected")
@@ -285,15 +267,12 @@ public class AccountPage extends BasePage {
     }
 
     @Step("Check 'Create Account' button is enabled")
-    public Boolean submitAccountButtonIsEnabled() {
-        return wait.until(
-                ExpectedConditions.visibilityOf(submitAccountButton)
-        ).isEnabled();
+    public boolean submitAccountButtonIsEnabled() {
+        return submitAccountButton.isEnabled();
     }
 
     @Step("Click 'Create Account' button")
     public void clickSubmitButton() {
-
         wait.until(
                 ExpectedConditions.elementToBeClickable(
                         submitAccountButton
@@ -305,9 +284,8 @@ public class AccountPage extends BasePage {
     // SUCCESS MESSAGES
     // =========================
 
-    @Step("Check successful created account")
+    @Step("Get successful account creation message")
     public String getSuccessfulCreatedAccountText() {
-
         return wait.until(
                 ExpectedConditions.visibilityOf(
                         accountCreatedText
@@ -315,9 +293,8 @@ public class AccountPage extends BasePage {
         ).getText();
     }
 
-    @Step("Check successful entered to account")
+    @Step("Get successful sign-in message")
     public String getSuccessfulEnteredAccountText() {
-
         return wait.until(
                 ExpectedConditions.visibilityOf(
                         successfulAccountText
@@ -329,7 +306,7 @@ public class AccountPage extends BasePage {
     // LOGIN ERRORS
     // =========================
 
-    @Step("Get text about login problem")
+    @Step("Get login warning message")
     public String getLoginWarningError() {
         return wait.until(
                 ExpectedConditions.visibilityOf(errorWarningText)
@@ -337,7 +314,7 @@ public class AccountPage extends BasePage {
     }
 
     @Step("Check login warning is displayed")
-    public boolean getLoginWarningErrorIsDisplayed() {
+    public boolean isLoginWarningErrorDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOf(errorWarningText)
         ).isDisplayed();
@@ -353,7 +330,7 @@ public class AccountPage extends BasePage {
     }
 
     @Step("Check invalid password error is displayed")
-    public boolean getErrorAccountInvalidPasswordMessageIsDisplayed() {
+    public boolean isInvalidPasswordErrorDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOf(
                         errorAccountInvalidPasswordText
@@ -393,7 +370,7 @@ public class AccountPage extends BasePage {
     }
 
     @Step("Check empty password error is displayed")
-    public boolean getErrorEmptyPasswordMessageIsDisplayed() {
+    public boolean isEmptyPasswordErrorDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOf(
                         errorAccountEmptyPasswordFieldText
@@ -401,7 +378,7 @@ public class AccountPage extends BasePage {
         ).isDisplayed();
     }
 
-    @Step("Get empty First Name error message")
+    @Step("Get empty first name error message")
     public String getErrorEmptyFirstNameMessage() {
         return wait.until(
                 ExpectedConditions.visibilityOf(
@@ -410,8 +387,8 @@ public class AccountPage extends BasePage {
         ).getText();
     }
 
-    @Step("Check empty First Name error is displayed")
-    public boolean getErrorEmptyFirstNameMessageIsDisplayed() {
+    @Step("Check empty first name error is displayed")
+    public boolean isEmptyFirstNameErrorDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOf(
                         errorEmptyFirstNameText
@@ -419,7 +396,7 @@ public class AccountPage extends BasePage {
         ).isDisplayed();
     }
 
-    @Step("Get empty Last Name error message")
+    @Step("Get empty last name error message")
     public String getErrorEmptyLastNameMessage() {
         return wait.until(
                 ExpectedConditions.visibilityOf(
@@ -428,8 +405,8 @@ public class AccountPage extends BasePage {
         ).getText();
     }
 
-    @Step("Check empty Last Name error is displayed")
-    public boolean getErrorEmptyLastNameMessageIsDisplayed() {
+    @Step("Check empty last name error is displayed")
+    public boolean isEmptyLastNameErrorDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOf(
                         errorEmptyLastNameText
@@ -437,7 +414,7 @@ public class AccountPage extends BasePage {
         ).isDisplayed();
     }
 
-    @Step("Get empty Zip Code error message")
+    @Step("Get empty ZIP code error message")
     public String getErrorEmptyZipCodeMessage() {
         return wait.until(
                 ExpectedConditions.visibilityOf(
@@ -446,8 +423,8 @@ public class AccountPage extends BasePage {
         ).getText();
     }
 
-    @Step("Check empty Zip Code error is displayed")
-    public boolean getErrorEmptyZipCodeMessageIsDisplayed() {
+    @Step("Check empty ZIP code error is displayed")
+    public boolean isEmptyZipCodeErrorDisplayed() {
         return wait.until(
                 ExpectedConditions.visibilityOf(
                         errorEmptyZipCodeText

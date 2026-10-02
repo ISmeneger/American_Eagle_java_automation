@@ -5,7 +5,11 @@ import api.controller.ProductController;
 import dto.BagResponse;
 import extensions.GuestTokenExtension;
 import io.qameta.allure.Severity;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.Duration;
@@ -23,24 +27,24 @@ public class E2EApiTests {
 
     private static final String TEST_CATEGORY_ID = "cat10025";
 
-    private BagController bag;
-    private ProductController product;
+    private BagController bagController;
+    private ProductController productController;
 
     @BeforeEach
     void setUp() {
 
-        bag = new BagController();
-        product = new ProductController();
+        bagController = new BagController();
+        productController = new ProductController();
 
-        BagResponse currentBag = bag.getBag();
+        BagResponse currentBag = bagController.getBag();
 
         for (BagResponse.Item item : currentBag.getData().getItems()) {
-            bag.deleteItem(item.getItemId())
+            bagController.deleteItem(item.getItemId())
                     .then()
                     .statusCode(202);
         }
 
-        BagResponse emptyBag = bag.getBag();
+        BagResponse emptyBag = bagController.getBag();
 
         assertThat(emptyBag.getData().getItems())
                 .as("Cart must be empty before E2E test")
@@ -58,41 +62,52 @@ public class E2EApiTests {
 
         // 1. Find an available product SKU
         String skuId =
-                product.getFirstSkuFromAvailableProducts(TEST_CATEGORY_ID);
+                productController.getFirstSkuFromAvailableProducts(
+                        TEST_CATEGORY_ID
+                );
 
         assertThat(skuId)
                 .as("Available SKU must be found")
                 .isNotBlank();
 
         // 2. Add product to bag
-        bag.addItem(skuId, initialQty)
+        bagController.addItem(skuId, initialQty)
                 .then()
                 .statusCode(202);
 
         // 3. Verify product was added
-        BagResponse afterAdd = bag.getBag();
+        BagResponse afterAdd = bagController.getBag();
 
-        BagResponse.Item addedItem = afterAdd.getData().getItems().stream()
-                .filter(item -> skuId.equals(item.getSku()))
-                .findFirst()
-                .orElseThrow(() ->
-                        new AssertionError(
-                                "Product with SKU " + skuId + " not found in cart"
-                        )
-                );
+        BagResponse.Item addedItem =
+                afterAdd.getData()
+                        .getItems()
+                        .stream()
+                        .filter(item -> skuId.equals(item.getSku()))
+                        .findFirst()
+                        .orElseThrow(() ->
+                                new AssertionError(
+                                        "Product with SKU "
+                                                + skuId
+                                                + " not found in cart"
+                                )
+                        );
 
         assertThat(addedItem.getQuantity())
                 .as("Initial product quantity must be %d", initialQty)
                 .isEqualTo(initialQty);
 
-        String itemId = addedItem.getItemId();
+        String initialItemId = addedItem.getItemId();
 
-        assertThat(itemId)
+        assertThat(initialItemId)
                 .as("Added item must have itemId")
                 .isNotBlank();
 
         // 4. Update product quantity
-        bag.updateItem(skuId, updatedQty, itemId)
+        bagController.updateItem(
+                        skuId,
+                        updatedQty,
+                        initialItemId
+                )
                 .then()
                 .statusCode(202);
 
@@ -102,16 +117,22 @@ public class E2EApiTests {
                 .pollInterval(Duration.ofMillis(500))
                 .untilAsserted(() -> {
 
-                    BagResponse afterUpdate = bag.getBag();
+                    BagResponse afterUpdate =
+                            bagController.getBag();
 
                     BagResponse.Item updatedItem =
-                            afterUpdate.getData().getItems().stream()
-                                    .filter(item -> skuId.equals(item.getSku()))
+                            afterUpdate.getData()
+                                    .getItems()
+                                    .stream()
+                                    .filter(item ->
+                                            skuId.equals(item.getSku())
+                                    )
                                     .findFirst()
                                     .orElseThrow(() ->
                                             new AssertionError(
-                                                    "Product with SKU " + skuId +
-                                                            " not found after update"
+                                                    "Product with SKU "
+                                                            + skuId
+                                                            + " not found after update"
                                             )
                                     );
 
@@ -120,24 +141,54 @@ public class E2EApiTests {
                             .isEqualTo(skuId);
 
                     assertThat(updatedItem.getQuantity())
-                            .as("Product quantity must be updated to %d", updatedQty)
+                            .as(
+                                    "Product quantity must be updated to %d",
+                                    updatedQty
+                            )
                             .isEqualTo(updatedQty);
                 });
 
+        // Get current itemId after update because API may regenerate it
+        BagResponse afterUpdate = bagController.getBag();
+
+        BagResponse.Item updatedItem =
+                afterUpdate.getData()
+                        .getItems()
+                        .stream()
+                        .filter(item -> skuId.equals(item.getSku()))
+                        .findFirst()
+                        .orElseThrow(() ->
+                                new AssertionError(
+                                        "Product with SKU "
+                                                + skuId
+                                                + " not found before delete"
+                                )
+                        );
+
+        String currentItemId = updatedItem.getItemId();
+
+        assertThat(currentItemId)
+                .as("Updated item must have itemId")
+                .isNotBlank();
+
         // 6. Delete product
-        bag.deleteItem(itemId)
+        bagController.deleteItem(currentItemId)
                 .then()
                 .statusCode(202);
 
         // 7. Verify product was deleted
-        BagResponse afterDelete = bag.getBag();
+        BagResponse afterDelete = bagController.getBag();
 
         assertThat(afterDelete.getData().getItems())
                 .as("Deleted item must not remain in the cart")
-                .noneMatch(item -> itemId.equals(item.getItemId()));
+                .noneMatch(item ->
+                        currentItemId.equals(item.getItemId())
+                );
 
         assertThat(afterDelete.getData().getItems())
                 .as("Deleted SKU must not remain in the cart")
-                .noneMatch(item -> skuId.equals(item.getSku()));
+                .noneMatch(item ->
+                        skuId.equals(item.getSku())
+                );
     }
 }

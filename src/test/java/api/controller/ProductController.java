@@ -1,6 +1,11 @@
 package api.controller;
 
+import configs.TestPropertiesConfig;
+import io.qameta.allure.Step;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+import org.aeonbits.owner.ConfigFactory;
 import support.TokenManager;
 
 import java.util.ArrayList;
@@ -10,99 +15,83 @@ import static io.restassured.RestAssured.given;
 
 public class ProductController {
 
-    private static final String BASE_URL = "https://www.ae.com";
+    private static final String USER_AGENT =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    + "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    + "Chrome/153.0.0.0 Safari/537.36";
 
-    public Response getInventoryByProduct(String productId) {
+    private static final String INVENTORY_ENDPOINT =
+            "/ugp-api/inventory/v1/groupByProduct/US/";
 
-        Response response =
-                given()
-                        .baseUri(BASE_URL)
+    private static final String CATEGORY_ENDPOINT =
+            "/ugp-api/browse/v1/category/";
 
-                        .header("Accept", "application/json")
-                        .header(
-                                "User-Agent",
-                                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
-                                        "AppleWebKit/537.36 (KHTML, like Gecko) " +
-                                        "Chrome/153.0.0.0 Safari/537.36"
-                        )
+    private final RequestSpecification requestSpec;
 
-                        .header("Referer", "https://www.ae.com/")
-                        .header("Origin", "https://www.ae.com")
+    public ProductController() {
 
-                        .header("aecountry", "US")
-                        .header("aelang", "en_US")
-                        .header("aesite", "AEO_US")
-                        .header(
-                                "Authorization",
-                                "Bearer " + TokenManager.getToken())
+        TestPropertiesConfig configProperties =
+                ConfigFactory.create(
+                        TestPropertiesConfig.class,
+                        System.getProperties()
+                );
 
-                        .when()
-                        .get(
-                                "/ugp-api/inventory/v1/groupByProduct/US/"
-                                        + productId
-                        );
-
-        System.out.println(
-                "INVENTORY STATUS: " + response.statusCode()
-        );
-
-        System.out.println("INVENTORY RESPONSE:");
-        response.prettyPrint();
-
-        return response;
+        requestSpec = given()
+                .baseUri(configProperties.getApiBaseUrl())
+                .header("User-Agent", USER_AGENT)
+                .header("aecountry", "US")
+                .header("aelang", "en_US")
+                .header("aesite", "AEO_US")
+                .header(
+                        "Authorization",
+                        "Bearer " + TokenManager.getToken()
+                )
+                .filter(new AllureRestAssured());
     }
 
+    @Step("Get inventory for product: {productId}")
+    public Response getInventoryByProduct(String productId) {
+
+        return given(requestSpec)
+                .header("Accept", "application/json")
+                .header("Referer", "https://www.ae.com/")
+                .header("Origin", "https://www.ae.com")
+                .when()
+                .get(INVENTORY_ENDPOINT + productId)
+                .andReturn();
+    }
+
+    @Step("Get SKU list for product: {productId}")
     public List<String> getSkuList(String productId) {
 
         Response response = getInventoryByProduct(productId);
 
-        response.then().statusCode(200);
+        response.then()
+                .statusCode(200);
 
-        List<String> skuIds = response.jsonPath()
-                .getList("data.'" + productId + "'.skuId", String.class);
-
-        System.out.println("SKU LIST: " + skuIds);
-
-        return skuIds;
+        return response.jsonPath()
+                .getList(
+                        "data.'" + productId + "'.skuId",
+                        String.class
+                );
     }
 
+    @Step("Get products by category: {categoryId}")
     public Response getProductsByCategory(String categoryId) {
 
-        Response response =
-                given()
-                        .baseUri(BASE_URL)
-                        .header("Accept", "application/vnd.api+json")
-                        .header(
-                                "User-Agent",
-                                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
-                                        "AppleWebKit/537.36 (KHTML, like Gecko) " +
-                                        "Chrome/153.0.0.0 Safari/537.36"
-                        )
-                        .header(
-                                "Referer",
-                                "https://www.ae.com/us/en/c/men/tops/" + categoryId
-                        )
-                        .header("aecountry", "US")
-                        .header("aelang", "en_US")
-                        .header("aesite", "AEO_US")
-                        .header("channelType", "WEB")
-                        .header(
-                                "Authorization",
-                                "Bearer " + TokenManager.getToken()
-                        )
-                        .when()
-                        .get("/ugp-api/browse/v1/category/" + categoryId);
-
-        System.out.println(
-                "BROWSE STATUS: " + response.statusCode()
-        );
-
-        System.out.println("BROWSE RESPONSE:");
-        response.prettyPrint();
-
-        return response;
+        return given(requestSpec)
+                .header("Accept", "application/vnd.api+json")
+                .header(
+                        "Referer",
+                        "https://www.ae.com/us/en/c/men/tops/" + categoryId
+                )
+                .header("channelType", "WEB")
+                .when()
+                .get(CATEGORY_ENDPOINT + categoryId)
+                .andReturn();
     }
 
+    @Step("Get first available SKU from category: {categoryId}")
     public String getFirstSkuFromAvailableProducts(String categoryId) {
 
         List<String> productIds = getAvailableProductIds(categoryId);
@@ -112,10 +101,6 @@ public class ProductController {
             Response response = getInventoryByProduct(productId);
 
             if (response.statusCode() != 200) {
-                System.out.println(
-                        "SKIP PRODUCT " + productId +
-                                " — inventory status: " + response.statusCode()
-                );
                 continue;
             }
 
@@ -126,24 +111,8 @@ public class ProductController {
                     );
 
             if (skuIds != null && !skuIds.isEmpty()) {
-
-                String skuId = skuIds.get(0);
-
-                System.out.println(
-                        "DYNAMIC PRODUCT ID: " + productId
-                );
-
-                System.out.println(
-                        "DYNAMIC SKU ID: " + skuId
-                );
-
-                return skuId;
+                return skuIds.get(0);
             }
-
-            System.out.println(
-                    "SKIP PRODUCT " + productId +
-                            " — no SKUs found"
-            );
         }
 
         throw new IllegalStateException(
@@ -152,10 +121,10 @@ public class ProductController {
         );
     }
 
+    @Step("Get SKUs from two different products in category: {categoryId}")
     public List<String> getSkusFromTwoDifferentProducts(String categoryId) {
 
         List<String> productIds = getAvailableProductIds(categoryId);
-
         List<String> skuIds = new ArrayList<>();
 
         for (String productId : productIds) {
@@ -163,10 +132,6 @@ public class ProductController {
             Response response = getInventoryByProduct(productId);
 
             if (response.statusCode() != 200) {
-                System.out.println(
-                        "SKIP PRODUCT " + productId +
-                                " — inventory status: " + response.statusCode()
-                );
                 continue;
             }
 
@@ -178,14 +143,7 @@ public class ProductController {
 
             if (productSkuIds != null && !productSkuIds.isEmpty()) {
 
-                String skuId = productSkuIds.get(0);
-
-                skuIds.add(skuId);
-
-                System.out.println(
-                        "PRODUCT " + productId +
-                                " — SELECTED SKU: " + skuId
-                );
+                skuIds.add(productSkuIds.get(0));
 
                 if (skuIds.size() == 2) {
                     return skuIds;
@@ -199,6 +157,7 @@ public class ProductController {
         );
     }
 
+    @Step("Find product with at least two SKUs in category: {categoryId}")
     public String getProductWithAtLeastTwoSkus(String categoryId) {
 
         List<String> productIds = getAvailableProductIds(categoryId);
@@ -208,10 +167,6 @@ public class ProductController {
             Response response = getInventoryByProduct(productId);
 
             if (response.statusCode() != 200) {
-                System.out.println(
-                        "SKIP PRODUCT " + productId +
-                                " — inventory status: " + response.statusCode()
-                );
                 continue;
             }
 
@@ -222,26 +177,8 @@ public class ProductController {
                     );
 
             if (skuIds != null && skuIds.size() >= 2) {
-
-                System.out.println(
-                        "PRODUCT WITH AT LEAST TWO SKUS FOUND: " + productId
-                );
-
-                System.out.println(
-                        "SKU COUNT: " + skuIds.size()
-                );
-
-                System.out.println(
-                        "SKU LIST: " + skuIds
-                );
-
                 return productId;
             }
-
-            System.out.println(
-                    "SKIP PRODUCT " + productId +
-                            " — less than two SKUs"
-            );
         }
 
         throw new IllegalStateException(
@@ -250,6 +187,7 @@ public class ProductController {
         );
     }
 
+    @Step("Get available product IDs from category: {categoryId}")
     public List<String> getAvailableProductIds(String categoryId) {
 
         Response response = getProductsByCategory(categoryId);
@@ -257,19 +195,13 @@ public class ProductController {
         response.then()
                 .statusCode(200);
 
-        List<String> productIds = response.jsonPath()
+        return response.jsonPath()
                 .getList(
-                        "included.findAll { " +
-                                "it.type == 'product' && " +
-                                "it.attributes.isSoldOut == false " +
-                                "}.id",
+                        "included.findAll { "
+                                + "it.type == 'product' && "
+                                + "it.attributes.isSoldOut == false "
+                                + "}.id",
                         String.class
                 );
-
-        System.out.println(
-                "AVAILABLE PRODUCT IDS: " + productIds
-        );
-
-        return productIds;
     }
 }

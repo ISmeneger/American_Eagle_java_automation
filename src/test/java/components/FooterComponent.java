@@ -16,11 +16,11 @@ public class FooterComponent {
     private final WebDriver driver;
     private final WebDriverWait wait;
 
-    @FindBy(xpath = "//p[contains(@class, 'copyright')]")
+    @FindBy(css = "p[class*='copyright']")
     private WebElement copyrightText;
 
-    @FindBy(xpath = "//img[contains(@src, 'Footer-logos.svg')]")
-    private WebElement footerImg;
+    @FindBy(css = "img[src*='Footer-logos.svg']")
+    private WebElement footerImage;
 
     public FooterComponent(WebDriver driver) {
         this.driver = driver;
@@ -33,7 +33,7 @@ public class FooterComponent {
     }
 
     @Step("Scroll to copyright text")
-    public void scrollingToElement() {
+    public void scrollToCopyrightText() {
 
         new Actions(driver)
                 .scrollToElement(copyrightText)
@@ -52,21 +52,21 @@ public class FooterComponent {
     }
 
     @Step("Scroll to footer image")
-    public void scrollingToElementFooterImg() {
+    public void scrollToFooterImage() {
 
         new Actions(driver)
-                .scrollToElement(footerImg)
+                .scrollToElement(footerImage)
                 .perform();
 
         wait.until(
-                ExpectedConditions.visibilityOf(footerImg)
+                ExpectedConditions.visibilityOf(footerImage)
         );
     }
 
-    @Step("Check footer image is displayed")
-    public boolean footerImgIsDisplayed() {
+    @Step("Check 'Footer' image is displayed")
+    public boolean footerImageIsDisplayed() {
         return wait.until(
-                ExpectedConditions.visibilityOf(footerImg)
+                ExpectedConditions.visibilityOf(footerImage)
         ).isDisplayed();
     }
 }

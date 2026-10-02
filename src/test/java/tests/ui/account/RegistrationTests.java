@@ -1,8 +1,14 @@
 package tests.ui.account;
 
+import configs.ConfigProvider;
 import io.qameta.allure.Severity;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -14,7 +20,6 @@ import utils.TestDataGeneratorForCreationAccount;
 
 import java.util.stream.Stream;
 
-import static constants.CommonConstants.BASE_URL;
 import static io.qameta.allure.SeverityLevel.NORMAL;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -24,9 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 })
 class RegistrationTests extends BaseTest {
 
-    private HomePage homePage;
-    private AccountPage accountPage;
-    private RegistrationSteps registrationSteps;
+    private static final String UI_BASE_URL =
+            ConfigProvider.get().getUiBaseUrl();
 
     private static final String ACCOUNT_URL =
             "/myaccount/real-rewards/account-summary";
@@ -37,7 +41,7 @@ class RegistrationTests extends BaseTest {
     private static final String MONTH_VALUE = "August";
     private static final String DAY_VALUE = "21";
 
-    private static final String ACCOUNT_CREATED_SUCCESSFUL_MESSAGE =
+    private static final String ACCOUNT_CREATED_SUCCESS_MESSAGE =
             "Account created!";
 
     private static final String EMAIL_VALIDATION_MESSAGE =
@@ -54,6 +58,10 @@ class RegistrationTests extends BaseTest {
 
     private static final String EMPTY_POSTAL_CODE_MESSAGE =
             "Please enter your zip/postal code.";
+
+    private HomePage homePage;
+    private AccountPage accountPage;
+    private RegistrationSteps registrationSteps;
 
     private static Stream<Arguments> emailValidationData() {
         return Stream.of(
@@ -75,6 +83,11 @@ class RegistrationTests extends BaseTest {
         registrationSteps = new RegistrationSteps(driver);
 
         homePage.closeBlockingOverlaysIfAvailable();
+    }
+
+    private void openRegistrationForm() {
+        homePage.getHeader().clickAccountButton();
+        homePage.getHeader().clickCreateAccountButton();
     }
 
     @Test
@@ -102,8 +115,7 @@ class RegistrationTests extends BaseTest {
         String password =
                 TestDataGeneratorForCreationAccount.generatePassword();
 
-        homePage.getHeader().clickAccountButton();
-        homePage.getHeader().clickCreateAccountButton();
+        openRegistrationForm();
 
         registrationSteps.fillRegistrationForm(
                 email,
@@ -113,7 +125,10 @@ class RegistrationTests extends BaseTest {
         );
 
         accountPage.enterZipCode(POSTAL_CODE);
-        accountPage.selectBirthDate(MONTH_VALUE, DAY_VALUE);
+        accountPage.selectBirthDate(
+                MONTH_VALUE,
+                DAY_VALUE
+        );
         accountPage.scrollToSubmitButton();
         accountPage.acceptTermsAndConditions();
 
@@ -131,7 +146,7 @@ class RegistrationTests extends BaseTest {
                         "After successful account creation, " +
                                 "user should be redirected to account page"
                 )
-                .isEqualTo(BASE_URL + ACCOUNT_URL);
+                .isEqualTo(UI_BASE_URL + ACCOUNT_URL);
 
         softly.assertThat(
                         accountPage.getSuccessfulCreatedAccountText()
@@ -141,7 +156,7 @@ class RegistrationTests extends BaseTest {
                                 "after account creation"
                 )
                 .isEqualTo(
-                        ACCOUNT_CREATED_SUCCESSFUL_MESSAGE
+                        ACCOUNT_CREATED_SUCCESS_MESSAGE
                 );
 
         softly.assertAll();
@@ -166,8 +181,7 @@ class RegistrationTests extends BaseTest {
         String password =
                 TestDataGeneratorForCreationAccount.generatePassword();
 
-        homePage.getHeader().clickAccountButton();
-        homePage.getHeader().clickCreateAccountButton();
+        openRegistrationForm();
 
         registrationSteps.fillRegistrationForm(
                 email,
@@ -223,7 +237,7 @@ class RegistrationTests extends BaseTest {
             "Check account creation with empty 'First Name' " +
                     "and empty 'Last Name'"
     )
-    void createAccountPageWithEmptyNamesFieldsTest() {
+    void createAccountWithEmptyNameFieldsTest() {
 
         String email =
                 TestDataGeneratorForCreationAccount.generateEmail();
@@ -234,8 +248,7 @@ class RegistrationTests extends BaseTest {
         String password =
                 TestDataGeneratorForCreationAccount.generatePassword();
 
-        homePage.getHeader().clickAccountButton();
-        homePage.getHeader().clickCreateAccountButton();
+        openRegistrationForm();
 
         registrationSteps.fillRegistrationForm(
                 email,
@@ -245,7 +258,10 @@ class RegistrationTests extends BaseTest {
         );
 
         accountPage.enterZipCode(POSTAL_CODE);
-        accountPage.selectBirthDate(MONTH_VALUE, DAY_VALUE);
+        accountPage.selectBirthDate(
+                MONTH_VALUE,
+                DAY_VALUE
+        );
         accountPage.scrollToSubmitButton();
         accountPage.acceptTermsAndConditions();
 
@@ -261,8 +277,7 @@ class RegistrationTests extends BaseTest {
                 .isFalse();
 
         softly.assertThat(
-                        accountPage
-                                .getErrorEmptyFirstNameMessageIsDisplayed()
+                        accountPage.isEmptyFirstNameErrorDisplayed()
                 )
                 .as(
                         "Error message for empty First Name " +
@@ -280,8 +295,7 @@ class RegistrationTests extends BaseTest {
                 .isEqualTo(EMPTY_FIRST_NAME_MESSAGE);
 
         softly.assertThat(
-                        accountPage
-                                .getErrorEmptyLastNameMessageIsDisplayed()
+                        accountPage.isEmptyLastNameErrorDisplayed()
                 )
                 .as(
                         "Error message for empty Last Name " +
@@ -305,7 +319,7 @@ class RegistrationTests extends BaseTest {
     @Severity(NORMAL)
     @Tag("negative")
     @DisplayName("Check account creation with empty password")
-    void createAccountPageWithEmptyPasswordTest() {
+    void createAccountWithEmptyPasswordTest() {
 
         String email =
                 TestDataGeneratorForCreationAccount.generateEmail();
@@ -318,8 +332,7 @@ class RegistrationTests extends BaseTest {
 
         String emptyPassword = "";
 
-        homePage.getHeader().clickAccountButton();
-        homePage.getHeader().clickCreateAccountButton();
+        openRegistrationForm();
 
         registrationSteps.fillRegistrationForm(
                 email,
@@ -329,7 +342,10 @@ class RegistrationTests extends BaseTest {
         );
 
         accountPage.enterZipCode(POSTAL_CODE);
-        accountPage.selectBirthDate(MONTH_VALUE, DAY_VALUE);
+        accountPage.selectBirthDate(
+                MONTH_VALUE,
+                DAY_VALUE
+        );
         accountPage.scrollToSubmitButton();
         accountPage.acceptTermsAndConditions();
 
@@ -345,8 +361,7 @@ class RegistrationTests extends BaseTest {
                 .isFalse();
 
         softly.assertThat(
-                        accountPage
-                                .getErrorEmptyPasswordMessageIsDisplayed()
+                        accountPage.isEmptyPasswordErrorDisplayed()
                 )
                 .as(
                         "Password error message should be visible"
@@ -369,7 +384,7 @@ class RegistrationTests extends BaseTest {
     @Severity(NORMAL)
     @Tag("negative")
     @DisplayName("Check account creation with empty 'Zip Code'")
-    void createAccountPageWithEmptyZipCodeTest() {
+    void createAccountWithEmptyZipCodeTest() {
 
         String email =
                 TestDataGeneratorForCreationAccount.generateEmail();
@@ -383,8 +398,7 @@ class RegistrationTests extends BaseTest {
         String password =
                 TestDataGeneratorForCreationAccount.generatePassword();
 
-        homePage.getHeader().clickAccountButton();
-        homePage.getHeader().clickCreateAccountButton();
+        openRegistrationForm();
 
         registrationSteps.fillRegistrationForm(
                 email,
@@ -394,7 +408,10 @@ class RegistrationTests extends BaseTest {
         );
 
         accountPage.enterZipCode(EMPTY_POSTAL_CODE);
-        accountPage.selectBirthDate(MONTH_VALUE, DAY_VALUE);
+        accountPage.selectBirthDate(
+                MONTH_VALUE,
+                DAY_VALUE
+        );
         accountPage.scrollToSubmitButton();
         accountPage.acceptTermsAndConditions();
 
@@ -410,8 +427,7 @@ class RegistrationTests extends BaseTest {
                 .isFalse();
 
         softly.assertThat(
-                        accountPage
-                                .getErrorEmptyZipCodeMessageIsDisplayed()
+                        accountPage.isEmptyZipCodeErrorDisplayed()
                 )
                 .as(
                         "Error message for empty 'Zip Code' " +
@@ -438,7 +454,7 @@ class RegistrationTests extends BaseTest {
             "Check account creation with empty 'Birthday' field " +
                     "and the checkbox 'I accept' unchecked"
     )
-    void createAccountPageWithEmptyBirthDateTest() {
+    void createAccountWithEmptyBirthDateTest() {
 
         String email =
                 TestDataGeneratorForCreationAccount.generateEmail();
@@ -452,8 +468,7 @@ class RegistrationTests extends BaseTest {
         String password =
                 TestDataGeneratorForCreationAccount.generatePassword();
 
-        homePage.getHeader().clickAccountButton();
-        homePage.getHeader().clickCreateAccountButton();
+        openRegistrationForm();
 
         registrationSteps.fillRegistrationForm(
                 email,

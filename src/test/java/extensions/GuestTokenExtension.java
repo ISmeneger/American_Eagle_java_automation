@@ -6,17 +6,16 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import support.TokenManager;
 
-public class GuestTokenExtension
-        implements BeforeAllCallback, AfterAllCallback {
+public class GuestTokenExtension implements BeforeAllCallback, AfterAllCallback {
 
     @Override
-    public void beforeAll(ExtensionContext extensionContext) {
+    public void beforeAll(ExtensionContext context) {
         TokenManager.setCurrentRole(UserRole.GUEST);
         TokenManager.getToken();
     }
 
     @Override
-    public void afterAll(ExtensionContext extensionContext) {
+    public void afterAll(ExtensionContext context) {
         TokenManager.clear();
     }
 }

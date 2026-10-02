@@ -2,22 +2,26 @@ package utils;
 
 import com.github.javafaker.Faker;
 
-public class TestDataGeneratorForCreationAccount {
-    private static final Faker faker = new Faker();
+public final class TestDataGeneratorForCreationAccount {
+
+    private static final Faker FAKER = new Faker();
+
+    private TestDataGeneratorForCreationAccount() {
+    }
 
     public static String generateEmail() {
-        return faker.internet().emailAddress();
+        return FAKER.internet().emailAddress();
     }
 
     public static String generatePassword() {
-        return faker.internet().password(8, 25, true, true);
+        return FAKER.internet().password(8, 25, true, true);
     }
 
     public static String generateFirstName() {
-        return faker.name().firstName();
+        return FAKER.name().firstName();
     }
 
     public static String generateLastName() {
-        return faker.name().lastName();
+        return FAKER.name().lastName();
     }
 }

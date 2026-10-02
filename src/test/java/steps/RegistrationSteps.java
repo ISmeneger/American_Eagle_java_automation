@@ -12,7 +12,7 @@ public class RegistrationSteps {
         this.accountPage = new AccountPage(driver);
     }
 
-    @Step("Fill registration form")
+    @Step("Fill registration form for email: {email}")
     public void fillRegistrationForm(
             String email,
             String firstName,
