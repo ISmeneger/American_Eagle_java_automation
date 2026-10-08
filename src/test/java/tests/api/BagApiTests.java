@@ -416,34 +416,21 @@ class BagApiTests {
         String invalidSkuId = "invalid-sku-id";
 
         Response response =
-                bagController.addItem(
-                        invalidSkuId,
-                        1
-                );
+                bagController.addItem(invalidSkuId, 1);
 
         response.then()
                 .statusCode(422);
 
-        assertThat(
-                response.jsonPath()
-                        .getString("errors[0].key")
-        )
+        assertThat(response.jsonPath().getString("errors[0].key"))
                 .as("Error key must indicate a cart error")
                 .isEqualTo("error.cart.general");
 
-        assertThat(
-                response.jsonPath()
-                        .getString("errors[0].message")
-        )
-                .as("Error message must indicate that SKU was not found")
-                .isEqualTo("catalog.error.sku_not_found");
+        assertThat(response.jsonPath().getString("errors[0].message"))
+                .as("Error message must indicate that SKU is invalid")
+                .isEqualTo("SKU is Invalid");
 
-        List<String> errorFields =
-                response.jsonPath()
-                        .getList(
-                                "errors[0].fields",
-                                String.class
-                        );
+        List<String> errorFields = response.jsonPath()
+                .getList("errors[0].fields", String.class);
 
         assertThat(errorFields)
                 .as("Error must be related to skuId")
