@@ -4,7 +4,6 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -153,23 +152,17 @@ public class AccountPage extends BasePage {
 
     @Step("Click 'Continue' button")
     public void clickContinueButton() {
-        wait.until(
-                ExpectedConditions.elementToBeClickable(continueButton)
-        ).click();
+        clickWithOverlayRetry(continueButton);
     }
 
     @Step("Select password as sign-in method")
     public void selectPasswordSignInMethod() {
-        wait.until(
-                ExpectedConditions.elementToBeClickable(passwordSignInMethod)
-        ).click();
+        clickWithOverlayRetry(passwordSignInMethod);
     }
 
     @Step("Click 'Sign In' / 'Continue' button")
     public void clickSubmitSignInButton() {
-        wait.until(
-                ExpectedConditions.elementToBeClickable(continueButton)
-        ).click();
+        clickWithOverlayRetry(continueButton);
     }
 
     // =========================
@@ -273,11 +266,7 @@ public class AccountPage extends BasePage {
 
     @Step("Click 'Create Account' button")
     public void clickSubmitButton() {
-        wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        submitAccountButton
-                )
-        ).click();
+        clickWithOverlayRetry(submitAccountButton);
     }
 
     // =========================

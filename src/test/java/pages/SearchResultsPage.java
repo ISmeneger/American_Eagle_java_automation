@@ -30,14 +30,17 @@ public class SearchResultsPage extends BasePage {
     @Step("Get search results message")
     public String getSearchResultsMessage() {
         return wait.until(
-                ExpectedConditions.visibilityOf(searchResultsMessage)
+                ExpectedConditions.visibilityOf(
+                        searchResultsMessage
+                )
         ).getText();
     }
 
     @Step("Get number of displayed products")
     public int getDisplayedProductsCount() {
-        wait.until(
-                ExpectedConditions.visibilityOfAllElements(productImages)
+
+        wait.until(driver ->
+                !productImages.isEmpty()
         );
 
         return productImages.size();

@@ -21,15 +21,22 @@ public class BasePage {
 
     protected final WebDriver driver;
     protected final WebDriverWait wait;
+    protected final WebDriverWait shortWait;
 
     @FindBy(css = "button[aria-label='dismiss cookie message']")
     private WebElement cookieButton;
 
     public BasePage(WebDriver driver) {
         this.driver = driver;
+
         this.wait = new WebDriverWait(
                 driver,
                 Duration.ofSeconds(10)
+        );
+
+        this.shortWait = new WebDriverWait(
+                driver,
+                Duration.ofSeconds(2)
         );
 
         PageFactory.initElements(driver, this);
@@ -52,11 +59,8 @@ public class BasePage {
                                 "button.close[aria-label='Close']"
                 );
 
-        WebDriverWait popupWait =
-                new WebDriverWait(driver, Duration.ofSeconds(10));
-
         try {
-            popupWait.until(webDriver -> {
+            shortWait.until(webDriver -> {
 
                 try {
                     WebElement shadowHost =
@@ -95,17 +99,13 @@ public class BasePage {
     public void acceptCookiesIfAvailable() {
 
         try {
-            WebDriverWait cookieWait =
-                    new WebDriverWait(driver, Duration.ofSeconds(2));
+            if (cookieButton.isDisplayed()
+                    && cookieButton.isEnabled()) {
 
-            cookieWait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            cookieButton
-                    )
-            ).click();
+                cookieButton.click();
+            }
 
-        } catch (TimeoutException |
-                 NoSuchElementException |
+        } catch (NoSuchElementException |
                  StaleElementReferenceException ignored) {
 
             // Cookie banner is optional.
@@ -116,5 +116,22 @@ public class BasePage {
     public void closeBlockingOverlaysIfAvailable() {
         acceptCookiesIfAvailable();
         closePopUpIfAvailable();
+    }
+
+    protected void clickWithOverlayRetry(WebElement element) {
+
+        try {
+            wait.until(
+                    ExpectedConditions.elementToBeClickable(element)
+            ).click();
+
+        } catch (ElementClickInterceptedException e) {
+
+            closeBlockingOverlaysIfAvailable();
+
+            wait.until(
+                    ExpectedConditions.elementToBeClickable(element)
+            ).click();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package tests.ui.search;
 
 import components.HeaderComponent;
+import extensions.KnownDefect;
 import io.qameta.allure.Severity;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,10 +67,10 @@ class SearchTests extends BaseTest {
 
     @Test
     @Severity(CRITICAL)
-    @Tags({
-            @Tag("negative"),
-            @Tag("defect")
-    })
+    @Tag("negative")
+    @KnownDefect(
+            "Search returns products for a non-existing query instead of showing no-results message"
+    )
     @DisplayName("Search for non-existing product")
     void searchNonExistingProductTest() {
 

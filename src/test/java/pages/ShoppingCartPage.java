@@ -7,6 +7,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.util.List;
+
 public class ShoppingCartPage extends BasePage {
 
     @FindBy(css = "h2[data-test-items-qty-msg]")
@@ -43,9 +45,13 @@ public class ShoppingCartPage extends BasePage {
     private WebElement freeShipping;
 
     @FindBy(css = "span[data-test-cart-item-sale-price]")
-    private WebElement cartProductPrice;
+    private List<WebElement> cartSalePrices;
 
-    @FindBy(css = "[data-testid='row-total-value']")
+    @FindBy(css = "span[data-test-cart-item-price]")
+    private List<WebElement> cartRegularPrices;
+
+    @FindBy(css = "[data-test-total-row] " +
+            "[data-testid='row-total-value']")
     private WebElement subtotalValue;
 
     public ShoppingCartPage(WebDriver driver) {
@@ -61,18 +67,7 @@ public class ShoppingCartPage extends BasePage {
 
     @Step("Click 'Edit Item' button")
     public void clickEditItemButton() {
-
-        WebElement editButton = wait.until(
-                ExpectedConditions.elementToBeClickable(editItem)
-        );
-
-        new Actions(driver)
-                .scrollToElement(editButton)
-                .perform();
-
-        wait.until(
-                ExpectedConditions.elementToBeClickable(editButton)
-        ).click();
+        clickWithOverlayRetry(editItem);
     }
 
     @Step("Move to 'Update Bag' button")
@@ -90,18 +85,12 @@ public class ShoppingCartPage extends BasePage {
 
     @Step("Increase product quantity")
     public void increaseProductQuantity() {
-        wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        increaseQuantityButton
-                )
-        ).click();
+        clickWithOverlayRetry(increaseQuantityButton);
     }
 
     @Step("Update bag")
     public void updateBag() {
-        wait.until(
-                ExpectedConditions.elementToBeClickable(updateBagButton)
-        ).click();
+        clickWithOverlayRetry(updateBagButton);
     }
 
     @Step("Get product name in cart")
@@ -113,6 +102,7 @@ public class ShoppingCartPage extends BasePage {
 
     @Step("Get product size in cart")
     public String getProductSize() {
+
         String sizeText = wait.until(
                 ExpectedConditions.visibilityOf(productSize)
         ).getText();
@@ -133,9 +123,7 @@ public class ShoppingCartPage extends BasePage {
                 .scrollToElement(remove)
                 .perform();
 
-        wait.until(
-                ExpectedConditions.elementToBeClickable(remove)
-        ).click();
+        clickWithOverlayRetry(remove);
     }
 
     @Step("Get empty bag message")
@@ -147,9 +135,7 @@ public class ShoppingCartPage extends BasePage {
 
     @Step("Click 'Sign In' button in cart")
     public void clickSignInButton() {
-        wait.until(
-                ExpectedConditions.elementToBeClickable(signInButton)
-        ).click();
+        clickWithOverlayRetry(signInButton);
     }
 
     @Step("Get cart page header")
@@ -168,9 +154,20 @@ public class ShoppingCartPage extends BasePage {
 
     @Step("Get product price in cart")
     public String getProductPriceInCart() {
-        return wait.until(
-                ExpectedConditions.visibilityOf(cartProductPrice)
-        ).getText();
+
+        if (!cartSalePrices.isEmpty()
+                && cartSalePrices.get(0).isDisplayed()) {
+            return cartSalePrices.get(0).getText().trim();
+        }
+
+        if (!cartRegularPrices.isEmpty()
+                && cartRegularPrices.get(0).isDisplayed()) {
+            return cartRegularPrices.get(0).getText().trim();
+        }
+
+        throw new IllegalStateException(
+                "Product price in cart is not displayed"
+        );
     }
 
     @Step("Get subtotal value in cart")

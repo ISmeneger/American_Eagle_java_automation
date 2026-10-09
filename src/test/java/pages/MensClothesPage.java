@@ -32,37 +32,33 @@ public class MensClothesPage extends BasePage {
     public void moveToMenMenu() {
 
         WebElement menMenu = wait.until(
-                ExpectedConditions.visibilityOf(menFormMenu)
+                ExpectedConditions.visibilityOf(
+                        menFormMenu
+                )
         );
 
         new Actions(driver)
-                .scrollToElement(menMenu)
                 .moveToElement(menMenu)
                 .perform();
 
         wait.until(
-                ExpectedConditions.visibilityOf(viewAllCategories)
+                ExpectedConditions.visibilityOf(
+                        viewAllCategories
+                )
         );
     }
 
     @Step("Click 'View All' in Men's menu")
     public void clickViewAllCategories() {
-
-        WebElement viewAll = wait.until(
-                ExpectedConditions.elementToBeClickable(viewAllCategories)
-        );
-
-        new Actions(driver)
-                .moveToElement(viewAll)
-                .perform();
-
-        viewAll.click();
+        clickWithOverlayRetry(viewAllCategories);
     }
 
     @Step("Get Men's Clothes page title")
     public String getMensPageTitle() {
         return wait.until(
-                ExpectedConditions.visibilityOf(mensClothesTitle)
+                ExpectedConditions.visibilityOf(
+                        mensClothesTitle
+                )
         ).getText();
     }
 
@@ -71,13 +67,19 @@ public class MensClothesPage extends BasePage {
 
         try {
             wait.until(
-                    ExpectedConditions.visibilityOfAllElements(productItems)
+                    ExpectedConditions.visibilityOfAllElements(
+                            productItems
+                    )
             );
+
         } catch (TimeoutException ignored) {
+
             closePopUpIfAvailable();
 
             wait.until(
-                    ExpectedConditions.visibilityOfAllElements(productItems)
+                    ExpectedConditions.visibilityOfAllElements(
+                            productItems
+                    )
             );
         }
 
@@ -93,6 +95,6 @@ public class MensClothesPage extends BasePage {
                 )
         );
 
-        firstProduct.click();
+        clickWithOverlayRetry(firstProduct);
     }
 }

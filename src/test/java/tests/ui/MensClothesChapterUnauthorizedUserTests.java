@@ -260,6 +260,7 @@ class MensClothesChapterUnauthorizedUserTests extends BaseTest {
                 .as("Initial quantity should be 1")
                 .contains(ONE_ITEM_TEXT);
 
+        cartPage.closeBlockingOverlaysIfAvailable();
         cartPage.clickEditItemButton();
         cartPage.moveToUpdateBagButton();
         cartPage.increaseProductQuantity();

@@ -24,7 +24,10 @@ public class ProductPage extends BasePage {
     private WebElement selectedSizeText;
 
     @FindBy(css = "div.product-sale-price")
-    private WebElement productPrice;
+    private List<WebElement> productSalePrices;
+
+    @FindBy(css = "div[data-testid='list-price']")
+    private List<WebElement> productRegularPrices;
 
     @FindBy(name = "addToBag")
     private WebElement addToBagButton;
@@ -55,7 +58,7 @@ public class ProductPage extends BasePage {
                 .scrollToElement(sizeDropdown)
                 .perform();
 
-        sizeDropdown.click();
+        clickWithOverlayRetry(sizeDropdown);
 
         wait.until(
                 ExpectedConditions.attributeToBe(
@@ -87,11 +90,7 @@ public class ProductPage extends BasePage {
                 .getText()
                 .trim();
 
-        wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        firstAvailableSize
-                )
-        ).click();
+        clickWithOverlayRetry(firstAvailableSize);
 
         wait.until(
                 ExpectedConditions.attributeToBe(
@@ -116,23 +115,31 @@ public class ProductPage extends BasePage {
         ).getText().trim();
     }
 
-    @Step("Get product price")
+    @Step("Get current product price")
     public String getProductPrice() {
-        return wait.until(
-                ExpectedConditions.visibilityOf(
-                        productPrice
-                )
-        ).getText();
+
+        return wait.until(webDriver -> {
+
+            for (WebElement price : productSalePrices) {
+                if (price.isDisplayed()) {
+                    return price.getText().trim();
+                }
+            }
+
+            for (WebElement price : productRegularPrices) {
+                if (price.isDisplayed()) {
+                    return price.getText().trim();
+                }
+            }
+
+            return null;
+        });
     }
 
     @Step("Add product to bag")
     public void clickAddToBagButton() {
 
-        wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        addToBagButton
-                )
-        ).click();
+        clickWithOverlayRetry(addToBagButton);
 
         wait.until(
                 ExpectedConditions.visibilityOf(
@@ -159,16 +166,13 @@ public class ProductPage extends BasePage {
     @Step("Open shopping bag")
     public void openShoppingBag() {
 
-        WebElement viewBagButton = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        viewItemInBagButton
-                )
-        );
-
-        viewBagButton.click();
+        clickWithOverlayRetry(viewItemInBagButton);
 
         WebDriverWait navigationWait =
-                new WebDriverWait(driver, Duration.ofSeconds(30));
+                new WebDriverWait(
+                        driver,
+                        Duration.ofSeconds(30)
+                );
 
         navigationWait.until(
                 ExpectedConditions.urlContains("/cart")
@@ -186,11 +190,7 @@ public class ProductPage extends BasePage {
 
     @Step("Increase product quantity")
     public void increaseQuantity() {
-        wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        increaseQuantityButton
-                )
-        ).click();
+        clickWithOverlayRetry(increaseQuantityButton);
     }
 
     @Step("Increase product quantity until button is disabled")

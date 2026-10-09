@@ -3,6 +3,7 @@ package components;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -16,9 +17,22 @@ public class HeaderComponent {
 
     private final WebDriverWait wait;
 
+    private static final By ACCOUNT_ICON =
+            By.cssSelector("svg[data-testid='icon-account']");
+
+    private static final By SEARCH_INPUT =
+            By.cssSelector("input[name='search']");
+
     public HeaderComponent(WebDriver driver) {
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        PageFactory.initElements(driver, this);
+        this.wait = new WebDriverWait(
+                driver,
+                Duration.ofSeconds(10)
+        );
+
+        PageFactory.initElements(
+                driver,
+                this
+        );
     }
 
     @FindBy(xpath = "//a[@title='Shop AE']")
@@ -48,16 +62,8 @@ public class HeaderComponent {
     @FindBy(name = "search-cta")
     private WebElement searchButton;
 
-    // The SVG is used for visibility checks; click its parent interactive element.
-
     @FindBy(css = "svg[data-testid='icon-account']")
     private WebElement iconAccount;
-
-    private static final By ACCOUNT_ICON =
-            By.cssSelector("svg[data-testid='icon-account']");
-
-    private static final By SEARCH_INPUT =
-            By.cssSelector("input[name='search']");
 
     @FindBy(css = "a[data-testid='sign-in-link']")
     private WebElement signInButton;
@@ -83,93 +89,112 @@ public class HeaderComponent {
     @Step("Get text in logo link")
     public String getAeoLogoSubtitleText() {
         return wait.until(
-                ExpectedConditions.visibilityOf(subTitleAeoLogo)
-        ).getText();
+                ExpectedConditions.visibilityOf(
+                        subTitleAeoLogo
+                )
+        ).getText().trim();
     }
 
     @Step("Get main logo title")
     public String getAeoLogoTitle() {
         return wait.until(
-                ExpectedConditions.visibilityOf(subTitleAeoLogo)
+                ExpectedConditions.visibilityOf(
+                        subTitleAeoLogo
+                )
         ).getDomProperty("title");
     }
 
     @Step("Get text in 'Today's Offers' button on main menu")
     public String getAeoFeaturedOffersText() {
         return wait.until(
-                ExpectedConditions.visibilityOf(featuredOffersMenu)
-        ).getText();
+                ExpectedConditions.visibilityOf(
+                        featuredOffersMenu
+                )
+        ).getText().trim();
     }
 
     @Step("Get text in 'New' tab on main menu")
     public String getAeoNewTabText() {
         return wait.until(
-                ExpectedConditions.visibilityOf(newFormMenu)
-        ).getText();
+                ExpectedConditions.visibilityOf(
+                        newFormMenu
+                )
+        ).getText().trim();
     }
 
     @Step("Get text in 'Women' tab on main menu")
     public String getAeoWomenTabText() {
         return wait.until(
-                ExpectedConditions.visibilityOf(womenFormMenu)
-        ).getText();
+                ExpectedConditions.visibilityOf(
+                        womenFormMenu
+                )
+        ).getText().trim();
     }
 
     @Step("Get text in 'Men' tab on main menu")
     public String getAeoMenTabText() {
         return wait.until(
-                ExpectedConditions.visibilityOf(menFormMenu)
-        ).getText();
+                ExpectedConditions.visibilityOf(
+                        menFormMenu
+                )
+        ).getText().trim();
     }
 
     @Step("Get text in 'Jeans' tab on main menu")
     public String getAeoJeansTabText() {
         return wait.until(
-                ExpectedConditions.visibilityOf(jeansFormMenu)
-        ).getText();
+                ExpectedConditions.visibilityOf(
+                        jeansFormMenu
+                )
+        ).getText().trim();
     }
 
     @Step("Get text in 'Aerie' tab on main menu")
     public String getAeoAerieTabText() {
         return wait.until(
-                ExpectedConditions.visibilityOf(aerieFormMenu)
-        ).getText();
+                ExpectedConditions.visibilityOf(
+                        aerieFormMenu
+                )
+        ).getText().trim();
     }
 
     @Step("Get text in 'Clearance' tab on main menu")
     public String getAeoClearanceTabText() {
         return wait.until(
-                ExpectedConditions.visibilityOf(clearanceFormMenu)
-        ).getText();
+                ExpectedConditions.visibilityOf(
+                        clearanceFormMenu
+                )
+        ).getText().trim();
     }
 
     @Step("Check 'Search' button is displayed")
     public boolean searchButtonIsDisplayed() {
         return wait.until(
-                ExpectedConditions.visibilityOf(searchButton)
+                ExpectedConditions.visibilityOf(
+                        searchButton
+                )
         ).isDisplayed();
     }
 
     @Step("Click 'Search' button")
     public void clickSearchButton() {
         wait.until(
-                ExpectedConditions.elementToBeClickable(searchButton)
+                ExpectedConditions.elementToBeClickable(
+                        searchButton
+                )
         ).click();
     }
 
     @Step("Check search input field is displayed")
     public boolean searchInputIsDisplayed() {
-        return wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        SEARCH_INPUT
-                )
-        ).isDisplayed();
+        return getVisibleSearchInput().isDisplayed();
     }
 
     @Step("Enter search query: {query}")
     public void enterSearchQuery(String query) {
 
-        WebElement searchInput = getVisibleSearchInput();
+        WebElement searchInput =
+                getVisibleSearchInput();
 
         searchInput.click();
         searchInput.sendKeys(query);
@@ -202,7 +227,9 @@ public class HeaderComponent {
     @Step("Check 'Account' icon is displayed")
     public boolean accountButtonIsDisplayed() {
         return wait.until(
-                ExpectedConditions.visibilityOf(iconAccount)
+                ExpectedConditions.visibilityOf(
+                        iconAccount
+                )
         ).isDisplayed();
     }
 
@@ -216,7 +243,11 @@ public class HeaderComponent {
         );
 
         WebElement clickableAccountButton =
-                accountIcon.findElement(By.xpath("./ancestor::*[self::button or self::a][1]"));
+                accountIcon.findElement(
+                        By.xpath(
+                                "./ancestor::*[self::button or self::a][1]"
+                        )
+                );
 
         wait.until(
                 ExpectedConditions.elementToBeClickable(
@@ -237,28 +268,36 @@ public class HeaderComponent {
     @Step("Check 'Sign In' button is displayed")
     public boolean signInButtonIsDisplayed() {
         return wait.until(
-                ExpectedConditions.visibilityOf(signInButton)
+                ExpectedConditions.visibilityOf(
+                        signInButton
+                )
         ).isDisplayed();
     }
 
     @Step("Get text in account side tray")
     public String getAccountTitleText() {
         return wait.until(
-                ExpectedConditions.visibilityOf(modalAccountText)
-        ).getText();
+                ExpectedConditions.visibilityOf(
+                        modalAccountText
+                )
+        ).getText().trim();
     }
 
     @Step("Check 'Create Account' button is displayed")
     public boolean createAccountButtonIsDisplayed() {
         return wait.until(
-                ExpectedConditions.visibilityOf(createAccountButton)
+                ExpectedConditions.visibilityOf(
+                        createAccountButton
+                )
         ).isDisplayed();
     }
 
     @Step("Check 'Favorites' button is displayed")
     public boolean favoritesButtonIsDisplayed() {
         return wait.until(
-                ExpectedConditions.visibilityOf(favoritesButton)
+                ExpectedConditions.visibilityOf(
+                        favoritesButton
+                )
         ).isDisplayed();
     }
 
@@ -274,14 +313,18 @@ public class HeaderComponent {
     @Step("Get 'Favorites' page title")
     public String getFavoritesTitleText() {
         return wait.until(
-                ExpectedConditions.visibilityOf(favoritesText)
-        ).getText();
+                ExpectedConditions.visibilityOf(
+                        favoritesText
+                )
+        ).getText().trim();
     }
 
     @Step("Check 'Basket' button is displayed")
     public boolean basketButtonIsDisplayed() {
         return wait.until(
-                ExpectedConditions.visibilityOf(basketButton)
+                ExpectedConditions.visibilityOf(
+                        basketButton
+                )
         ).isDisplayed();
     }
 
@@ -297,8 +340,10 @@ public class HeaderComponent {
     @Step("Get text on basket page")
     public String getBasketTitleText() {
         return wait.until(
-                ExpectedConditions.visibilityOf(basketText)
-        ).getText();
+                ExpectedConditions.visibilityOf(
+                        basketText
+                )
+        ).getText().trim();
     }
 
     @Step("Click 'Sign In' button")
@@ -312,25 +357,29 @@ public class HeaderComponent {
 
     private WebElement getVisibleSearchInput() {
 
-        return wait.until(
-                        ExpectedConditions.visibilityOfAllElementsLocatedBy(
-                                SEARCH_INPUT
-                        )
-                )
-                .stream()
-                .filter(WebElement::isEnabled)
-                .findFirst()
-                .orElseThrow(
-                        () -> new IllegalStateException(
-                                "Visible and enabled search input was not found"
-                        )
-                );
+        return wait.until(driver -> {
+
+            for (WebElement element :
+                    driver.findElements(SEARCH_INPUT)) {
+
+                if (element.isDisplayed()
+                        && element.isEnabled()) {
+
+                    return element;
+                }
+            }
+
+            throw new NoSuchElementException(
+                    "Visible and enabled search input was not found"
+            );
+        });
     }
 
     @Step("Submit search query")
     public void submitSearchQuery() {
 
-        WebElement searchInput = getVisibleSearchInput();
+        WebElement searchInput =
+                getVisibleSearchInput();
 
         searchInput.sendKeys(Keys.ENTER);
     }

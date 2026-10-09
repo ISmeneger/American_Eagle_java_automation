@@ -14,11 +14,14 @@ public class ProductCatalogSteps {
 
     @Step("Open first available product from Men's catalog")
     public void openFirstAvailableMensProduct() {
-        mensClothesPage.closePopUpIfAvailable();
+
+        mensClothesPage.closeBlockingOverlaysIfAvailable();
+
         mensClothesPage.moveToMenMenu();
-        mensClothesPage.closePopUpIfAvailable();
         mensClothesPage.clickViewAllCategories();
-        mensClothesPage.closePopUpIfAvailable();
+
+        mensClothesPage.closeBlockingOverlaysIfAvailable();
+
         mensClothesPage.openFirstAvailableProduct();
     }
 }

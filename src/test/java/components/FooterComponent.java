@@ -24,6 +24,7 @@ public class FooterComponent {
 
     public FooterComponent(WebDriver driver) {
         this.driver = driver;
+
         this.wait = new WebDriverWait(
                 driver,
                 Duration.ofSeconds(10)
@@ -34,39 +35,33 @@ public class FooterComponent {
 
     @Step("Scroll to copyright text")
     public void scrollToCopyrightText() {
-
         new Actions(driver)
                 .scrollToElement(copyrightText)
                 .perform();
-
-        wait.until(
-                ExpectedConditions.visibilityOf(copyrightText)
-        );
     }
 
     @Step("Get copyright text")
     public String getCopyrightText() {
         return wait.until(
-                ExpectedConditions.visibilityOf(copyrightText)
+                ExpectedConditions.visibilityOf(
+                        copyrightText
+                )
         ).getText();
     }
 
     @Step("Scroll to footer image")
     public void scrollToFooterImage() {
-
         new Actions(driver)
                 .scrollToElement(footerImage)
                 .perform();
-
-        wait.until(
-                ExpectedConditions.visibilityOf(footerImage)
-        );
     }
 
     @Step("Check 'Footer' image is displayed")
     public boolean footerImageIsDisplayed() {
         return wait.until(
-                ExpectedConditions.visibilityOf(footerImage)
+                ExpectedConditions.visibilityOf(
+                        footerImage
+                )
         ).isDisplayed();
     }
 }
