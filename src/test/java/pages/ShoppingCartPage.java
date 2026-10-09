@@ -155,19 +155,22 @@ public class ShoppingCartPage extends BasePage {
     @Step("Get product price in cart")
     public String getProductPriceInCart() {
 
-        if (!cartSalePrices.isEmpty()
-                && cartSalePrices.get(0).isDisplayed()) {
-            return cartSalePrices.get(0).getText().trim();
-        }
+        return wait.until(webDriver -> {
 
-        if (!cartRegularPrices.isEmpty()
-                && cartRegularPrices.get(0).isDisplayed()) {
-            return cartRegularPrices.get(0).getText().trim();
-        }
+            for (WebElement price : cartSalePrices) {
+                if (price.isDisplayed()) {
+                    return price.getText().trim();
+                }
+            }
 
-        throw new IllegalStateException(
-                "Product price in cart is not displayed"
-        );
+            for (WebElement price : cartRegularPrices) {
+                if (price.isDisplayed()) {
+                    return price.getText().trim();
+                }
+            }
+
+            return null;
+        });
     }
 
     @Step("Get subtotal value in cart")

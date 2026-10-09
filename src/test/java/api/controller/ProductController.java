@@ -61,6 +61,32 @@ public class ProductController {
                 .andReturn();
     }
 
+    @Step("Get inventory for product without Authorization: {productId}")
+    public Response getInventoryByProductWithoutAuthorization(
+            String productId
+    ) {
+
+        TestPropertiesConfig configProperties =
+                ConfigFactory.create(
+                        TestPropertiesConfig.class,
+                        System.getProperties()
+                );
+
+        return given()
+                .baseUri(configProperties.getApiBaseUrl())
+                .header("User-Agent", USER_AGENT)
+                .header("aecountry", "US")
+                .header("aelang", "en_US")
+                .header("aesite", "AEO_US")
+                .header("Accept", "application/json")
+                .header("Referer", "https://www.ae.com/")
+                .header("Origin", "https://www.ae.com")
+                .filter(new AllureRestAssured())
+                .when()
+                .get(INVENTORY_ENDPOINT + productId)
+                .andReturn();
+    }
+
     @Step("Get SKU list for product: {productId}")
     public List<String> getSkuList(String productId) {
 
@@ -86,6 +112,36 @@ public class ProductController {
                         "https://www.ae.com/us/en/c/men/tops/" + categoryId
                 )
                 .header("channelType", "WEB")
+                .when()
+                .get(CATEGORY_ENDPOINT + categoryId)
+                .andReturn();
+    }
+
+    @Step("Get products by category without Authorization: {categoryId}")
+    public Response getProductsByCategoryWithoutAuthorization(
+            String categoryId
+    ) {
+
+        TestPropertiesConfig configProperties =
+                ConfigFactory.create(
+                        TestPropertiesConfig.class,
+                        System.getProperties()
+                );
+
+        return given()
+                .baseUri(configProperties.getApiBaseUrl())
+                .header("User-Agent", USER_AGENT)
+                .header("aecountry", "US")
+                .header("aelang", "en_US")
+                .header("aesite", "AEO_US")
+                .header("Accept", "application/vnd.api+json")
+                .header(
+                        "Referer",
+                        "https://www.ae.com/us/en/c/men/tops/"
+                                + categoryId
+                )
+                .header("channelType", "WEB")
+                .filter(new AllureRestAssured())
                 .when()
                 .get(CATEGORY_ENDPOINT + categoryId)
                 .andReturn();

@@ -80,13 +80,23 @@ class SearchTests extends BaseTest {
         headerComponent.enterSearchQuery(searchQuery);
         headerComponent.submitSearchQuery();
 
+        boolean noResultsDisplayed =
+                searchResultsPage.noSearchResultsMessageIsDisplayed();
+
+        org.assertj.core.api.Assertions.assertThat(
+                        noResultsDisplayed
+                )
+                .as("No results message should be displayed")
+                .isTrue();
+
         String noResultsMessage =
                 searchResultsPage.getNoSearchResultsMessage();
 
-        SoftAssertions softly = new SoftAssertions();
+        SoftAssertions softly =
+                new SoftAssertions();
 
         softly.assertThat(noResultsMessage)
-                .as("No results message should be displayed")
+                .as("No results message should contain expected text")
                 .containsIgnoringCase(
                         "Sorry! We couldn't find a match for"
                 );

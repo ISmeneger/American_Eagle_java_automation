@@ -7,7 +7,8 @@ import org.opentest4j.TestAbortedException;
 
 import java.lang.reflect.Method;
 
-public class KnownDefectExtension implements InvocationInterceptor {
+public class KnownDefectExtension
+        implements InvocationInterceptor {
 
     @Override
     public void interceptTestMethod(
@@ -24,12 +25,12 @@ public class KnownDefectExtension implements InvocationInterceptor {
         try {
             invocation.proceed();
 
-        } catch (Throwable throwable) {
+        } catch (AssertionError assertionError) {
 
             throw new TestAbortedException(
                     "Known defect reproduced: "
                             + knownDefect.value(),
-                    throwable
+                    assertionError
             );
         }
 

@@ -23,7 +23,7 @@ public class TokenClient {
                     System.getProperties()
             );
 
-    private static RequestSpecification guestAuthSpec() {
+    private static RequestSpecification guestBaseSpec() {
         return given()
                 .baseUri(configProperties.getApiBaseUrl())
                 .accept(JSON)
@@ -31,17 +31,37 @@ public class TokenClient {
                 .header("aelang", "en_US")
                 .header("aesite", "AEO_US")
                 .header("aecountry", "US")
+                .filter(new AllureRestAssured());
+    }
+
+    private static RequestSpecification guestAuthSpec() {
+        return given()
+                .spec(guestBaseSpec())
                 .header(
                         "Authorization",
                         configProperties.getGuestHeaderAuth()
-                )
-                .filter(new AllureRestAssured());
+                );
     }
 
     @Step("Get guest token response")
     public static Response getGuestTokenResponse() {
         return guestAuthSpec()
-                .formParam("grant_type", "client_credentials")
+                .formParam(
+                        "grant_type",
+                        "client_credentials"
+                )
+                .when()
+                .post(TOKEN_ENDPOINT)
+                .andReturn();
+    }
+
+    @Step("Get guest token response without Authorization")
+    public static Response getGuestTokenResponseWithoutAuthorization() {
+        return guestBaseSpec()
+                .formParam(
+                        "grant_type",
+                        "client_credentials"
+                )
                 .when()
                 .post(TOKEN_ENDPOINT)
                 .andReturn();
@@ -50,7 +70,8 @@ public class TokenClient {
     @Step("Get guest token")
     public static String getGuestToken() {
 
-        Response response = getGuestTokenResponse();
+        Response response =
+                getGuestTokenResponse();
 
         response.then()
                 .statusCode(200);

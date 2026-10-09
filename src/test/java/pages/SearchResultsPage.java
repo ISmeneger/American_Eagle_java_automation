@@ -54,4 +54,12 @@ public class SearchResultsPage extends BasePage {
                 )
         ).getText();
     }
+
+    @Step("Check no search results message is displayed")
+    public boolean noSearchResultsMessageIsDisplayed() {
+
+        return !driver.findElements(
+                NO_SEARCH_RESULTS_MESSAGE
+        ).isEmpty();
+    }
 }

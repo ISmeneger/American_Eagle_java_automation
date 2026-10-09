@@ -58,4 +58,35 @@ public class TokenApiTests {
                 .as("Guest token lifetime must be greater than zero")
                 .isGreaterThan(0);
     }
+
+    @Test
+    @Severity(CRITICAL)
+    @Tags({
+            @Tag("negative")
+    })
+    @DisplayName("Get guest token without Authorization")
+    void getGuestTokenWithoutAuthorizationTest() {
+
+        Response response =
+                TokenClient.getGuestTokenResponseWithoutAuthorization();
+
+        response.then()
+                .statusCode(401);
+
+        assertThat(
+                response.jsonPath()
+                        .getString("error")
+        )
+                .as("Error should be invalid_client")
+                .isEqualTo("invalid_client");
+
+        assertThat(
+                response.jsonPath()
+                        .getString("error_description")
+        )
+                .as("Error description should explain invalid client credentials")
+                .isEqualTo(
+                        "Invalid client or Invalid client credentials"
+                );
+    }
 }

@@ -96,10 +96,7 @@ class RegistrationTests extends BaseTest {
                     "Registration form filling works, but submission results in Access Denied."
     )
     @Severity(NORMAL)
-    @Tags({
-            @Tag("positive"),
-            @Tag("defect")
-    })
+    @Tag("positive")
     @DisplayName("Check successful account creation")
     void shouldCreateAccountSuccessfullyTest() {
 
@@ -125,11 +122,14 @@ class RegistrationTests extends BaseTest {
         );
 
         accountPage.enterZipCode(POSTAL_CODE);
+
         accountPage.selectBirthDate(
                 MONTH_VALUE,
                 DAY_VALUE
         );
+
         accountPage.scrollToSubmitButton();
+
         accountPage.acceptTermsAndConditions();
 
         assertTrue(
@@ -139,14 +139,19 @@ class RegistrationTests extends BaseTest {
 
         accountPage.clickSubmitButton();
 
-        SoftAssertions softly = new SoftAssertions();
+        SoftAssertions softly =
+                new SoftAssertions();
 
-        softly.assertThat(accountPage.getCurrentUrl())
+        softly.assertThat(
+                        accountPage.getCurrentUrl()
+                )
                 .as(
                         "After successful account creation, " +
                                 "user should be redirected to account page"
                 )
-                .isEqualTo(UI_BASE_URL + ACCOUNT_URL);
+                .isEqualTo(
+                        UI_BASE_URL + ACCOUNT_URL
+                );
 
         softly.assertThat(
                         accountPage.getSuccessfulCreatedAccountText()
@@ -191,14 +196,18 @@ class RegistrationTests extends BaseTest {
         );
 
         accountPage.enterZipCode(POSTAL_CODE);
+
         accountPage.selectBirthDate(
                 MONTH_VALUE,
                 DAY_VALUE
         );
+
         accountPage.scrollToSubmitButton();
+
         accountPage.acceptTermsAndConditions();
 
-        SoftAssertions softly = new SoftAssertions();
+        SoftAssertions softly =
+                new SoftAssertions();
 
         softly.assertThat(
                         accountPage.submitAccountButtonIsEnabled()
@@ -225,7 +234,9 @@ class RegistrationTests extends BaseTest {
                         "Email validation error message should be correct " +
                                 "for scenario: " + scenario
                 )
-                .isEqualTo(EMAIL_VALIDATION_MESSAGE);
+                .isEqualTo(
+                        EMAIL_VALIDATION_MESSAGE
+                );
 
         softly.assertAll();
     }
@@ -258,14 +269,18 @@ class RegistrationTests extends BaseTest {
         );
 
         accountPage.enterZipCode(POSTAL_CODE);
+
         accountPage.selectBirthDate(
                 MONTH_VALUE,
                 DAY_VALUE
         );
+
         accountPage.scrollToSubmitButton();
+
         accountPage.acceptTermsAndConditions();
 
-        SoftAssertions softly = new SoftAssertions();
+        SoftAssertions softly =
+                new SoftAssertions();
 
         softly.assertThat(
                         accountPage.submitAccountButtonIsEnabled()
@@ -292,7 +307,9 @@ class RegistrationTests extends BaseTest {
                         "Error message for empty First Name " +
                                 "should match expected text"
                 )
-                .isEqualTo(EMPTY_FIRST_NAME_MESSAGE);
+                .isEqualTo(
+                        EMPTY_FIRST_NAME_MESSAGE
+                );
 
         softly.assertThat(
                         accountPage.isEmptyLastNameErrorDisplayed()
@@ -310,7 +327,9 @@ class RegistrationTests extends BaseTest {
                         "Error message for empty Last Name " +
                                 "should match expected text"
                 )
-                .isEqualTo(EMPTY_LAST_NAME_MESSAGE);
+                .isEqualTo(
+                        EMPTY_LAST_NAME_MESSAGE
+                );
 
         softly.assertAll();
     }
@@ -342,14 +361,18 @@ class RegistrationTests extends BaseTest {
         );
 
         accountPage.enterZipCode(POSTAL_CODE);
+
         accountPage.selectBirthDate(
                 MONTH_VALUE,
                 DAY_VALUE
         );
+
         accountPage.scrollToSubmitButton();
+
         accountPage.acceptTermsAndConditions();
 
-        SoftAssertions softly = new SoftAssertions();
+        SoftAssertions softly =
+                new SoftAssertions();
 
         softly.assertThat(
                         accountPage.submitAccountButtonIsEnabled()
@@ -375,7 +398,9 @@ class RegistrationTests extends BaseTest {
                         "Password error message text " +
                                 "should match expected"
                 )
-                .isEqualTo(EMPTY_PASSWORD_MESSAGE);
+                .isEqualTo(
+                        EMPTY_PASSWORD_MESSAGE
+                );
 
         softly.assertAll();
     }
@@ -408,14 +433,18 @@ class RegistrationTests extends BaseTest {
         );
 
         accountPage.enterZipCode(EMPTY_POSTAL_CODE);
+
         accountPage.selectBirthDate(
                 MONTH_VALUE,
                 DAY_VALUE
         );
+
         accountPage.scrollToSubmitButton();
+
         accountPage.acceptTermsAndConditions();
 
-        SoftAssertions softly = new SoftAssertions();
+        SoftAssertions softly =
+                new SoftAssertions();
 
         softly.assertThat(
                         accountPage.submitAccountButtonIsEnabled()
@@ -442,7 +471,9 @@ class RegistrationTests extends BaseTest {
                         "Error message for empty 'Zip Code' " +
                                 "must match expected text"
                 )
-                .isEqualTo(EMPTY_POSTAL_CODE_MESSAGE);
+                .isEqualTo(
+                        EMPTY_POSTAL_CODE_MESSAGE
+                );
 
         softly.assertAll();
     }
@@ -450,10 +481,7 @@ class RegistrationTests extends BaseTest {
     @Test
     @Severity(NORMAL)
     @Tag("negative")
-    @DisplayName(
-            "Check account creation with empty 'Birthday' field " +
-                    "and the checkbox 'I accept' unchecked"
-    )
+    @DisplayName("Check account creation with empty 'Birthday' field")
     void createAccountWithEmptyBirthDateTest() {
 
         String email =
@@ -478,16 +506,80 @@ class RegistrationTests extends BaseTest {
         );
 
         accountPage.enterZipCode(POSTAL_CODE);
+
         accountPage.scrollToSubmitButton();
 
-        SoftAssertions softly = new SoftAssertions();
+        accountPage.acceptTermsAndConditions();
+
+        SoftAssertions softly =
+                new SoftAssertions();
 
         softly.assertThat(
                         accountPage.isTermsCheckboxSelected()
                 )
                 .as(
-                        "'I accept' checkbox should be " +
-                                "unchecked by default"
+                        "'I accept' checkbox should be selected"
+                )
+                .isTrue();
+
+        softly.assertThat(
+                        accountPage.submitAccountButtonIsEnabled()
+                )
+                .as(
+                        "'Create Account' button should be disabled " +
+                                "when Birthday is empty"
+                )
+                .isFalse();
+
+        softly.assertAll();
+    }
+
+    @Test
+    @Severity(NORMAL)
+    @Tag("negative")
+    @DisplayName(
+            "Check account creation without accepting Terms and Conditions"
+    )
+    void createAccountWithoutAcceptingTermsTest() {
+
+        String email =
+                TestDataGeneratorForCreationAccount.generateEmail();
+
+        String firstName =
+                TestDataGeneratorForCreationAccount.generateFirstName();
+
+        String lastName =
+                TestDataGeneratorForCreationAccount.generateLastName();
+
+        String password =
+                TestDataGeneratorForCreationAccount.generatePassword();
+
+        openRegistrationForm();
+
+        registrationSteps.fillRegistrationForm(
+                email,
+                firstName,
+                lastName,
+                password
+        );
+
+        accountPage.enterZipCode(POSTAL_CODE);
+
+        accountPage.selectBirthDate(
+                MONTH_VALUE,
+                DAY_VALUE
+        );
+
+        accountPage.scrollToSubmitButton();
+
+        SoftAssertions softly =
+                new SoftAssertions();
+
+        softly.assertThat(
+                        accountPage.isTermsCheckboxSelected()
+                )
+                .as(
+                        "'I accept' checkbox should be unchecked"
                 )
                 .isFalse();
 
@@ -495,8 +587,8 @@ class RegistrationTests extends BaseTest {
                         accountPage.submitAccountButtonIsEnabled()
                 )
                 .as(
-                        "Submit button should be disabled when " +
-                                "birth date and checkbox are not filled"
+                        "'Create Account' button should be disabled " +
+                                "when Terms and Conditions are not accepted"
                 )
                 .isFalse();
 

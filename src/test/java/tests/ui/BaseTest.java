@@ -10,7 +10,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import utils.AllureExtension;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.time.Duration;
 import java.util.Map;
 
@@ -55,7 +55,7 @@ public class BaseTest {
         if (isRemoteRun()) {
             try {
                 driver = new RemoteWebDriver(
-                        new URL(remoteUrl),
+                        URI.create(remoteUrl).toURL(),
                         options
                 );
             } catch (MalformedURLException e) {

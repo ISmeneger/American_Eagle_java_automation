@@ -54,6 +54,25 @@ public class ProductApiTests {
     @Test
     @Severity(CRITICAL)
     @Tags({
+            @Tag("extended"),
+            @Tag("negative")
+    })
+    @DisplayName("Get products by category without Authorization")
+    void getProductsByCategoryWithoutAuthorizationTest() {
+
+        Response response =
+                productController
+                        .getProductsByCategoryWithoutAuthorization(
+                                TEST_CATEGORY_ID
+                        );
+
+        response.then()
+                .statusCode(401);
+    }
+
+    @Test
+    @Severity(CRITICAL)
+    @Tags({
             @Tag("smoke"),
             @Tag("positive")
     })
@@ -220,5 +239,29 @@ public class ProductApiTests {
         assertThat(errorFields)
                 .as("Error must be related to categoryId")
                 .contains("categoryId");
+    }
+
+    @Test
+    @Severity(CRITICAL)
+    @Tags({
+            @Tag("extended"),
+            @Tag("negative")
+    })
+    @DisplayName("Get inventory by product ID without Authorization")
+    void getInventoryByProductWithoutAuthorizationTest() {
+
+        String productId =
+                productController
+                        .getAvailableProductIds(TEST_CATEGORY_ID)
+                        .get(0);
+
+        Response response =
+                productController
+                        .getInventoryByProductWithoutAuthorization(
+                                productId
+                        );
+
+        response.then()
+                .statusCode(401);
     }
 }
