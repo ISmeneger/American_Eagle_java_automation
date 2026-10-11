@@ -101,7 +101,7 @@
 - REST API;
 - sale / regular prices;
 - динамический контент;
-- popup / marketing overlays;
+- cookie banner, location modal и marketing / email overlays;
 - anti-bot protection;
 - различия поведения сайта при локальном и удалённом запуске.
 
@@ -152,7 +152,8 @@
 - Awaitility;
 - Allure annotations (`@Step`, `@Severity`);
 - JUnit tags;
-- Gradle tasks для запуска отдельных категорий тестов.
+- Gradle tasks для запуска отдельных категорий тестов;
+- централизованная конфигурация всех `Test` tasks через `tasks.withType(Test).configureEach`.
 
 ### UI-слой
 
@@ -237,7 +238,7 @@ UI-набор содержит **35 test cases** и покрывает:
 - maximum quantity;
 - удаление товара.
 
-Для динамических страниц используются explicit waits, повторное получение элементов после DOM update и обработка optional overlays.
+Для динамических страниц используются explicit waits, повторное получение элементов после DOM update и централизованная обработка optional overlays. В `BasePage` последовательно обрабатываются location modal, cookie banner и Bloomreach email popup.
 
 ### API
 
@@ -351,7 +352,7 @@ American Eagle может возвращать товары / рекоменда
 - `StaleElementReferenceException`;
 - `TimeoutException`;
 - временные WebDriver/navigation errors;
-- повторное появление popup;
+- повторное появление location / marketing popup;
 - изменение доступности товаров;
 - изменение sale / regular prices.
 
@@ -428,24 +429,33 @@ extended
 
 Проект использует **Gradle Wrapper**, поэтому глобально установленный Gradle не требуется.
 
+### Локальная настройка API credential
+
+Для API-тестов необходим guest Basic credential. Локально он хранится **вне репозитория** в пользовательском Gradle-файле:
+
+```text
+C:\Users\<USER>\.gradle\gradle.properties
+```
+
+Пример:
+
+```properties
+guestHeaderAuth=Basic <guest-api-credential>
+```
+
+`build.gradle` автоматически передаёт это значение в тестовую JVM как системное свойство:
+
+```text
+guest.header.auth
+```
+
+После такой настройки credential не нужно вводить при каждом запуске.
+
 ### API
 
-Для API-тестов необходим guest credential.
-
-PowerShell:
-
 ```powershell
-$env:AE_GUEST_AUTH="Basic <guest-api-credential>"
-.\gradlew apiTests "-Dguest.header.auth=$env:AE_GUEST_AUTH" --rerun-tasks
+.\gradlew apiTests --rerun-tasks
 ```
-
-Также property можно передать напрямую:
-
-```powershell
-.\gradlew apiTests "-Dguest.header.auth=Basic <guest-api-credential>" --rerun-tasks
-```
-
-> В PowerShell весь аргумент `-Dguest.header.auth=...` рекомендуется заключать в кавычки.
 
 ### UI
 
@@ -477,17 +487,33 @@ $env:AE_GUEST_AUTH="Basic <guest-api-credential>"
 .\gradlew e2e
 ```
 
+### Combined UI + API
+
+```powershell
+.\gradlew allTests
+```
+
 ### Стандартный Gradle test
 
 ```powershell
-.\gradlew test "-Dguest.header.auth=$env:AE_GUEST_AUTH" --rerun-tasks
+.\gradlew test --rerun-tasks
 ```
 
 ### Один конкретный тест
 
 ```powershell
-.\gradlew test --tests "tests.api.TokenApiTests.getGuestTokenTest" "-Dguest.header.auth=$env:AE_GUEST_AUTH"
+.\gradlew test --tests "tests.api.TokenApiTests.getGuestTokenTest"
 ```
+
+### Разовое переопределение guest credential
+
+При необходимости локальное значение из `gradle.properties` можно переопределить системным параметром:
+
+```powershell
+.\gradlew apiTests "-Dguest.header.auth=Basic <guest-api-credential>" --rerun-tasks
+```
+
+> В PowerShell аргумент `-Dguest.header.auth=...` рекомендуется передавать целиком в кавычках.
 
 ### Опциональный parallel run Home Page
 
@@ -500,6 +526,17 @@ $env:AE_GUEST_AUTH="Basic <guest-api-credential>"
 Она ограничена `HomePageTests`.
 
 Глобальный parallel run всего UI-набора намеренно не используется: на реальном production-сайте и локальном Chrome параллельное выполнение показало меньшую стабильность.
+
+### Gradle 9 compatibility
+
+Для всех кастомных `Test` tasks централизованно задаются:
+
+```groovy
+testClassesDirs = sourceSets.test.output.classesDirs
+classpath = sourceSets.test.runtimeClasspath
+```
+
+Это устраняет deprecated convention для custom `Test` tasks в Gradle 8.10 и подготавливает конфигурацию к Gradle 9.
 
 Для Linux/macOS:
 
@@ -514,30 +551,41 @@ $env:AE_GUEST_AUTH="Basic <guest-api-credential>"
 <a id="credentials"></a>
 ## 🔐 Credentials
 
-Секретные значения не хранятся в исходном коде.
+Секретные значения не хранятся в исходном коде или Git history.
 
-Для API используется:
+### Локально
 
-- `AE_GUEST_AUTH` — Basic credential для получения guest access token.
+Для API используется пользовательское Gradle-свойство:
 
-Для отдельных UI auth-сценариев CI может использовать:
+```properties
+guestHeaderAuth=Basic <guest-api-credential>
+```
+
+Оно хранится в:
+
+```text
+C:\Users\<USER>\.gradle\gradle.properties
+```
+
+Этот файл находится **вне репозитория** и автоматически читается Gradle.
+
+В `build.gradle` значение преобразуется в системное свойство `guest.header.auth`, которое использует API-клиент.
+
+### GitHub Actions
+
+В CI guest credential хранится в **GitHub Repository Secrets** как:
+
+- `AE_GUEST_AUTH`.
+
+Для отдельных UI auth-сценариев CI также может использовать:
 
 - `EMAIL`;
 - `PASSWORD`.
 
-Локальный API запуск:
-
-```powershell
-$env:AE_GUEST_AUTH="Basic <guest-api-credential>"
-.\gradlew apiTests "-Dguest.header.auth=$env:AE_GUEST_AUTH"
-```
-
-В GitHub Actions реальные значения передаются через **GitHub Repository Secrets**.
-
 Credentials не должны попадать в:
 
 - Java-код;
-- `*.properties`;
+- project-level / tracked `*.properties`;
 - README;
 - Allure attachments;
 - Git history.
@@ -809,12 +857,11 @@ src
 - публикация через GitHub Pages;
 - ручной запуск через `workflow_dispatch`.
 
-Финальная локальная проверка после последнего рефакторинга:
+Последняя локальная проверка после рефакторинга overlay-логики и Gradle-конфигурации:
 
 - полный **API suite** — passed;
-- полный **UI suite** — passed.
-
-Дополнительный объединённый `test` run выполнялся во время нестабильного интернет-соединения и завершился Selenium `WebDriverException`, `StaleElementReferenceException` и `TimeoutException`. Этот прогон не использовался как основание для изменения тестовой логики, поскольку API и UI suites независимо уже были успешно пройдены.
+- полный **UI suite** — passed;
+- кастомные Gradle `Test` tasks выполняются без deprecated warnings для `Test.classpath` и `Test.testClassesDirs`.
 
 [⬆️ К содержанию](#contents)
 
@@ -839,6 +886,9 @@ src
 - ✅ Authorization-negative API tests
 - ✅ `@KnownDefect` / `KnownDefectExtension`
 - ✅ Anti-bot-aware test strategy
+- ✅ Location / cookie / email overlay handling
+- ✅ User-level Gradle credential configuration
+- ✅ Gradle 9-ready custom Test task configuration
 - ✅ Allure Report
 - ✅ GitHub Actions CI
 - ✅ GitHub Pages
