@@ -46,10 +46,7 @@ class MensClothesChapterAuthorizedUserTests extends BaseTest {
                     "Manual sign-in works successfully."
     )
     @Severity(CRITICAL)
-    @Tags({
-            @Tag("positive"),
-            @Tag("defect")
-    })
+    @Tag("positive")
     @DisplayName("Authorized user adds a product to the cart")
     void authorizedUserAddsProductToCartTest() {
 

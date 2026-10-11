@@ -39,57 +39,63 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+tasks.withType(Test).configureEach {
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    def guestHeaderAuth =
+            project.findProperty('guestHeaderAuth')
+
+    if (guestHeaderAuth != null) {
+        systemProperty(
+                'guest.header.auth',
+                guestHeaderAuth
+        )
+    }
+
     systemProperties(System.getProperties())
 }
 
 tasks.register('smoke', Test) {
     useJUnitPlatform() {
         includeTags 'smoke'
-        excludeTags 'defect'
     }
-    systemProperties(System.getProperties())
 }
 
 tasks.register('positive', Test) {
     useJUnitPlatform() {
         includeTags 'positive'
-        excludeTags 'defect'
     }
-    systemProperties(System.getProperties())
 }
 
 tasks.register('negative', Test) {
     useJUnitPlatform() {
         includeTags 'negative'
-        excludeTags 'defect'
     }
-    systemProperties(System.getProperties())
 }
 
 tasks.register('e2e', Test) {
     useJUnitPlatform() {
         includeTags 'E2E'
-        excludeTags 'defect'
     }
-    systemProperties(System.getProperties())
 }
 
-tasks.register('allExceptDefect', Test) {
+tasks.register('allTests', Test) {
     useJUnitPlatform() {
         includeTags 'UI'
         includeTags 'API'
-        excludeTags 'defect'
     }
-    systemProperties(System.getProperties())
 }
 
-tasks.register('allExceptDefectRemote', Test) {
+tasks.register('allTestsRemote', Test) {
     useJUnitPlatform() {
         includeTags 'UI'
         includeTags 'API'
-        excludeTags 'defect'
     }
-    systemProperties(System.getProperties())
+
     maxParallelForks = 1
 }
 
@@ -97,18 +103,14 @@ tasks.register('apiTests', Test) {
     useJUnitPlatform() {
         includeTags 'API'
         excludeTags 'UI'
-        excludeTags 'defect'
     }
-    systemProperties(System.getProperties())
 }
 
 tasks.register('uiTests', Test) {
     useJUnitPlatform() {
         includeTags 'UI'
         excludeTags 'API'
-        excludeTags 'defect'
     }
-    systemProperties(System.getProperties())
 }
 
 tasks.register('homePageTestsParallel', Test) {
@@ -116,27 +118,17 @@ tasks.register('homePageTestsParallel', Test) {
     useJUnitPlatform() {
         includeTags 'UI'
         excludeTags 'API'
-        excludeTags 'defect'
     }
 
     filter {
         includeTestsMatching 'tests.ui.HomePageTests'
     }
 
-    systemProperties(System.getProperties())
-
     systemProperty 'junit.jupiter.execution.parallel.enabled', 'true'
     systemProperty 'junit.jupiter.execution.parallel.mode.default', 'concurrent'
 
     systemProperty 'junit.jupiter.execution.parallel.config.strategy', 'fixed'
     systemProperty 'junit.jupiter.execution.parallel.config.fixed.parallelism', '2'
-}
-
-tasks.register('defect', Test) {
-    useJUnitPlatform() {
-        includeTags 'defect'
-    }
-    systemProperties(System.getProperties())
 }
 
 

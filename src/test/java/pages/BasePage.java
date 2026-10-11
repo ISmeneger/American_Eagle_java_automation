@@ -26,6 +26,11 @@ public class BasePage {
     @FindBy(css = "button[aria-label='dismiss cookie message']")
     private WebElement cookieButton;
 
+    private static final By LOCATION_POPUP_CLOSE_BUTTON =
+            By.cssSelector(
+                    "button[data-test-btn='close'][aria-label='Close']"
+            );
+
     public BasePage(WebDriver driver) {
         this.driver = driver;
 
@@ -114,6 +119,8 @@ public class BasePage {
 
     @Step("Close blocking overlays if available")
     public void closeBlockingOverlaysIfAvailable() {
+
+        closeLocationPopupIfDisplayed();
         acceptCookiesIfAvailable();
         closePopUpIfAvailable();
     }
@@ -132,6 +139,42 @@ public class BasePage {
             wait.until(
                     ExpectedConditions.elementToBeClickable(element)
             ).click();
+        }
+    }
+
+    @Step("Close location popup if displayed")
+    public void closeLocationPopupIfDisplayed() {
+
+        try {
+            shortWait.until(webDriver ->
+                    webDriver.findElements(
+                                    LOCATION_POPUP_CLOSE_BUTTON
+                            )
+                            .stream()
+                            .anyMatch(element ->
+                                    element.isDisplayed()
+                                            && element.isEnabled()
+                            )
+            );
+
+            for (WebElement closeButton :
+                    driver.findElements(
+                            LOCATION_POPUP_CLOSE_BUTTON
+                    )) {
+
+                if (closeButton.isDisplayed()
+                        && closeButton.isEnabled()) {
+
+                    closeButton.click();
+                    break;
+                }
+            }
+
+        } catch (TimeoutException |
+                 StaleElementReferenceException |
+                 ElementClickInterceptedException ignored) {
+
+            // Location popup is optional.
         }
     }
 }
