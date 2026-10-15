@@ -431,25 +431,24 @@ extended
 
 ### Локальная настройка API credential
 
-Для API-тестов необходим guest Basic credential. Локально он хранится **вне репозитория** в пользовательском Gradle-файле:
+Для позитивных API-тестов требуется действующий guest Basic credential, разрешённый для тестирования. Java-клиент получает его **непосредственно из переменной окружения `AE_GUEST_AUTH`** через `System.getenv()`, без Gradle/JVM-параметров `-D`.
 
-```text
-C:\Users\<USER>\.gradle\gradle.properties
+В Windows переменную можно настроить через **Свойства системы → Дополнительно → Переменные среды**. После изменения перезапустите IntelliJ IDEA.
+
+Для текущего сеанса PowerShell (ввод не отображает значение):
+
+```powershell
+$secure = Read-Host "Enter AE_GUEST_AUTH (Basic ...)" -AsSecureString
+$env:AE_GUEST_AUTH = [System.Net.NetworkCredential]::new("", $secure).Password
 ```
 
-Пример:
+Значение должно начинаться с `Basic `. Не добавляйте credentials в исходники, командные аргументы или README.
 
-```properties
-guestHeaderAuth=Basic <guest-api-credential>
+Проверка наличия без вывода значения:
+
+```powershell
+[bool]$env:AE_GUEST_AUTH
 ```
-
-`build.gradle` автоматически передаёт это значение в тестовую JVM как системное свойство:
-
-```text
-guest.header.auth
-```
-
-После такой настройки credential не нужно вводить при каждом запуске.
 
 ### API
 
@@ -505,15 +504,19 @@ guest.header.auth
 .\gradlew test --tests "tests.api.TokenApiTests.getGuestTokenTest"
 ```
 
-### Разовое переопределение guest credential
+### Временная настройка guest credential
 
-При необходимости локальное значение из `gradle.properties` можно переопределить системным параметром:
+Для отдельного сеанса PowerShell задайте `AE_GUEST_AUTH` через защищённый ввод, как показано выше, и запускайте API suite обычной командой:
 
 ```powershell
-.\gradlew apiTests "-Dguest.header.auth=Basic <guest-api-credential>" --rerun-tasks
+.\gradlew apiTests --rerun-tasks
 ```
 
-> В PowerShell аргумент `-Dguest.header.auth=...` рекомендуется передавать целиком в кавычках.
+После выполнения можно очистить переменную текущего сеанса:
+
+```powershell
+Remove-Item Env:AE_GUEST_AUTH
+```
 
 ### Опциональный parallel run Home Page
 
@@ -555,21 +558,9 @@ classpath = sourceSets.test.runtimeClasspath
 
 ### Локально
 
-Для API используется пользовательское Gradle-свойство:
+Guest Basic credential передаётся через переменную окружения **`AE_GUEST_AUTH`**, а не через Gradle properties или JVM system properties. `TokenClient` читает её через `System.getenv("AE_GUEST_AUTH")`.
 
-```properties
-guestHeaderAuth=Basic <guest-api-credential>
-```
-
-Оно хранится в:
-
-```text
-C:\Users\<USER>\.gradle\gradle.properties
-```
-
-Этот файл находится **вне репозитория** и автоматически читается Gradle.
-
-В `build.gradle` значение преобразуется в системное свойство `guest.header.auth`, которое использует API-клиент.
+Устаревшее свойство `guestHeaderAuth` в личном `~/.gradle/gradle.properties` больше не используется; если оно сохранено, его следует удалить. Не выводите значение переменной в логи или Allure-вложения. В `TokenClient` отключён `AllureRestAssured` HTTP-filter для запросов токена; остальные HTTP-вложения также должны проверяться на отсутствие чувствительных данных.
 
 ### GitHub Actions
 
@@ -619,7 +610,7 @@ ui-tests ───► ui-allure-results ───┘
 Пример:
 
 ```bash
-./gradlew apiTests -Dguest.header.auth="$AE_GUEST_AUTH"
+./gradlew apiTests
 ```
 
 ### `ui-tests`
@@ -857,11 +848,17 @@ src
 - публикация через GitHub Pages;
 - ручной запуск через `workflow_dispatch`.
 
-Последняя локальная проверка после рефакторинга overlay-логики и Gradle-конфигурации:
+Подтверждённый CI-запуск **[Api and UI Automation #38 (attempt 2)](https://github.com/ISmeneger/American_Eagle_java_automation/actions/runs/38773416345)**, коммит `f622400`, ветка `master`, 15 октября 2026 г.:
 
-- полный **API suite** — passed;
-- полный **UI suite** — passed;
-- кастомные Gradle `Test` tasks выполняются без deprecated warnings для `Test.classpath` и `Test.testClassesDirs`.
+- `api-tests` — **Success**;
+- `ui-tests` — **Success**;
+- `allure-report` — **Success**;
+- Allure — **55 test cases: 47 Passed, 8 Skipped/Aborted, 0 Failed/Broken**;
+- общая длительность workflow — **10 мин 32 сек**.
+
+Показатель 100% в Allure относится к выполненным тестам; восемь тест-кейсов пропущены или прерваны. В первой попытке запуска наблюдался UI timeout при открытии страницы, не воспроизведённый во второй попытке: причина не подтверждена.
+
+После изменения способа передачи `AE_GUEST_AUTH` Java API suite успешно выполняется локально и в GitHub Actions. Собственные Gradle `Test` tasks настроены без устаревших conventions для `Test.classpath` и `Test.testClassesDirs`.
 
 [⬆️ К содержанию](#contents)
 
@@ -887,7 +884,7 @@ src
 - ✅ `@KnownDefect` / `KnownDefectExtension`
 - ✅ Anti-bot-aware test strategy
 - ✅ Location / cookie / email overlay handling
-- ✅ User-level Gradle credential configuration
+- ✅ Environment-based guest API credential configuration (`AE_GUEST_AUTH`)
 - ✅ Gradle 9-ready custom Test task configuration
 - ✅ Allure Report
 - ✅ GitHub Actions CI
