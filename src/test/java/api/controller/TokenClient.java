@@ -1,8 +1,8 @@
+
 package api.controller;
 
 import configs.TestPropertiesConfig;
 import io.qameta.allure.Step;
-import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.aeonbits.owner.ConfigFactory;
@@ -23,28 +23,63 @@ public class TokenClient {
                     System.getProperties()
             );
 
+    /**
+     * Reads guest authorization credentials from
+     * the AE_GUEST_AUTH environment variable.
+     *
+     * Credentials are never printed or included
+     * in JVM system properties.
+     */
+    private static String getGuestAuthorization() {
+
+        String authorization =
+                System.getenv("AE_GUEST_AUTH");
+
+        if (authorization == null || authorization.isBlank()) {
+            throw new IllegalStateException(
+                    "AE_GUEST_AUTH environment variable is not set"
+            );
+        }
+
+        if (!authorization.startsWith("Basic ")) {
+            throw new IllegalStateException(
+                    "AE_GUEST_AUTH must start with 'Basic '"
+            );
+        }
+
+        return authorization;
+    }
+
+    /**
+     * Base request specification for guest token API.
+     */
     private static RequestSpecification guestBaseSpec() {
+
         return given()
                 .baseUri(configProperties.getApiBaseUrl())
                 .accept(JSON)
                 .contentType(URLENC)
                 .header("aelang", "en_US")
                 .header("aesite", "AEO_US")
-                .header("aecountry", "US")
-                .filter(new AllureRestAssured());
+                .header("aecountry", "US");
     }
 
+    /**
+     * Request specification with guest authorization.
+     */
     private static RequestSpecification guestAuthSpec() {
+
         return given()
                 .spec(guestBaseSpec())
                 .header(
                         "Authorization",
-                        configProperties.getGuestHeaderAuth()
+                        getGuestAuthorization()
                 );
     }
 
     @Step("Get guest token response")
     public static Response getGuestTokenResponse() {
+
         return guestAuthSpec()
                 .formParam(
                         "grant_type",
@@ -57,6 +92,7 @@ public class TokenClient {
 
     @Step("Get guest token response without Authorization")
     public static Response getGuestTokenResponseWithoutAuthorization() {
+
         return guestBaseSpec()
                 .formParam(
                         "grant_type",
@@ -76,12 +112,22 @@ public class TokenClient {
         response.then()
                 .statusCode(200);
 
-        return response.jsonPath()
-                .getString("access_token");
+        String accessToken =
+                response.jsonPath()
+                        .getString("access_token");
+
+        if (accessToken == null || accessToken.isBlank()) {
+            throw new IllegalStateException(
+                    "Guest access token was not returned by API"
+            );
+        }
+
+        return accessToken;
     }
 
     @Step("Get authorized token")
     public static String getAuthorizedToken() {
+
         throw new NotImplementedException(
                 "Not yet implemented!"
         );

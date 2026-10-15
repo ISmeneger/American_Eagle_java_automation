@@ -42,21 +42,8 @@ test {
 }
 
 tasks.withType(Test).configureEach {
-
     testClassesDirs = sourceSets.test.output.classesDirs
     classpath = sourceSets.test.runtimeClasspath
-
-    def guestHeaderAuth =
-            project.findProperty('guestHeaderAuth')
-
-    if (guestHeaderAuth != null) {
-        systemProperty(
-                'guest.header.auth',
-                guestHeaderAuth
-        )
-    }
-
-    systemProperties(System.getProperties())
 }
 
 tasks.register('smoke', Test) {

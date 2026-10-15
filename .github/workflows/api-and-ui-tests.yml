@@ -36,7 +36,7 @@ jobs:
       - name: Run API tests
         env:
           AE_GUEST_AUTH: ${{ secrets.AE_GUEST_AUTH }}
-        run: ./gradlew apiTests -Dguest.header.auth="$AE_GUEST_AUTH"
+        run: ./gradlew apiTests
 
       - name: Upload API Allure results
         if: always()

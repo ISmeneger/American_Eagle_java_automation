@@ -14,9 +14,6 @@ public interface TestPropertiesConfig extends Config {
     @Key("uiBaseUrl")
     String getUiBaseUrl();
 
-    @Key("guest.header.auth")
-    String getGuestHeaderAuth();
-
     @Key("email")
     String getEmail();
 
